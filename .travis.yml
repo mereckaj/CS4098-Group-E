@@ -6,4 +6,9 @@ python:
 # command to install dependencies
 install: "./install.sh"
 # command to run tests
-script: main
+before_script: source venv/bin/activate
+script: python test/main.py 
+branches:
+  only:
+    - master
+    - dev
