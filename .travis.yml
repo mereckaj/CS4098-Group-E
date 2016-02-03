@@ -4,6 +4,6 @@ python:
   - "3.4"
   - "3.5"
 # command to install dependencies
-install: "./install"
+install: "./install.sh"
 # command to run tests
-script: nosetests
+script: main
