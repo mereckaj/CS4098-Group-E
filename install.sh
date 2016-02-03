@@ -1,15 +1,18 @@
 #! /bin/bash
 
-echo "install.sh"
+echo "[Install]"
 
 # Check if script is run with sudo
+
+# Check that platform is what the client asked for
 
 # Check if python3.5 is installed
 
 # Check if pip is isntalled
 
+
 # insttall and setup virtualenv. Each script will change to venv by itself
-sudo pip install virtualenv
+pip install virtualenv
 virtualenv -p /usr/bin/python3.5 venv
 
 VE=`echo $VIRTUAL_ENV`
@@ -19,5 +22,7 @@ if [ -z $VE ]; then
 	source venv/bin/activate
 fi
 
+# Install Flask
+
 #Install dependancies
-sudo pip install -r requirements.txt
+pip install -r requirements.txt

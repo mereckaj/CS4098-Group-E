@@ -20,12 +20,6 @@ To install all the required programs
 ./install
 ```
 
-To install all the required libraries for python
-```bash
-pip install -r requirements.txt
-```
-
-
 Launch
 ------
 
