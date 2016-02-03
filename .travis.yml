@@ -1,8 +1,6 @@
 language: python
 sudo: true
 python:
-  - "3.3"
-  - "3.4"
   - "3.5"
 # command to install dependencies
 install: "./install.sh"
