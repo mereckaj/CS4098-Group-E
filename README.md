@@ -12,11 +12,31 @@ PML is a simple programming language for describing a workflow or process that s
  * Eoin Higgins
 
 
-
 Install
 -------
 
-To install all the required programs and libraries run
+To install all the required programs
 ```bash
 ./install
+```
+
+To install all the required libraries for python
+```bash
+pip install -r requirements.txt
+```
+
+
+Launch
+------
+
+```bash
+./start.sh
+```
+
+Test
+----
+
+Run all tests as so: (Assumes you're using virtualenv)
+```bash
+./test.sh
 ```

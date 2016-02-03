@@ -1,4 +1,4 @@
-#! /usr/bin/env
+#! ../venv/bin/python
 
 import sys
 
@@ -7,3 +7,4 @@ if not hasattr(sys, 'real_prefix'):
 	sys.exit(1)
 else:
 	print("Starting tests")
+	#Add execution of tests here

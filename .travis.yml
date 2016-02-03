@@ -5,8 +5,8 @@ python:
 # command to install dependencies
 install: "./install.sh"
 # command to run tests
-before_script: source venv/bin/activate
-script: python test/main.py 
+before_script: "sudo pip install -r requirements.txt"
+script: "./test.sh"
 branches:
   only:
     - master
