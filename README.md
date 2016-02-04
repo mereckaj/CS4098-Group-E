@@ -1,7 +1,7 @@
 # A web-based IDE for PML.
 
 Master: [![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=master)](https://travis-ci.org/mereckaj/CS4098-Group-E)
-Dev:	[![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=zer-velocity)](https://travis-ci.org/mereckaj/CS4098-Group-E)
+Dev:	[![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=zero-velocity)](https://travis-ci.org/mereckaj/CS4098-Group-E)
 
 PML is a simple programming language for describing a workflow or process that specifies the activities and roles involved in delivering some tangible outcome.
 
