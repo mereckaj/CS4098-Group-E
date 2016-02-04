@@ -1,6 +1,7 @@
 # A web-based IDE for PML.
 
-[![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=master)](https://travis-ci.org/mereckaj/CS4098-Group-E)
+Master: [![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=master)](https://travis-ci.org/mereckaj/CS4098-Group-E)
+Dev:	[![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=zer-velocity)](https://travis-ci.org/mereckaj/CS4098-Group-E)
 
 PML is a simple programming language for describing a workflow or process that specifies the activities and roles involved in delivering some tangible outcome.
 
@@ -29,6 +30,10 @@ pip install -r requirements.txt
 Launch
 ------
 
+Enter the virtual environment
+```bash
+source venv/bin/activate
+```
 ```bash
 ./start.sh
 ```
