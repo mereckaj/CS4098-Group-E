@@ -12,9 +12,13 @@ fi
 
 # Check that platform is what the client asked for
 
-CHECK_OS="lsb_release -s -d"
 OS_VERSION=$(lsb_release -s -d)
-echo "OS: " $OS_VERSION
+if [ -z $OS_VERSION ]
+then
+	echo "Could not determine OS"
+	exit 1
+fi
+
 if [[ $OS_VERSION != *"Ubuntu 14.04"* ]]
 then
 	echo "You are running: " $OS_VERSION " program is made for Ubuntu 14.04"

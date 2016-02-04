@@ -10,4 +10,4 @@ script: "./test.sh"
 branches:
   only:
     - master
-    - dev
+    - zero-velocity
