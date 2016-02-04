@@ -3,11 +3,11 @@ sudo: true
 python:
   - "3.5"
 # command to install dependencies
-install: "./install.sh"
+install: "sudo ./install.sh"
 # command to run tests
 before_script: "sudo pip install -r requirements.txt"
 script: "./test.sh"
 branches:
   only:
     - master
-    - dev
+    - zero-velocity
