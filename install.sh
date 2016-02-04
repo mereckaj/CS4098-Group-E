@@ -26,10 +26,21 @@ then
 fi
 
 
-# Check if python3.5 is installed
+# Check if python3.4 is installed
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' python3.4|grep "install ok installed")
+echo Checking for python3.4: $PKG_OK
+if [ "" == "$PKG_OK" ]; then
+  echo "No python3.4. Setting up python3.4."
+  apt-get --force-yes --yes install python3.4
+fi
 
 # Check if pip is isntalled
-
+PIP_OK=$(dpkg-query -W --showformat='${Status}\n' python-pip|grep "install ok installed")
+echo Checking for pip: $PIP_OK
+if [ "" == "$PIP_OK" ]; then
+  echo "No PIP. Setting up PIP."
+  apt-get --force-yes --yes install python-pip
+fi
 
 # insttall and setup virtualenv. Each script will change to venv by itself
 pip install virtualenv
