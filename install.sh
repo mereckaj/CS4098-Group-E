@@ -12,18 +12,18 @@ fi
 
 # Check that platform is what the client asked for
 
-OS_VERSION=$(lsb_release -s -d)
-if [ -z $OS_VERSION ]
-then
-	echo "Could not determine OS"
-	exit 1
-fi
-
-if [[ $OS_VERSION != *"Ubuntu 14.04"* ]]
-then
-	echo "You are running: " $OS_VERSION " program is made for Ubuntu 14.04"
-	exit 1
-fi
+# OS_VERSION=$(lsb_release -s -d)
+# if [ -z $OS_VERSION ]
+# then
+# 	echo "Could not determine OS"
+# 	exit 1
+# fi
+#
+# if [[ $OS_VERSION != *"Ubuntu 14.04"* ]]
+# then
+# 	echo "You are running: " $OS_VERSION " program is made for Ubuntu 14.04"
+# 	exit 1
+# fi
 
 
 # Check if python3.4 is installed
@@ -55,5 +55,5 @@ fi
 
 # Install Flask
 
-#Install dependancies
+# Install dependancies
 pip install -r requirements.txt
