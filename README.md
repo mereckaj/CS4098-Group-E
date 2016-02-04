@@ -23,6 +23,11 @@ To install all the required programs
 Launch
 ------
 
+Enter the virtual environment
+```bash
+source venv/bin/activate
+```
+and then
 ```bash
 ./start.sh
 ```
