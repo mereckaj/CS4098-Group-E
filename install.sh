@@ -55,4 +55,4 @@ fi
 # Install Flask
 
 # Install dependancies
-# pip install -r requirements.txt
+source venv/bin/activate &&  pip install -r requirements.txt
