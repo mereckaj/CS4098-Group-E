@@ -2,14 +2,6 @@
 
 echo "[Install]"
 
-# Check if script is run with sudo
-
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   echo "Run \"sudo ./install.sh\""
-   exit 1
-fi
-
 # Check that platform is what the client asked for
 
 # OS_VERSION=$(lsb_release -s -d)
@@ -26,34 +18,41 @@ fi
 # fi
 
 
+echo "[Checking if python3.4 is installed]"
 # Check if python3.4 is installed
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' python3.4|grep "install ok installed")
-echo Checking for python3.4: $PKG_OK
 if [ "" == "$PKG_OK" ]; then
-  echo "No python3.4. Setting up python3.4."
-  apt-get --force-yes --yes install python3.4
+  echo "[No python3.4. Setting up python3.4.]"
+  sudo apt-get --force-yes --yes install python3.4
+else
+  echo "[OK]"
 fi
 
 # Check if pip is isntalled
+echo "[Checking if pip is installed]"
 PIP_OK=$(dpkg-query -W --showformat='${Status}\n' python-pip|grep "install ok installed")
-echo Checking for pip: $PIP_OK
 if [ "" == "$PIP_OK" ]; then
-  echo "No PIP. Setting up PIP."
-  apt-get --force-yes --yes install python-pip
+  echo "[No PIP. Setting up PIP.]"
+  sudo apt-get --force-yes --yes install python-pip
+else
+  echo "[OK]"
 fi
 
 # insttall and setup virtualenv. Each script will change to venv by itself
+echo "[Installing virtualenv]"
 pip install virtualenv
+echo "[Setting up virtualenv]"
 virtualenv -p /usr/bin/python3.4 venv
 
 VE="echo $VIRTUAL_ENV"
 if [ -z $VE ]; then
 	# The virtualenv variable is null, so we are not in 
 	# an active virtual environment. 
+	echo "[Entering virtualenv]"
 	source venv/bin/activate
 fi
 
 # Install Flask
 
 # Install dependancies
-pip install -r requirements.txt
+source venv/bin/activate &&  pip install -r requirements.txt
