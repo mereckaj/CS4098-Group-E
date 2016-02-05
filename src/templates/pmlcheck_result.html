@@ -14,11 +14,18 @@
 			</div>
 			<h3>Original code</h3>
 			<div id="content">
+				<!-- 
+					render_template in app.py will replace this with the actual code the user entered. 
+				 -->
 				{{code}}
 			</div>
 
 			<h3>Result</h3>
 			<div class="content">
+				<!-- 
+					result is an array of data passed through render_remplate in app.py and code bellow
+					just prints out each line with a break like at the end.
+				 -->
 				{% for line in result %}
 				{{ line }} <br>
 				{% endfor %}
