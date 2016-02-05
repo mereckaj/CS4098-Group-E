@@ -1,6 +1,8 @@
 from flask import Flask,request,render_template
 from runCode import pmlchecker
+from flask.ext.script import Manager
 app = Flask(__name__)
+manager = Manager(app)
 
 @app.route("/result/",methods=["POST"])
 def root_post():
@@ -13,8 +15,4 @@ def root_get():
 	return render_template("pmlcheck_form.html")
 
 if __name__ == "__main__":
-	app.run(
-		host="0.0.0.0",
-		port=8080,
-		debug=True
-	)
+	manager.run()

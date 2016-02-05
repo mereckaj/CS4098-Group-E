@@ -22,11 +22,16 @@ def storeInFile(code):
 	filehash = hashlib.md5(code.encode('utf-8')).hexdigest()
 
 	storeInNamedFile(code,filehash)
-	return filehash
+	return "tmp/" + filehash
 
 def storeInNamedFile(code,filename):
 
+	if not os.path.exists("tmp/"):
+		os.makedirs("tmp/")
+		print("Created tmp/")
+	else:
+		print("tmp exists")
 	# Write the code to the file 
-	text_file = open(filename, "w")
+	text_file = open("tmp/" +filename, "w")
 	text_file.write("%s" % code)
 	text_file.close()
