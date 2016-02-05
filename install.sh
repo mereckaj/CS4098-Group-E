@@ -2,14 +2,6 @@
 
 echo "[Install]"
 
-# Check if script is run with sudo
-
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   echo "Run \"sudo ./install.sh\""
-   exit 1
-fi
-
 # Check that platform is what the client asked for
 
 # OS_VERSION=$(lsb_release -s -d)
