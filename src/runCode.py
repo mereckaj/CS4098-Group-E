@@ -9,9 +9,11 @@ def pmlchecker(code):
 		output = subprocess.check_output(["./../pmlcheck",filename],stderr=subprocess.STDOUT)
 	except subprocess.CalledProcessError as e:
 		output = str(e.output)
-	# Remove the file (If left there's a change it will cause collisions)
+	
 	output = output.decode("utf-8")
 	output.encode('utf-8').decode('unicode_escape')
+	
+	# Remove the file (If left there's a change it will cause collisions)
 	os.remove(filename)
 
 	# Return the data
@@ -26,6 +28,7 @@ def storeInFile(code):
 
 def storeInNamedFile(code,filename):
 
+	# Create a "tmp" folder to store the files if it does not exist and sotre the new file in there
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
 		print("Created tmp/")
