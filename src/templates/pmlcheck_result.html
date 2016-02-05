@@ -14,11 +14,24 @@
 			</div>
 			<h3>Original code</h3>
 			<div id="content">
-				{{code|safe}}
+<<<<<<< HEAD
+				{{code}}
+=======
+				<!-- 
+					render_template in app.py will replace this with the actual code the user entered. 
+				 -->
+				{{code}}
+>>>>>>> 45321313e40360a3bfee8d60e93c2c89fb8505d2
 			</div>
 
 			<h3>Result</h3>
 			<div class="content">
-				{{result}}
+				<!-- 
+					result is an array of data passed through render_remplate in app.py and code bellow
+					just prints out each line with a break like at the end.
+				 -->
+				{% for line in result %}
+				{{ line }} <br>
+				{% endfor %}
 			</div>
 </body>
