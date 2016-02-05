@@ -18,34 +18,41 @@ echo "[Install]"
 # fi
 
 
+echo "[Checking if python3.4 is installed]"
 # Check if python3.4 is installed
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' python3.4|grep "install ok installed")
-echo Checking for python3.4: $PKG_OK
 if [ "" == "$PKG_OK" ]; then
-  echo "No python3.4. Setting up python3.4."
+  echo "[No python3.4. Setting up python3.4.]"
   sudo apt-get --force-yes --yes install python3.4
+else
+  echo "[OK]"
 fi
 
 # Check if pip is isntalled
+echo "[Checking if pip is installed]"
 PIP_OK=$(dpkg-query -W --showformat='${Status}\n' python-pip|grep "install ok installed")
-echo Checking for pip: $PIP_OK
 if [ "" == "$PIP_OK" ]; then
-  echo "No PIP. Setting up PIP."
+  echo "[No PIP. Setting up PIP.]"
   sudo apt-get --force-yes --yes install python-pip
+else
+  echo "[OK]"
 fi
 
 # insttall and setup virtualenv. Each script will change to venv by itself
+echo "[Installing virtualenv]"
 pip install virtualenv
+echo "[Setting up virtualenv]"
 virtualenv -p /usr/bin/python3.4 venv
 
 VE="echo $VIRTUAL_ENV"
 if [ -z $VE ]; then
 	# The virtualenv variable is null, so we are not in 
 	# an active virtual environment. 
+	echo "[Entering virtualenv]"
 	source venv/bin/activate
 fi
 
 # Install Flask
 
 # Install dependancies
-pip install -r requirements.txt
+# pip install -r requirements.txt
