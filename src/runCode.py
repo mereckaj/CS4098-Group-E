@@ -7,25 +7,17 @@ def pmlchecker(code):
 	try:
 		# Run the code through the checker and get the output
 		output = subprocess.check_output(["./../pmlcheck",filename],stderr=subprocess.STDOUT)
-		
 	except subprocess.CalledProcessError as e:
-		output = str(e.output)
-<<<<<<< HEAD
-		#convert the output into bytes
-		output = output.encode("utf-8")
+		output = e.output
+
 	#convert output into a string
 	output = output.decode("utf-8")
-	#convert back into bytes, and get rid of escape characters and returns it to a str
-	output.encode("utf-8").decode('unicode_escape')
-	print("the type %s"% type(output))
-=======
-	
-	
->>>>>>> 45321313e40360a3bfee8d60e93c2c89fb8505d2
+
 	# Remove the file (If left there's a change it will cause collisions)
 	os.remove(filename)
-	# Return the data as str
-	return output
+	
+	# Return the data as [str]
+	return output.split('\n')
 
 def storeInFile(code):
 	# Create a somewhat unique name for the temp file

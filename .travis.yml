@@ -9,4 +9,3 @@ script: "./test.sh"
 branches:
   only:
     - master
-    - zero-velocity
