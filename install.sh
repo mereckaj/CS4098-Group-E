@@ -44,7 +44,7 @@ fi
 
 # insttall and setup virtualenv. Each script will change to venv by itself
 pip install virtualenv
-virtualenv -p /usr/bin/python3.5 venv
+virtualenv -p /usr/bin/python3.4 venv
 
 VE="echo $VIRTUAL_ENV"
 if [ -z $VE ]; then
