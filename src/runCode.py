@@ -8,11 +8,13 @@ def pmlchecker(code):
 		# Run the code through the checker and get the output
 		output = subprocess.check_output(["./../pmlcheck",filename],stderr=subprocess.STDOUT)
 	except subprocess.CalledProcessError as e:
-		output = "ERROR: " + str(e.output)
+		output = str(e.output)
 	# Remove the file (If left there's a change it will cause collisions)
+	output = output.decode("utf-8")
+	output.encode('utf-8').decode('unicode_escape')
 	os.remove(filename)
 
-	# Return th data
+	# Return the data
 	return output
 
 def storeInFile(code):
