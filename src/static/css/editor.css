@@ -1,3 +1,6 @@
 #editor {
 	height: 300px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #A8A8A8;
 }
