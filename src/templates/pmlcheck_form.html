@@ -12,11 +12,7 @@
 
 	<!-- Text Editor -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
-	<style type="text/css" >
-	    #editor { 
-		height: 300px;
-	    }
-	</style>
+	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
 
 </head>
 <body>
@@ -34,19 +30,19 @@
 				</form>
 
 					<script>
-					    var textarea = $('#code');
-    					    textarea.hide();
+						var textarea = $('#code');
+							textarea.hide();
 
-					    var editor = ace.edit("editor");
-					    editor.setTheme("ace/theme/monokai");
-					    editor.getSession().setMode("ace/mode/javascript");
-					    
-					    // Update text editor when there is a change
-					    editor.getSession().on('change', function () {
-					       	textarea.val(editor.getSession().getValue());
-					    });
+						var editor = ace.edit("editor");
+						editor.setTheme("ace/theme/monokai");
+						editor.getSession().setMode("ace/mode/javascript");
+						
+						// Update text editor when there is a change
+						editor.getSession().on('change', function () {
+							textarea.val(editor.getSession().getValue());
+						});
 
-					    textarea.val(editor.getSession().getValue());
+						textarea.val(editor.getSession().getValue());
 
 					</script>
 			</div>
