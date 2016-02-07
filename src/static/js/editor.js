@@ -5,10 +5,7 @@ function submitData(path){
 		url: path,
 		data: { code: data},
 		success: function(d){
-			// Take the reply and make it the new document now.
-			document.open();
-			document.write(d);
-			document.close();
+			$('#result').html(d);
 		}
 	});
 }
