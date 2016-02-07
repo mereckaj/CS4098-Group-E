@@ -1,32 +1,11 @@
-{% extends "base.html" %}
-
-{% block title %}PML Code Checker{% endblock %}
-
-{% block head %}
-	{{ super() }}	
-	<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
-	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
-{% endblock %}
-
-{% block page_content %}
-	{{super()}}
-	<div class="panel-body">
-		<h3>Result</h3>
-		<div class="content">
-			<!-- 
-				result is an array of data passed through render_remplate in app.py and code bellow
-				just prints out each line with a break like at the end.
-			 -->
-			<div class="table-responsive">
-				<table class="table table table-striped">
-					<thead>File:Line:Result</thead>
-					<tbody>
-						{% for line in result %}
-						<tr><td>{{ line }}</td></tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			</div> 
-		</div>
-	</div>
-{% endblock %}
+<div class="content">
+	<div class="table-responsive">
+		<table class="table table table-striped">
+			<tbody>
+				{% for line in result %}
+					<tr><td>{{ line }}</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div> 
+</div>
