@@ -4,3 +4,10 @@
 	border-width: 1px;
 	border-color: #A8A8A8;
 }
+body {
+	/* 
+		Offset the page by 70px because of the floating navbar.
+		If removed the top part of the page will always be hidden
+	*/
+	padding-top: 70px;
+}
