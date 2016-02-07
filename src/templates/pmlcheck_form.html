@@ -6,20 +6,40 @@
 	<!-- Bootsrap -->
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- Text Editor -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+	<style type="text/css" >
+	    #editor { 
+		height: 300px;
+		
+	    }
+	</style>
+
 </head>
 <body>
-	<div id="container">
-		<div id="container">
-			<div class="title">
-				<h1>PML Code Checker</h1>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h1 class ="panel-title">PML Code Checker</h1>
 			</div>
-			<div id="content">
+			<div id="panel-body">
 					<form method="post" action="{{ url_for('root_post') }}">
-					<label for="code">Your code</label>
 					<input type="text" name="code" /><br />
 					<input type="submit" />
 				</form>
+					<!-- Editor -->
+					<div id="editor">//add code</div>
+					<script>
+					    var editor = ace.edit("editor");
+					    editor.setTheme("ace/theme/monokai");
+					    editor.getSession().setMode("ace/mode/javascript");
+					</script>
 			</div>
 		</div>
 	</div>
 </body>
+
+<!-- TODO 
+Ace editor return results for code 
+remove input box -->
