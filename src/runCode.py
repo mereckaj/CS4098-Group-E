@@ -1,6 +1,6 @@
 import subprocess, hashlib, os
 def pmlchecker(code):
-	
+
 	# Create a somewhat unique name for the temp file
 	filename = storeInFile(code)
 

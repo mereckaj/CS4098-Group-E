@@ -17,7 +17,7 @@ PML is a simple programming language for describing a workflow or process that s
 Install
 -------
 
-To install all the required programs
+To install all the required programs. Deals with all of the dependencies too, which can be found in the requirements.txt
 ```bash
 ./install
 ```

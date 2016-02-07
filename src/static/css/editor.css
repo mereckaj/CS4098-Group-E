@@ -1,3 +1,10 @@
 #editor {
 	height: 300px;
 }
+body {
+	/* 
+		Offset the page by 70px because of the floating navbar.
+		If removed the top part of the page will always be hidden
+	*/
+	padding-top: 70px;
+}
