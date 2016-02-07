@@ -11,4 +11,8 @@ rm -rf ./src/tmp
 echo "Removing Virtual Environment"
 rm -rf ./venv
 
+# Reove logs
+echo "Removing logs"
+rm install.log &> /dev/null
+
 echo "Files Removed"
