@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}PML Code Checker{% endblock %}
+
+{% block head %}
+	{{ super() }}	
+	<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
+	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
+{% endblock %}
+
+{% block page_content %}
+	{{super()}}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h1 class ="panel-title">PML Code Checker</h1>
+		</div>
+		<div id="panel-body">
+			<input type="text" name="code" id="code"/> 
+			
+			<!-- Editor -->
+			<div id="editor"></div>
+			<button type="submit" class="btn btn-primary" onclick="submitData({{ url_for('root_post') }})">Submit</button>
+			<script>
+				var textarea = $('#code');
+					textarea.hide();
+
+				var editor = ace.edit("editor");
+				editor.setTheme("ace/theme/chrome");
+				editor.getSession().setMode("ace/mode/javascript");
+				
+				// Update text editor when there is a change
+				editor.getSession().on('change', function () {
+					textarea.val(editor.getSession().getValue());
+				});
+
+				textarea.val(editor.getSession().getValue());
+			</script>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h1 class ="panel-title">PML Code Result</h1>
+		</div>
+			<div id="result"></div>
+		</div>	
+	</div>
+{% endblock %}

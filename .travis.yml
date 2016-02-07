@@ -5,9 +5,7 @@ python:
 # command to install dependencies
 install: "./install.sh"
 # command to run tests
-before_script: "sudo pip install -r requirements.txt"
 script: "./test.sh"
 branches:
   only:
     - master
-    - zero-velocity

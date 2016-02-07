@@ -1,9 +1,13 @@
+dominate==2.1.16
 Flask==0.10.1
+Flask-Bootstrap==3.3.5.7
+Flask-Script==2.0.5
 itsdangerous==0.24
 Jinja2==2.8
 linecache2==1.0.0
 MarkupSafe==0.23
 six==1.10.0
 traceback2==1.4.0
+visitor==0.1.2
 Werkzeug==0.11.3
 wheel==0.26.0
