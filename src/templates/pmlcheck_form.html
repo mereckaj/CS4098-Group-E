@@ -25,8 +25,8 @@
 					<form method="post" action="{{ url_for('root_post') }}">
 					<input type="text" name="code" id="code"/> 
 					<!-- Editor -->
-					<div id="editor">//add code</div>
-					<input type="submit" />
+					<div id="editor"></div>
+					<button type="submit" class="btn btn-primary">Submit</button>
 				</form>
 
 					<script>
@@ -34,7 +34,7 @@
 							textarea.hide();
 
 						var editor = ace.edit("editor");
-						editor.setTheme("ace/theme/monokai");
+						editor.setTheme("ace/theme/chrome");
 						editor.getSession().setMode("ace/mode/javascript");
 						
 						// Update text editor when there is a change
