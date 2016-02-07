@@ -9,7 +9,10 @@ function submitData(path){
 		success: function(d){
 			console.log("Got reply from server: " + d);
 			// Take the reply and make it the new document now.
-			document = d;
+			document.open();
+			document.write(d);
+			document.close();
+			// document = d;
 			console.log("set document");
 		}
 	});
