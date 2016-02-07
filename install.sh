@@ -17,7 +17,8 @@ echo "[Install]"
 # 	exit 1
 # fi
 
-
+#Found most of this bash script snippet on http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
+#mainly used the answer by Urhixidur.
 echo "[Checking if python3.4 is installed]"
 # Check if python3.4 is installed
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' python3.4|grep "install ok installed")
