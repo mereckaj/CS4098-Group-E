@@ -8,26 +8,30 @@
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<div id="container">
-			<div class="title">
-				<h1>PML Code Checker</h1>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h1 class ="panel-title">PML Code Checker</h1>
 			</div>
-			<h3>Original code</h3>
-			<div id="content">
-				<!-- 
-					render_template in app.py will replace this with the actual code the user entered. 
-				 -->
-				{{code|safe}}
-			</div>
+			<div class="panel-body">
+				<h3>Original code</h3>
+				<div id="content">
+					<!-- 
+						render_template in app.py will replace this with the actual code the user entered. 
+					 -->
+					{{code|safe}}
+				</div>
 
-			<h3>Result</h3>
-			<div class="content">
-				<!-- 
-					result is an array of data passed through render_remplate in app.py and code bellow
-					just prints out each line with a break like at the end.
-				 -->
-				{% for line in result %}
-				{{ line }} <br>
-				{% endfor %}
+				<h3>Result</h3>
+				<div class="content">
+					<!-- 
+						result is an array of data passed through render_remplate in app.py and code bellow
+						just prints out each line with a break like at the end.
+					 -->
+					{% for line in result %}
+					{{ line }} <br>
+					{% endfor %}
+				</div>
 			</div>
+		</div>
 </body>
