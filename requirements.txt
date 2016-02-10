@@ -3,6 +3,7 @@ Flask==0.10.1
 Flask-Bootstrap==3.3.5.7
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
+Flask-WTF==0.12
 itsdangerous==0.24
 Jinja2==2.8
 linecache2==1.0.0
@@ -10,6 +11,8 @@ MarkupSafe==0.23
 six==1.10.0
 SQLAlchemy==1.0.11
 traceback2==1.4.0
+unittest2==1.1.0
 visitor==0.1.2
 Werkzeug==0.11.3
 wheel==0.26.0
+WTForms==2.1

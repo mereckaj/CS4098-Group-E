@@ -6,7 +6,7 @@ def pmlchecker(code):
 
 	try:
 		# Run the code through the checker and get the output
-		output = subprocess.check_output(["./../pmlcheck",filename],stderr=subprocess.STDOUT)
+		output = subprocess.check_output(["./pmlcheck",filename],stderr=subprocess.STDOUT)
 	except subprocess.CalledProcessError as e:
 		output = e.output
 
@@ -32,8 +32,7 @@ def storeInNamedFile(code,filename):
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
 		print("Created tmp/")
-	else:
-		print("tmp exists")
+	
 	# Write the code to the file 
 	text_file = open("tmp/" +filename, "w")
 	text_file.write("%s" % code)

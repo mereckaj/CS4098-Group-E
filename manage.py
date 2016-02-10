@@ -18,11 +18,5 @@ def test():
 	tests = unittest2.TestLoader().discover("tests")
 	unittest2.TextTestRunner(verbosity=2).run(tests)
 
-@manager.command
-def run():
-	"""RUN APP HOST=0.0.0.0 PORT=8000 THREADED"""
-	
-
-
 if(__name__=="__main__"):
 	manager.run()

@@ -1,4 +1,4 @@
-from flask import render_template, url_for
+from flask import render_template, url_for, request, session
 from . import main
 from .runCode import pmlchecker
 from .. import db
@@ -13,6 +13,7 @@ def root_post():
 	result = pmlchecker(code)
 	
 	return render_template("pmlcheck_result.html",result=result)
+	return session
 
 # Main page
 @main.route("/",methods=["GET"])
