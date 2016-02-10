@@ -1,11 +1,15 @@
 language: python
 sudo: true
+dist: trusty
 python:
   - "3.5"
 # command to install dependencies
 install: "./install.sh"
+before_script: sudo pip install -r requirements.txt
 # command to run tests
-script: "./test.sh"
+script: "python manage.py test"
 branches:
   only:
     - master
+    - dev
+    - restructured-project

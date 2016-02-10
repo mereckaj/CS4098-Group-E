@@ -11,8 +11,12 @@ rm -rf ./src/tmp
 echo "Removing Virtual Environment"
 rm -rf ./venv
 
-# Reove logs
+# Remove logs
 echo "Removing logs"
 rm install.log &> /dev/null
+
+# Remove database
+echo "Removing database"
+rm *.sqlite
 
 echo "Files Removed"
