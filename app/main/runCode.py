@@ -28,7 +28,7 @@ def storeInFile(code):
 
 def storeInNamedFile(code,filename):
 
-	# Create a "tmp" folder to store the files if it does not exist and sotre the new file in there
+	# Create a "tmp" folder to store the files if it does not exist and store the new file in there
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
 		print("Created tmp/")

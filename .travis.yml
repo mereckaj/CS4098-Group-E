@@ -2,7 +2,7 @@ language: python
 sudo: true
 dist: trusty
 python:
-  - "3.5"
+  - "3.4"
 # command to install dependencies
 install: "./install.sh"
 before_script: sudo pip install -r requirements.txt
@@ -12,4 +12,3 @@ branches:
   only:
     - master
     - dev
-    - restructured-project
