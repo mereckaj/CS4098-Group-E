@@ -7,6 +7,7 @@ class Config:
 	SECRET_KEY = os.environ.get("SECRET_KEY") or "HopefullyThisWillNeverBeUsed"
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
+	SESSION_TYPE = "sqlalchemy"
 
 	@staticmethod
 	def init_app(app):
