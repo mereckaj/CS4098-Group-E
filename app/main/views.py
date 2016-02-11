@@ -19,3 +19,7 @@ def root_post():
 @main.route("/",methods=["GET"])
 def root_get():
 	return render_template("pmlcheck_form.html")
+
+@main.route("/ben",methods=["GET"])
+def home():
+	return render_template("homepage.html")
