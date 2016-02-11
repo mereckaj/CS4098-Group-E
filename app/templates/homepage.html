@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block head %}
+	{{super()}}
+	<!-- jQuery -->
+	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
+{% endblock %}
+
+
+{% block page_content %}
+
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2	">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">Welcome !</h3>
+			</div>
+			<div class="panel-body">
+				<div class="panel panel-default">
+					<div class="panel-heading">Login</div>
+					<div class="panel-body">
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-addon" id="basic-addon1">Username</span>
+								<input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+							</div>
+						</div>
+						<br>
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-addon" id="basic-addon1">Password</span>
+								<input type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon1">
+							</div>
+						</div>
+						<br>
+						<div class="col">
+							<span class="input-group-btn center-block">
+								<button class="btn btn-default" type="button">Login</button>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">Regiser</div>
+					<div class="panel-body">
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-addon" id="basic-addon1">Username</span>
+								<input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+							</div>
+						</div>
+						<br>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon" id="basic-addon1">Password</div>
+								<input type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon1">
+
+								<div class="input-group-addon" id="basic-addon1">Again</div>
+								<input type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon1">
+							</div>
+						</div>
+						<br>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon" id="basic-addon1">Email</div>
+								<input type="email" class="form-control" placeholder="Password" aria-describedby="basic-addon1">
+							</div>
+						</div>
+						<br>
+						<div class="col">
+							<span class="input-group-btn center-block">
+								<button class="btn btn-default" type="button">Register</button>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import render_template, url_for, request, session
 from . import main
 from .runCode import pmlchecker
 from .. import db
+from flask_user import login_required
 
 # Result page
 @main.route("/result/",methods=["POST"])
@@ -19,3 +20,9 @@ def root_post():
 @main.route("/",methods=["GET"])
 def root_get():
 	return render_template("pmlcheck_form.html")
+
+
+@main.route("/authed",methods=["GET"])
+@login_required
+def home():
+	return render_template("homepage.html")
