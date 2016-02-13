@@ -1,0 +1,45 @@
+{% extends "bootstrap/base.html" %}
+
+{% block metas %}
+	{{ super() }}
+	<meta charset="utf-8">
+{% endblock %}
+
+{% block head %}
+	{{super()}}
+	<!-- jQuery -->
+	<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block title%}Group E PML editor {% endblock %}
+
+{% block body %}
+	<!-- NAVBAR goes here -->
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/">Gedit</a>
+			</div>	
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="/">Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="{{url_for('user.logout')}}">Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+<div class="container">
+	{% block content %}
+	{% endblock %}
+</div>
+{% endblock %}

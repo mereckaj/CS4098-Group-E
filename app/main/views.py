@@ -18,11 +18,6 @@ def root_post():
 
 # Main page
 @main.route("/",methods=["GET"])
+@login_required
 def root_get():
 	return render_template("pmlcheck_form.html")
-
-
-@main.route("/authed",methods=["GET"])
-@login_required
-def home():
-	return render_template("homepage.html")

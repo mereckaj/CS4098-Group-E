@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "member_base.html" %}
 
 {% block title %}PML Code Checker{% endblock %}
 
@@ -9,7 +9,7 @@
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 {% endblock %}
 
-{% block page_content %}
+{% block content %}
 	{{super()}}
 	<div class="panel panel-default">
 		<div class="panel-heading">
