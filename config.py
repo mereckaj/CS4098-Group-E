@@ -11,7 +11,7 @@ class Config:
 	CSRF_ENABLED = True
 
 	# Flask-User settings
-	USER_APP_NAME = "AppName" # Used by email templates
+	USER_APP_NAME = "Group E PML IDE" # Used by email templates
 	USER_ENABLE_CONFIRM_EMAIL = False
 	USER_ENABLE_EMAIL = False
 
@@ -21,6 +21,7 @@ class Config:
 		pass
 
 class DevelopmentConfig(Config):
+	DEVELOPMENT = True
 	DEBUG = True
 	SQLALCHEMY_DATABASE_URI = os.environ.get("DEV_DATABASE_URL") or "sqlite:///" + os.path.join(basedir,"dev-db.sqlite")
 
@@ -29,8 +30,8 @@ class ProductionConfig(Config):
 	SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or "sqlite:///" + os.path.join(basedir,"data.sqlite")
 
 config = {
-	'development' : DevelopmentConfig,
-	'production' : ProductionConfig,
+	"development" : DevelopmentConfig,
+	"production" : ProductionConfig,
 
-	'default' : DevelopmentConfig
+	"default" : DevelopmentConfig
 }

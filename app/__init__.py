@@ -3,11 +3,12 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.session import Session
 from config import config
-from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
+from flask_user import login_required, UserManager, SQLAlchemyAdapter
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 session = Session()
+user_manager = UserManager()
 
 def create_app(config_name):
 	app = Flask(__name__)
@@ -19,24 +20,16 @@ def create_app(config_name):
 	db.init_app(app) # SQLAlchemy (Object Relational Mapper) (Work with objects not SQL)
 	session.init_app(app) # Session lets you keep data about users (Cookies)
 
-	class User(db.Model, UserMixin):
-		id = db.Column(db.Integer, primary_key=True)
-		# User authentication information
-		username = db.Column(db.String(50), nullable=False, unique=True)
-		password = db.Column(db.String(255), nullable=False, server_default='')
-
-		# User information
-		active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
-		first_name = db.Column(db.String(100), nullable=False, server_default='')
-		last_name = db.Column(db.String(100), nullable=False, server_default='')
-
-	with app.app_context():
-		db.create_all()
-	db_adapter = SQLAlchemyAdapter(db,User)
-	user_manager = UserManager(db_adapter, app)
-
-	# Tell the app where to look for the routes
+	# Tell the app where to look for the routeszz
 	from .main import main as main_blueprint
 	app.register_blueprint(main_blueprint)
+
+	from .main import models
+	# Register the User model, and initialize the UserManager
+	db_adapter = SQLAlchemyAdapter(db,models.User)
+	user_manager.init_app(app,db_adapter)
+	
+	with app.app_context():
+		db.create_all()
 
 	return app
