@@ -17,7 +17,7 @@ git clone https://github.com/jnoll/peos.git >> $LOG
 echo "[DONE]"
 
 echo -n "Installing dependancies "
-sudo $PACMAN bison flex libreadline-dev libncurses-dev tcl tcl-dev check expect libxml2 >> $LOG
+sudo $PACMAN --force-yes --yes  bison flex libreadline-dev libncurses-dev tcl tcl-dev check expect libxml2 >> $LOG
 echo "[DONE]"
 
 echo -n "Compiling everything "

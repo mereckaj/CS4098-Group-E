@@ -45,6 +45,8 @@ echo "[Done]"
 
 # Install dependancies
 echo "[Installing dependancies]"
-sudo apt-get install --force-yes --yes libssl-dev >> install.log 
+sudo apt-get install --force-yes --yes libssl-dev libffi-dev python3.4-dev >> install.log 
+echo "[Installing from requirements.txt]"
 source venv/bin/activate &&  pip install -r requirements.txt >> install.log
+echo "[Compiling peos]"
 cd $ORIGIN && bash peos.sh
