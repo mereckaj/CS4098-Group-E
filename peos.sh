@@ -13,15 +13,15 @@ cd /tmp && mkdir ge_peos -p && cd ge_peos
 echo "[DONE]"
 
 echo -n "Cloning repo from https://github.com/jnoll/peos.git "
-git clone https://github.com/jnoll/peos.git >> $LOG 2>&1
+git clone https://github.com/jnoll/peos.git >> $LOG
 echo "[DONE]"
 
 echo -n "Installing dependancies "
-sudo $PACMAN tcl tcl-dev check expect libxml2 >> $LOG 2>&1
+sudo $PACMAN bison flex libreadline-dev libncurses-dev tcl tcl-dev check expect libxml2 >> $LOG
 echo "[DONE]"
 
 echo -n "Compiling everything "
-cd peos && make >> $LOG 2>&1
+cd peos && make >> $LOG
 mv pml/check/pmlcheck $ORIGIN
 echo "[DONE]"
 

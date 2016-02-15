@@ -1,4 +1,4 @@
-#! /bin/bash
+# /bin/bash
 
 ORIGIN=$(pwd)
 echo "[Install]"
@@ -30,8 +30,14 @@ echo "[Done]"
 
 # insttall and setup virtualenv. Each script will change to venv by itself
 echo -n "[Installing virtualenv]"
-pip install virtualenv >> install.log
-echo "[Done]"
+sudo pip install virtualenv >> install.log
+if [ $? -ne 0 ]
+then
+	echo "[Failed to install virtualenv, check install.log]"
+	exit 1
+else
+	echo "[Done]"
+fi
 
 echo -n "[Setting up virtualenv]"
 virtualenv -p /usr/bin/python3.4 venv >> install.log
