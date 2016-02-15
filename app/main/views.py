@@ -2,7 +2,6 @@ from flask import render_template, url_for, request, session
 from . import main
 from .runCode import pmlchecker
 from .. import db
-
 # Result page
 @main.route("/result/",methods=["POST"])
 def root_post():
@@ -23,3 +22,4 @@ def root_get():
 @main.route("/ben",methods=["GET"])
 def home():
 	return render_template("homepage.html")
+
