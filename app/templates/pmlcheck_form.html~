@@ -4,7 +4,7 @@
 
 {% block head %}
 	{{ super() }}	
-	<script src={{url_for('static', filename='ace/lib/ace/ace.js')}}"></script>
+	<script src='//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'></script>
 	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 {% endblock %}
@@ -26,7 +26,7 @@
 					textarea.hide();
 
 				var editor = ace.edit("editor");
-				editor.setTheme("ace/theme/chrome");
+				editor.setTheme("static/ace-master/lib/ace/theme//chrome");
 				editor.getSession().setMode("ace/mode/javascript");
 				
 				// Update text editor when there is a change
