@@ -3,10 +3,10 @@
 {% block title %}PML Code Checker{% endblock %}
 
 {% block head %}
-	{{ super() }}	
-	<script src='//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'></script>
+	{{ super() }}
 	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
+	<script src="{{url_for('static', filename='src-noconflict/ace.js')}}" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 
 {% block content %}
@@ -16,25 +16,14 @@
 			<h1 class ="panel-title">PML Code Checker</h1>
 		</div>
 		<div id="panel-body">
-			<input type="text" name="code" id="code"/> 
 			
 			<!-- Editor -->
 			<div id="editor"></div>
 			<button type="submit" class="btn btn-primary" onclick="submitData({{ url_for('main.root_post') }})">Submit</button>
 			<script>
-				var textarea = $('#code');
-					textarea.hide();
-
-				var editor = ace.edit("editor");
-				editor.setTheme("static/ace-master/lib/ace/theme//chrome");
-				editor.getSession().setMode("ace/mode/javascript");
-				
-				// Update text editor when there is a change
-				editor.getSession().on('change', function () {
-					textarea.val(editor.getSession().getValue());
-				});
-
-				textarea.val(editor.getSession().getValue());
+					var editor = ace.edit("editor");
+					editor.setTheme("static/ace-master/lib/ace/theme//chrome");
+					editor.session.setMode("ace/mode/javascript");
 			</script>
 		</div>
 	</div>
@@ -43,6 +32,5 @@
 			<h1 class ="panel-title">PML Code Result</h1>
 		</div>
 			<div id="result"></div>
-		</div>	
 	</div>
 {% endblock %}
