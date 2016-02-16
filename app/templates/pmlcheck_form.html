@@ -13,6 +13,15 @@
 	{{super()}}
 	<div class="panel panel-default">
 		<div class="panel-heading">
+			<h1 class ="panel-title">Upload File</h1> 
+		</div> <br />
+		<div id="panel-body">
+			<form action="upload" method="post" enctype="multipart/form-data" id = "upload">
+				<input type="file" name="file"> 
+				<button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
+			</form>  <br />
+		</div>
+		<div class="panel-heading">
 			<h1 class ="panel-title">PML Code Checker</h1>
 		</div>
 		<div id="panel-body">
