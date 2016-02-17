@@ -4,12 +4,15 @@ from .runCode import pmlchecker
 from .. import db
 from flask_oauthlib.client import OAuth, OAuthException
 
+main.debug = True
+main.secret_key = 'development'
 oauth = OAuth()
 
-FACEBOOK_APP_ID = '188477911223606'
-FACEBOOK_APP_SECRET = '621413ddea2bcc5b2e83d42fc40495de'
+FACEBOOK_APP_ID = '486691024846349'
+FACEBOOK_APP_SECRET = '5654dfce0e6167725cf31272545a914e'
 
-facebook = oauth.remote_app('facebook',
+facebook = oauth.remote_app(
+    'facebook',
     base_url='https://graph.facebook.com/',
     request_token_url=None,
     access_token_url='/oauth/access_token',
@@ -34,13 +37,13 @@ def root_post():
 # Main page
 @main.route("/",methods=["GET"])
 def root_get():
-	return render_template("pmlcheck_form.html")
+	return render_template("public_base.html")
 
 # #facebook login page
 @main.route('/login')
 def login():
     callback = url_for(
-        'facebook_authorized',
+        'main.facebook_authorized',
         next=request.args.get('next') or request.referrer or None,
         _external=True
     )
