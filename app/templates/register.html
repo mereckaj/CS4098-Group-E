@@ -1,0 +1,28 @@
+{% extends "public_base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title%}Register{% endblock %}
+
+{% block head %}
+	{{super()}}
+	<script src="{{url_for('static', filename='js/register.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2	">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">Register</h3>
+			</div>
+			<div class="panel-body">
+				{% for line in error %}
+					<div class="alert alert-danger" role="alert">{{ line }}</div>
+				{% endfor %}
+				{% if form %}
+					{{ wtf.quick_form(form,id=id) }}
+				{% endif %}
+				<button type="submit" class="btn btn-primary pull-right" id="register" onclick="register('{{url_for('main.register')}}')">Register</button>
+			</div>
+		</div>
+	</div>
+{% endblock %}
