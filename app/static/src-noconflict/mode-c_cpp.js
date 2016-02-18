@@ -58,30 +58,26 @@ var cFunctions = exports.cFunctions = "\\b(?:hypot(?:f|l)?|s(?:scanf|ystem|nprin
 
 var c_cppHighlightRules = function() {
 
+
+
     var keywordControls = (
-        "break|case|continue|default|do|else|for|goto|if|_Pragma|" +
-        "return|switch|while|catch|operator|try|throw|using"
+        "process|agent|action"
     );
     
     var storageType = (
-        "asm|__asm__|auto|bool|_Bool|char|_Complex|double|enum|float|" +
-        "_Imaginary|int|long|short|signed|struct|typedef|union|unsigned|void|" +
-        "class|wchar_t|template|char16_t|char32_t"
+        "iteration"
     );
 
     var storageModifiers = (
-        "const|extern|register|restrict|static|volatile|inline|private|" +
-        "protected|public|friend|explicit|virtual|export|mutable|typename|" +
-        "constexpr|new|delete|alignas|alignof|decltype|noexcept|thread_local"
+        "op"
     );
 
     var keywordOperators = (
-        "and|and_eq|bitand|bitor|compl|not|not_eq|or|or_eq|typeid|xor|xor_eq" +
-        "const_cast|dynamic_cast|reinterpret_cast|static_cast|sizeof|namespace"
+        "provides|requires"
     );
 
     var builtinConstants = (
-        "NULL|true|false|TRUE|FALSE|nullptr"
+        "value"
     );
 
     var keywordMapper = this.$keywords = this.createKeywordMapper({
