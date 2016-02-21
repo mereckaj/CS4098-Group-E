@@ -46,12 +46,13 @@ def index():
 	elif request.method == "POST":
 		# Extract the code from the POST request
 		code = request.form["code"]
-
 		# Run the code through the pmlheck tool and get the result
 		result = pmlchecker(code)
-		
 		return render_template("pmlcheck_result.html",result=result)
 
+# Url to go to if you want to log in through facebook, it basically
+# calls the facebook url for loging in, on return it will redirect to
+# main.facebook_authorized
 @main.route('/facebook_login')
 def facebook_login():
 	next_url = request.args.get('next') or url_for('main.index')
@@ -59,11 +60,19 @@ def facebook_login():
 		next=next_url,
 		_external=True))
 
+# Same as above except for google.
 @main.route('/google_login')
 def google_login():
 	callback=url_for('main.google_authorized', _external=True)
 	return google.authorize(callback=callback)
 
+# Facebook callback function, check if the reply is present,
+# Check if user gave email, if no email is given then can't register
+# so show an error, if email is given see if there's a user registered
+# with that email. If a user is registered log them in (No password checks)
+# since the password would not be set
+# If the email is not registered register it, since password = None the User
+# model will generate a random 32 character password (This is a dirty hack)
 @main.route('/facebook_login/authorized')
 @facebook.authorized_handler
 def facebook_authorized(resp):
@@ -71,18 +80,13 @@ def facebook_authorized(resp):
 	if resp is None:
 		return redirect(next_url)
 	session['oauth_token'] = (resp['access_token'], '')
-	user_data = facebook.get('/me').data
+	user_data = facebook.get('/me?fields=email,id,first_name,last_name').data
 	if "email" in user_data:
 		user = User.query.filter(User.email == user_data['email']).first()
 	else:
-		# TODO: Register use by name
-		return render_template("register.html",error=["No email from facebook"])
-		# return redirect(url_for("main.register",error=["No email from facebook"]))
+		return render_template("login.html",error=["No email from facebook, can't register you :("])
 	if user is None:
-		email=user_data['email']
-		first_name=user_data['first_name']
-		last_name=user_data['last_name']
-		new_user = User(email=email,first_name=first_name,last_name=last_name)
+		new_user = User(email=user_data['email'],first_name=user_data['first_name'],last_name=user_data['last_name'])
 		db.session.add(new_user)
 		db.session.commit()
 		login_user(new_user)
@@ -90,6 +94,7 @@ def facebook_authorized(resp):
 		login_user(user)
 	return redirect(next_url)
 
+# Same as facebooks one above, read that description.
 @main.route("/google_login/authorized")
 @google.authorized_handler
 def google_authorized(resp):
@@ -101,12 +106,8 @@ def google_authorized(resp):
 	if "email" in user_data:
 		user = User.query.filter(User.email == user_data['email']).first()
 	else:
-		return render_template("register.html",error=["No email from google"])
+		return render_template("login.html",error=["No email from google, can't register you :("])
 	if user is None:
-		email=user_data['email']
-		first_name=user_data['given_name']
-		last_name=user_data['family_name']
-		return email + ":" + first_name +":"+last_name
 		new_user = User(email=user_data['email'], first_name=user_data['given_name'], last_name=user_data['family_name'])
 		db.session.add(new_user)
 		db.session.commit()
@@ -115,6 +116,10 @@ def google_authorized(resp):
 		login_user(user)
 	return redirect(next_url)
 
+# Register a new user, if it's a GET then return the form, 
+# If its a post then validate the users form
+# If this email already exists then return an error
+# Otherwise register a new user and log them in straight away
 @main.route("/register",methods=["GET","POST"])
 def register():
 	form = RegisterForm()
@@ -129,17 +134,22 @@ def register():
 			user = User.query.filter(User.email == email).first()
 			if user is None:
 				new_user = User(email=email, first_name=first_name, last_name=last_name,password=password)
-				# new_user.set_password(password=password)
 				db.session.add(new_user)
 				db.session.commit()
 				login_user(new_user)
 				return redirect(url_for("main.index"))
 			else:
 				return render_template("register.html",error=["User already exists"])
-				# return redirect(url_for("main.register",error=["User already exists"]))
 		else:
-			return prepareFormErrors(form)
+			ers = []
+			for (field, errors) in form.errors.items():
+				for e in errors:
+					ers.append(field + " : " + e)
+			return render_template("register.html",error=ers)
 
+# If it's a GET request then regner the login form.
+# If it's a POSt request then validate the form and see
+# if the passwords matched and the user may be logged in.
 @main.route("/login",methods=["GET","POST"])
 def login():
 	form = LoginForm()
@@ -150,30 +160,27 @@ def login():
 		if user is None:
 			return render_template("login.html",error=["User does not exist"])
 		else:
-			login_user(user)
-			return redirect(url_for("main.index"))
+			if user.check_password(password):
+				login_user(user)
+				return redirect(url_for("main.index"))
+			else:
+				return render_template("login.html",error=["Bad password :("])
 	else:
 		return render_template("login.html",form=form)
 
-
-def prepareFormErrors(form):
-	ers = []
-	for (field, errors) in form.errors.items():
-		for e in errors:
-			ers.append(field + " : " + e)
-	return render_template("register.html",error=ers,form=form)
-
+# Log out the user, no matter what way the logged in.
 @main.route("/logout")
 @login_required
 def logout():
 	logout_user()
 	return redirect(url_for("main.index"))
 
-# @login_manager.unauthorized_handler
-# def unauthorized_handler():
-# 	return render_template(url_for("main.index"))
-# AUTH
+# Any unauthorized requests will be redirected to the login page.
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+	return redirect(url_for("main.login"))
 
+# Get user object by id
 @login_manager.user_loader
 def load_user(userid):
 	user = User.query.get(int(userid))
@@ -187,6 +194,3 @@ def get_facebook_oauth_token():
 @google.tokengetter
 def get_access_token():
 	return session.get('oauth_token')
-
-def debug(message):
-	print("\n" + message + "\n")

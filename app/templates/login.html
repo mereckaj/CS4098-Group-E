@@ -5,7 +5,6 @@
 
 {% block head %}
 	{{super()}}
-	<script src="{{url_for('static', filename='js/register.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -24,11 +23,17 @@
 							onclick="window.location.href='{{url_for('main.index')}}'">Back
 						</button>
 					{% endif %}
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					{% if form %}
 						<div class="row">
 							{{ wtf.quick_form(form,id=id) }}
 						</div>
+						<br>
 						<div class="row">
+							<button class="btn btn-info" id="fbLogin" 
+							onclick="window.location.href='{{url_for('main.register')}}'">Register
+							</button>
 							<button class="btn btn-primary" id="fbLogin" 
 							onclick="window.location.href='{{url_for('main.facebook_login')}}'">Facebook Login
 							</button>

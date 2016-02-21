@@ -5,7 +5,6 @@
 
 {% block head %}
 	{{super()}}
-	<script src="{{url_for('static', filename='js/register.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -15,12 +14,21 @@
 				<h3 class="panel-title text-center">Register</h3>
 			</div>
 			<div class="panel-body">
-				{% for line in error %}
-					<div class="alert alert-danger" role="alert">{{ line }}</div>
-				{% endfor %}
-				{% if form %}
-					{{ wtf.quick_form(form,id=id) }}
-				{% endif %}
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					{% if error %}
+						{% for line in error %}
+							<div class="alert alert-danger" role="alert">{{ line }}</div>
+						{% endfor %}						
+						<button type="submit" class="btn" id="back"
+							onclick="window.location.href='{{url_for('main.index')}}'">Back
+						</button>
+					{% endif %}
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					{% if form %}
+						{{ wtf.quick_form(form,id=id) }}
+					{% endif %}
+				</div>
 			</div>
 		</div>
 	</div>

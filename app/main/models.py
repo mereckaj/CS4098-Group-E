@@ -1,5 +1,6 @@
 from .. import db
 from werkzeug.security import generate_password_hash, check_password_hash
+import random, string
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -16,6 +17,10 @@ class User(db.Model):
 		self.set_password(password)
 
 	def set_password(self, password):
+		# If the password was not specified (Login from Facebook/Google then create a random 32 charachter password)
+		# Otherwise users can login by entering empty string as password
+		if password is None:
+			password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
 		self.pw_hash = generate_password_hash(password)
 
 	def check_password(self, password):
