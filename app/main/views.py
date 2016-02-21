@@ -11,6 +11,8 @@ FACEBOOK_APP_ID = "486691024846349"
 FACEBOOK_APP_SECRET = "5654dfce0e6167725cf31272545a914e"
 GOOGLE_APP_ID = "899383105434-k00rirsh9bvq8cu7l19i1loh029e1hgv.apps.googleusercontent.com"
 GOOGLE_APP_SECRET = "H48CFybLmBnZpTWgtLCt-ls1"
+PROVIDER_GOOGLE = "GOOGLE"
+PROVIDER_FACEBOOK = "FACEBOOK"
 
 facebook = oauth.remote_app(
 	"facebook",
@@ -81,18 +83,7 @@ def facebook_authorized(resp):
 		return redirect(next_url)
 	session['oauth_token'] = (resp['access_token'], '')
 	user_data = facebook.get('/me?fields=email,id,first_name,last_name').data
-	if "email" in user_data:
-		user = User.query.filter(User.email == user_data['email']).first()
-	else:
-		return render_template("login.html",error=["No email from facebook, can't register you :("])
-	if user is None:
-		new_user = User(email=user_data['email'],first_name=user_data['first_name'],last_name=user_data['last_name'])
-		db.session.add(new_user)
-		db.session.commit()
-		login_user(new_user)
-	else:
-		login_user(user)
-	return redirect(next_url)
+	return authAndRedirectOrError(user_data,PROVIDER_FACEBOOK,next_url)
 
 # Same as facebooks one above, read that description.
 @main.route("/google_login/authorized")
@@ -103,12 +94,38 @@ def google_authorized(resp):
 		return redirect(next_url);
 	session['oauth_token'] = (resp['access_token'], '')
 	user_data =  google.get("userinfo").data
-	if "email" in user_data:
-		user = User.query.filter(User.email == user_data['email']).first()
+	return authAndRedirectOrError(user_data,PROVIDER_GOOGLE,next_url)
+
+# Refractored code for loging in a user through a third party plugin
+def authAndRedirectOrError(user_data,provider,next_url):
+	email = user_data["email"]
+
+	# Extract details from user_data
+	if provider is PROVIDER_GOOGLE:
+		first_name = user_data["given_name"]
+		last_name = user_data["family_name"]
+	elif provider is PROVIDER_FACEBOOK:
+		first_name = user_data["first_name"]
+		last_name = user_data["last_name"]
 	else:
-		return render_template("login.html",error=["No email from google, can't register you :("])
+		return render_template("login.html",error="[Error getting first and last names]")
+
+	# Conver email to lower case to prevent strign comparison issues
+	email = email.lower()
+
+	# Check that an details has been given
+	if email is not None:
+		user = User.query.filter(User.email == email).first()
+	else:
+		return render_template("login.html",error=["Could not get email from " + provider])
+	if first_name is None:
+		first_name ="UNDEF"
+	if last_name is None:
+		last_name = "UNDEF"
+
+	# Try to log the user in, or register a new user
 	if user is None:
-		new_user = User(email=user_data['email'], first_name=user_data['given_name'], last_name=user_data['family_name'])
+		new_user = User(email=email, first_name=first_name, last_name=last_name)
 		db.session.add(new_user)
 		db.session.commit()
 		login_user(new_user)
@@ -154,7 +171,7 @@ def register():
 def login():
 	form = LoginForm()
 	if form.validate_on_submit():
-		email = form.email.data
+		email = form.email.data.lower()
 		password = form.password.data
 		user = User.query.filter(User.email == email).first()
 		if user is None:
