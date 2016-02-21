@@ -20,7 +20,7 @@ function emacs(){
 	console.log("Changed keybinds to emacs")
 }
 
-function subl(){
-	editor.setKeyboardHandler("ace/keyboard/ace");
-	console.log("Changed keybinds to ace")
+function none(){
+	editor.setKeyboardHandler("");
+	console.log("Changed keybinds to emacs")	
 }
