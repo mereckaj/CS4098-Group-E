@@ -12,8 +12,10 @@ function submitData(path){
 
 window.onload =function() {
     var fileInput = document.getElementById('file');
+    var button = document.getElementById('send');
 
-    fileInput.addEventListener('change', function(e) {
+    button.addEventListener("click", function(e){
+
 	  var file = fileInput.files[0];
 	  var reader = new FileReader();
 
