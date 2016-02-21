@@ -5,11 +5,12 @@ from .forms import LoginForm, RegisterForm
 from .. import db, login_manager, oauth
 from flask_login import login_required,login_user,logout_user
 from .models import User
+import json
 
 FACEBOOK_APP_ID = "486691024846349"
 FACEBOOK_APP_SECRET = "5654dfce0e6167725cf31272545a914e"
-GOOGLE_ID = "k00rirsh9bvq8cu7l19i1loh029e1hgv"
-GOOGLE_SECRET = "H48CFybLmBnZpTWgtLCt-ls1"
+GOOGLE_APP_ID = "899383105434-k00rirsh9bvq8cu7l19i1loh029e1hgv.apps.googleusercontent.com"
+GOOGLE_APP_SECRET = "H48CFybLmBnZpTWgtLCt-ls1"
 
 facebook = oauth.remote_app(
 	"facebook",
@@ -23,15 +24,17 @@ facebook = oauth.remote_app(
 )
 
 google = oauth.remote_app(
-	"google",
-	base_url="https://www.googleapis.com/oauth2/v1/",
+	'google',
+	consumer_key=GOOGLE_APP_ID,
+	consumer_secret=GOOGLE_APP_SECRET,
+	request_token_params={
+		'scope': 'https://www.googleapis.com/auth/userinfo.email'
+	},
+	base_url='https://www.googleapis.com/oauth2/v1/',
 	request_token_url=None,
-	access_token_url="https://accounts.google.com/o/oauth2/token",
-	authorize_url="https://accounts.google.com/o/oauth2/auth",
-	consumer_key=GOOGLE_ID,
-	consumer_secret=GOOGLE_SECRET,
-	request_token_params={"scope": "email"},
-	access_token_method="POST"
+	access_token_method='POST',
+	access_token_url='https://accounts.google.com/o/oauth2/token',
+	authorize_url='https://accounts.google.com/o/oauth2/auth',
 )
 
 # Main page
@@ -51,28 +54,60 @@ def index():
 
 @main.route('/facebook_login')
 def facebook_login():
-	next_url = request.args.get('next') or url_for('index')
+	next_url = request.args.get('next') or url_for('main.index')
 	return facebook.authorize(callback=url_for('main.facebook_authorized',
 		next=next_url,
 		_external=True))
 
+@main.route('/google_login')
+def google_login():
+	callback=url_for('main.google_authorized', _external=True)
+	return google.authorize(callback=callback)
+
 @main.route('/facebook_login/authorized')
 @facebook.authorized_handler
 def facebook_authorized(resp):
-	next_url = request.args.get('next') or url_for('index')
+	next_url = request.args.get('next') or url_for('main.index')
 	if resp is None:
-		# The user likely denied the request
-		flash(u'There was a problem logging in.')
 		return redirect(next_url)
 	session['oauth_token'] = (resp['access_token'], '')
 	user_data = facebook.get('/me').data
 	if "email" in user_data:
 		user = User.query.filter(User.email == user_data['email']).first()
 	else:
+		# TODO: Register use by name
 		return render_template("register.html",error=["No email from facebook"])
 		# return redirect(url_for("main.register",error=["No email from facebook"]))
 	if user is None:
-		new_user = User(email=user_data['email'], first_name=user_data['first_name'], last_name=user_data['last_name'])
+		email=user_data['email']
+		first_name=user_data['first_name']
+		last_name=user_data['last_name']
+		new_user = User(email=email,first_name=first_name,last_name=last_name)
+		db.session.add(new_user)
+		db.session.commit()
+		login_user(new_user)
+	else:
+		login_user(user)
+	return redirect(next_url)
+
+@main.route("/google_login/authorized")
+@google.authorized_handler
+def google_authorized(resp):
+	next_url = request.args.get("next") or url_for("main.index")
+	if resp is None:
+		return redirect(next_url);
+	session['oauth_token'] = (resp['access_token'], '')
+	user_data =  google.get("userinfo").data
+	if "email" in user_data:
+		user = User.query.filter(User.email == user_data['email']).first()
+	else:
+		return render_template("register.html",error=["No email from google"])
+	if user is None:
+		email=user_data['email']
+		first_name=user_data['given_name']
+		last_name=user_data['family_name']
+		return email + ":" + first_name +":"+last_name
+		new_user = User(email=user_data['email'], first_name=user_data['given_name'], last_name=user_data['family_name'])
 		db.session.add(new_user)
 		db.session.commit()
 		login_user(new_user)
@@ -105,7 +140,7 @@ def register():
 		else:
 			return prepareFormErrors(form)
 
-@main.route("/login",methods=["POST"])
+@main.route("/login",methods=["GET","POST"])
 def login():
 	form = LoginForm()
 	if form.validate_on_submit():
@@ -113,12 +148,13 @@ def login():
 		password = form.password.data
 		user = User.query.filter(User.email == email).first()
 		if user is None:
-			return render_template("register.html",error=["User does not exist"])
-			# return redirect(url_for("main.register",error=["User does not exist"]))
+			return render_template("login.html",error=["User does not exist"])
 		else:
-			login_user(user.get_id())
+			login_user(user)
+			return redirect(url_for("main.index"))
 	else:
-		return prepareFormErrors(form)
+		return render_template("login.html",form=form)
+
 
 def prepareFormErrors(form):
 	ers = []
@@ -146,6 +182,10 @@ def load_user(userid):
 
 @facebook.tokengetter
 def get_facebook_oauth_token():
+	return session.get('oauth_token')
+
+@google.tokengetter
+def get_access_token():
 	return session.get('oauth_token')
 
 def debug(message):

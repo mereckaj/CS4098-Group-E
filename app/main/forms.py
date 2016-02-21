@@ -12,7 +12,9 @@ class RegisterForm(Form):
 	])
 	confirm = PasswordField('Repeat Password')
 	email = StringField('Email Address', [Length(min=6, max=64)])
+	submit = SubmitField("Register")
 
 class LoginForm(Form):
 	email = StringField('Email Address', [Length(min=6, max=64)])
 	password = PasswordField('New Password', [Required()])
+	submit = SubmitField("Login")

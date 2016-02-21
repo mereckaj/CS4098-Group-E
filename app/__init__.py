@@ -23,7 +23,7 @@ def create_app(config_name):
 	session.init_app(app) # Session lets you keep data about users (Cookies)
 	
 	login_manager.init_app(app)
-	login_manager.login_view = "main.facebook_login"
+	login_manager.login_view = "main.login"
 	login_manager.login_message = u"You need to log in to view this page"
 
 	# Tell the app where to look for the routeszz
