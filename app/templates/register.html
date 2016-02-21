@@ -26,6 +26,17 @@
 				</div>
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					{% if form %}
+						<div class="alert alert-info" role="alert">
+							<b>Heads up !</b> Passwords have special needs<br>
+							<ul>
+								<li>At least <b>8</b> characters long</li>
+								<li>Must have <b>1</b> lower case letter</li>
+								<li>Must have <b>1</b> upper case letter</li>
+								<li>Must have <b>1</b> digit</li>
+							</ul>
+						</div>
+						<div class="alert alert-danger" role="alert">No HTTPS support (Passwords are sent in plaintext)<br>
+						<b> Please don't use a password you don't want people to know about<b></div>
 						{{ wtf.quick_form(form,id=id) }}
 					{% endif %}
 				</div>

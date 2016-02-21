@@ -161,7 +161,7 @@ def register():
 			ers = []
 			for (field, errors) in form.errors.items():
 				for e in errors:
-					ers.append(field + " : " + e)
+					ers.append(e)
 			return render_template("register.html",error=ers)
 
 # If it's a GET request then regner the login form.
