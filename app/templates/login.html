@@ -1,0 +1,49 @@
+{% extends "public_base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title%}Login{% endblock %}
+
+{% block head %}
+	{{super()}}
+{% endblock %}
+
+{% block content %}
+	<div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2	">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">Login</h3>
+			</div>
+			<div class="panel-body">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					{% if error %}
+						{% for line in error %}
+							<div class="alert alert-danger" role="alert">{{ line }}</div>
+						{% endfor %}						
+						<button type="submit" class="btn" id="back"
+							onclick="window.location.href='{{url_for('main.index')}}'">Back
+						</button>
+					{% endif %}
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					{% if form %}
+						<div class="row">
+							{{ wtf.quick_form(form,id=id) }}
+						</div>
+						<br>
+						<div class="row">
+							<button class="btn btn-info" id="fbLogin" 
+							onclick="window.location.href='{{url_for('main.register')}}'">Register
+							</button>
+							<button class="btn btn-primary" id="fbLogin" 
+							onclick="window.location.href='{{url_for('main.facebook_login')}}'">Facebook Login
+							</button>
+							<button type="submit" class="btn btn-danger" id="gLogin"
+								onclick="window.location.href='{{url_for('main.google_login')}}'">Google Login
+							</button>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

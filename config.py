@@ -8,12 +8,6 @@ class Config:
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	SESSION_TYPE = "sqlalchemy"
-	CSRF_ENABLED = True
-
-	# Flask-User settings
-	USER_APP_NAME = "Group E PML IDE" # Used by email templates
-	USER_ENABLE_CONFIRM_EMAIL = False
-	USER_ENABLE_EMAIL = False
 
 	@staticmethod
 	def init_app(app):

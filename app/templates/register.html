@@ -1,0 +1,46 @@
+{% extends "public_base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title%}Register{% endblock %}
+
+{% block head %}
+	{{super()}}
+{% endblock %}
+
+{% block content %}
+	<div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2	">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">Register</h3>
+			</div>
+			<div class="panel-body">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					{% if error %}
+						{% for line in error %}
+							<div class="alert alert-danger" role="alert">{{ line }}</div>
+						{% endfor %}						
+						<button type="submit" class="btn" id="back"
+							onclick="window.location.href='{{url_for('main.index')}}'">Back
+						</button>
+					{% endif %}
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					{% if form %}
+						<div class="alert alert-info" role="alert">
+							<b>Heads up !</b> Passwords have special needs<br>
+							<ul>
+								<li>At least <b>8</b> characters long</li>
+								<li>Must have <b>1</b> lower case letter</li>
+								<li>Must have <b>1</b> upper case letter</li>
+								<li>Must have <b>1</b> digit</li>
+							</ul>
+						</div>
+						<div class="alert alert-danger" role="alert">No HTTPS support (Passwords are sent in plaintext)<br>
+						<b> Please don't use a password you don't want people to know about<b></div>
+						{{ wtf.quick_form(form,id=id) }}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
