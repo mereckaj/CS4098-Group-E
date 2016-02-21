@@ -14,7 +14,7 @@ window.onload =function() {
     var fileInput = document.getElementById('file');
     var button = document.getElementById('send');
 
-    button.addEventListener("click", function(e){
+    fileInput.addEventListener("change", function(e){
 
 	  var file = fileInput.files[0];
 	  var reader = new FileReader();

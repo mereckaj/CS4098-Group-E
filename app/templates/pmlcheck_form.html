@@ -13,14 +13,6 @@
 	{{super()}}
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h1 class ="panel-title">Upload File</h1>
-		</div>
-		<form action="upload" method="post" enctype="multipart/form-data">
-			<input type="file" name="file" id ="file"> 
-			<button type="submit" class="btn btn-sm btn-primary" id="send" >Upload</button>
-		</form>  <br />
-
-		<div class="panel-heading">
 			<h1 class ="panel-title">PML Code Checker</h1>
 		</div>
 		<div id="panel-body">
@@ -28,7 +20,12 @@
 			
 			<!-- Editor -->
 			<div id="editor"></div>
-			<button type="submit" class="btn btn-primary" onclick="submitData({{ url_for('main.root_post') }})">Submit</button>
+			<button type="submit" class="btn btn-primary" onclick="submitData({{ url_for('main.root_post') }}) id="submit">Submit</button>
+		
+			<form action="upload" method="post" enctype="multipart/form-data" id="send">
+				<button type="submit" class="btn btn-primary" >Save</button>				
+				<input type="file" name="file" id ="file"> 
+			</form>  <br />
 			<script>
 				var textarea = $('#code');
 					textarea.hide();
