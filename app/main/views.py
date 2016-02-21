@@ -15,9 +15,10 @@ from .. import db
 app = Flask(__name__)
 
 # This is the path to the upload directory
-app.config["UPLOAD_FOLDER"] = "uploads/"
+app.config["UPLOAD_FOLDER"] = "app/static/uploads/"
+app.config["UPLOAD_FOLDER2"] = "static/uploads/"
 # These are the extension that we are accepting to be uploaded
-app.config["ALLOWED_EXTENSIONS"] = set(["txt", "pdf", "png", "jpg", "jpeg", "gif"])
+app.config["ALLOWED_EXTENSIONS"] = set(["txt", "pml", "png", "jpg", "jpeg", "gif"])
 
 # For a given file, return whether it's an allowed type or not
 def allowed_file(filename):
@@ -54,11 +55,12 @@ def upload():
 		# Move the file form the temporal folder to
 		# the upload folder we setup
 		file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+		file.save(os.path.join(app.config["UPLOAD_FOLDER2"], filename))
 		# Redirect the user to the uploaded_file route, which
 		# will basicaly show on the browser the uploaded file
-		return redirect(url_for("uploaded_file", filename=filename))
+		return redirect(url_for("main.uploaded_file", filename=filename))
 
 @main.route("/uploads/<filename>")
 def uploaded_file(filename):
-	return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+	return send_from_directory(app.config["UPLOAD_FOLDER2"], filename)
 
