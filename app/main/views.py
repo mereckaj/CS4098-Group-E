@@ -28,7 +28,6 @@ def allowed_file(filename):
 # Result page
 @main.route("/result/",methods=["POST"])
 def root_post():
-	print("Hello world!", file=sys.stderr)
 	# Extract the code from the POST request
 	code = request.form["code"]
 
@@ -43,6 +42,7 @@ def root_post():
 def root_get():
 	return render_template("pmlcheck_form.html")
 
+#reference http://code.runnable.com/UiPcaBXaxGNYAAAL/how-to-upload-a-file-to-the-server-in-flask-for-python
 # Route that will process the file upload
 @main.route("/upload", methods=["POST"])
 def upload():
@@ -63,4 +63,3 @@ def upload():
 @main.route("/uploads/<filename>")
 def uploaded_file(filename):
 	return send_from_directory(app.config["UPLOAD_FOLDER2"], filename)
-
