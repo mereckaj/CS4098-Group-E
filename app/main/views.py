@@ -15,8 +15,7 @@ from .. import db
 app = Flask(__name__)
 
 # This is the path to the upload directory
-app.config["UPLOAD_FOLDER"] = "app/tmp/"
-app.config["UPLOAD_FOLDER2"] = "tmp/"
+app.config["UPLOAD_FOLDER"] = "tmp/"
 # These are the extension that we are accepting to be uploaded
 app.config["ALLOWED_EXTENSIONS"] = set(["txt", "pml", "png", "jpg", "jpeg", "gif"])
 
@@ -29,10 +28,6 @@ def allowed_file(filename):
 def createFolders():
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
-		print("Created tmp/")
-	if not os.path.exists("app/tmp/"):
-		os.makedirs("app/tmp/")
-		print("Created app/tmp/")
 
 # Result page
 @main.route("/result/",methods=["POST"])
@@ -62,15 +57,15 @@ def upload():
 	if file and allowed_file(file.filename):
 		# Make the filename safe, remove unsupported chars
 		filename = secure_filename(file.filename)
+		# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
+		filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"])
 		# Move the file form the temporal folder to
 		# the upload folder we setup
-		file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-		file.save(os.path.join(app.config["UPLOAD_FOLDER2"], filename))
+		file.save(os.path.join(filepath,filename))
 		# Redirect the user to the uploaded_file route, which
 		# will basicaly show on the browser the uploaded file
 		return redirect(url_for("main.uploaded_file", filename=filename))
 
 @main.route("/uploads/<filename>")
 def uploaded_file(filename):
-	return send_from_directory(app.config["UPLOAD_FOLDER2"], filename)
-
+	return send_from_directory(os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"]), filename)
