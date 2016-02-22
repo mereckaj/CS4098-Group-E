@@ -10,6 +10,8 @@ from werkzeug import secure_filename
 from . import main
 from .runCode import pmlchecker
 from .. import db
+#from .models import User
+
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -46,25 +48,24 @@ def root_post():
 def root_get():
 	return render_template("pmlcheck_form.html")
 
-#reference http://code.runnable.com/UiPcaBXaxGNYAAAL/how-to-upload-a-file-to-the-server-in-flask-for-python
 # Route that will process the file upload
 @main.route("/upload", methods=["POST"])
 def upload():
 	createFolders()
 	# Get the name of the uploaded file
-	file = request.files["file"]
-	# Check if the file is one of the allowed types/extensions
-	if file and allowed_file(file.filename):
-		# Make the filename safe, remove unsupported chars
-		filename = secure_filename(file.filename)
-		# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
-		filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"])
-		# Move the file form the temporal folder to
-		# the upload folder we setup
-		file.save(os.path.join(filepath,filename))
-		# Redirect the user to the uploaded_file route, which
-		# will basicaly show on the browser the uploaded file
-		return redirect(url_for("main.uploaded_file", filename=filename))
+	code = request.form["fileCode"]
+
+	#filename = '%s_upload.%s'%(User.query.get(int(userid)), "pml") use when push with authentication
+	filename = '%s_upload.%s'%("UserId12345", "pml") 
+	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
+	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"])
+	# Move the file form the temporal folder to
+	# the upload folder we setup
+	inFile = open('tmp/' + filename,'w')
+	inFile.write(code)
+	# Redirect the user to the uploaded_file route, which
+	# will basicaly show on the browser the uploaded file
+	return redirect(url_for("main.uploaded_file", filename=filename))
 
 @main.route("/uploads/<filename>")
 def uploaded_file(filename):

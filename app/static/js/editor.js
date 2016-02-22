@@ -12,7 +12,6 @@ function submitData(path){
 
 window.onload =function() {
     var fileInput = document.getElementById('file');
-    var button = document.getElementById('send');
 
     fileInput.addEventListener("change", function(e){
 
@@ -22,8 +21,6 @@ window.onload =function() {
 	  reader.onload = function(e) {
             editor.session.doc.setValue(reader.result);
 	  }
-
 	  reader.readAsText(file);  
-
     });
 }
