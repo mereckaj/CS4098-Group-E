@@ -4,8 +4,11 @@ echo "[Clean]"
 
 # Remove the tmp file from src if it is there
 echo "Removing tmp file"
-rm -rf ./src/tmp
+rm -rf ./tmp
 
+# Remove the tmp file from src if it is there
+echo "Removing tmp file"
+rm -rf ./app/tmp
 
 # Remove the Virtual Environment folder if it is there
 echo "Removing Virtual Environment"

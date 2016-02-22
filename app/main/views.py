@@ -15,8 +15,8 @@ from .. import db
 app = Flask(__name__)
 
 # This is the path to the upload directory
-app.config["UPLOAD_FOLDER"] = "app/static/uploads/"
-app.config["UPLOAD_FOLDER2"] = "static/uploads/"
+app.config["UPLOAD_FOLDER"] = "app/tmp/"
+app.config["UPLOAD_FOLDER2"] = "tmp/"
 # These are the extension that we are accepting to be uploaded
 app.config["ALLOWED_EXTENSIONS"] = set(["txt", "pml", "png", "jpg", "jpeg", "gif"])
 
@@ -24,6 +24,15 @@ app.config["ALLOWED_EXTENSIONS"] = set(["txt", "pml", "png", "jpg", "jpeg", "gif
 def allowed_file(filename):
 	return "." in filename and \
 		filename.rsplit(".", 1)[1] in app.config["ALLOWED_EXTENSIONS"]
+
+# Create a "tmp" folder to store the files if it does not exist and store the new file in there
+def createFolders():
+	if not os.path.exists("tmp/"):
+		os.makedirs("tmp/")
+		print("Created tmp/")
+	if not os.path.exists("app/tmp/"):
+		os.makedirs("app/tmp/")
+		print("Created app/tmp/")
 
 # Result page
 @main.route("/result/",methods=["POST"])
@@ -46,6 +55,7 @@ def root_get():
 # Route that will process the file upload
 @main.route("/upload", methods=["POST"])
 def upload():
+	createFolders()
 	# Get the name of the uploaded file
 	file = request.files["file"]
 	# Check if the file is one of the allowed types/extensions
