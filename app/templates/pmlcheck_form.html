@@ -27,9 +27,9 @@
 				<input type="file" name="file" id ="file"> 
     				<input type="hidden" name="fileCode" style="display: none;">
 		 		{% if session.changed %}
-    					<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
+    				<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
  				{% else %}
-					<input type="hidden" name="update" style="display: none;" value =" " id="update">
+				<input type="hidden" name="update" style="display: none;" value ="" id="update">
            			{% endif %}
 
 			</form>  <br />

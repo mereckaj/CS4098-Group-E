@@ -56,8 +56,12 @@ def upload():
 	code = request.form["fileCode"]
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
-	#filename = '%s_upload.%s'%(User.query.get(int(userid)), "pml") use when push with user authentication
-	filename = '%s_upload.%s'%("UserId12345", "pml") 
+	session["uid"] = 12304
+	if session["uid"] is not None:
+		filename = '%s_upload.%s'%(session["uid"], "pml") 
+	else:
+		filename = '%s_upload.%s'%(User.query.get(int(userid)), "pml") 
+
 	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
 	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"])
 	# Move the file form the temporal folder to
