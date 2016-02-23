@@ -52,10 +52,11 @@ def root_get():
 @main.route("/upload", methods=["POST"])
 def upload():
 	createFolders()
-	# Get the name of the uploaded file
+	# Request the code
 	code = request.form["fileCode"]
-
-	#filename = '%s_upload.%s'%(User.query.get(int(userid)), "pml") use when push with authentication
+	session["update"] = request.form["fileCode"]
+	session["changed"] = True
+	#filename = '%s_upload.%s'%(User.query.get(int(userid)), "pml") use when push with user authentication
 	filename = '%s_upload.%s'%("UserId12345", "pml") 
 	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
 	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"])
@@ -63,10 +64,7 @@ def upload():
 	# the upload folder we setup
 	inFile = open('tmp/' + filename,'w')
 	inFile.write(code)
-	# Redirect the user to the uploaded_file route, which
-	# will basicaly show on the browser the uploaded file
-	return redirect(url_for("main.uploaded_file", filename=filename))
 
-@main.route("/uploads/<filename>")
-def uploaded_file(filename):
-	return send_from_directory(os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"]), filename)
+	return redirect(url_for("main.root_get"))
+	return session
+
