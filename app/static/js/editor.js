@@ -10,18 +10,19 @@ function submitData(path){
 	});
 }
 window.onload =function() {
-    var fileInput = document.getElementById('file');
+	var fileInput = document.getElementById('file');
+	console.log("Adding change listener");
+	fileInput.addEventListener("change", function(e){
 
-    fileInput.addEventListener("change", function(e){
+		var file = fileInput.files[0];
+		var reader = new FileReader();
 
-	  var file = fileInput.files[0];
-	  var reader = new FileReader();
-
-	  reader.onload = function(e) {
-            editor.session.doc.setValue(reader.result);
-	  }
-	  reader.readAsText(file);
-    });
+		reader.onload = function(e) {
+			editor.session.doc.setValue(reader.result);
+		}
+		reader.readAsText(file);
+	});
+	console.log("Added change listener");
 }
 
 function vim(){

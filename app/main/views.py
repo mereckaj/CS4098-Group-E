@@ -227,6 +227,7 @@ def upload():
 	createFolders()
 	# Request the code
 	code = request.form["fileCode"]
+	print("\n\nGOT CODE:\n\n" + code)
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
 	session["uid"] = 123
