@@ -10,68 +10,89 @@
 	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ace.js')}}" type="text/javascript" charset="utf-8"></script>
-
 	<script src="{{url_for('static', filename='src-noconflict/ext-language_tools.js')}}"></script>
-
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
 	{{super()}}
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h1 class ="panel-title">PML Code Checker</h1>
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h1 class ="panel-title">PML Code Checker</h1>
+				</div>
+				<div id="panel-body">
+					
+					<!-- Editor -->
+					<div id="editor"></div>
+						<div class="pull-left">
+							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
+							<form action="upload" method="post" enctype="multipart/form-data" id="send">
+								<button type="submit" class="btn btn-primary" >Save</button>				
+								<input type="file" name="file" id ="file"> 
+								<input type="hidden" name="fileCode" style="display: none;">
+								{% if session.changed %}
+									<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
+								{% else %}
+									<input type="hidden" name="update" style="display: none;" value ="" id="update">
+								{% endif %}
+
+							</form>
+						</div>
+						<script>
+							var textarea2 = $('input[name="fileCode"]');
+							var textarea3 = $('input[name="update"]');
+							ace.require("ace/ext/language_tools");
+							var editor = ace.edit("editor");
+							editor.setTheme("static/ace-master/lib/ace/theme//chrome");
+							editor.session.setMode("ace/mode/c_cpp");
+							editor.getSession().setValue(textarea3.val());
+							
+							// Update text editor when there is a change
+							editor.getSession().on('change', function () {
+								textarea.val(editor.getSession().getValue());
+								textarea2.val(editor.getSession().getValue());
+							});
+
+							textarea.val(editor.getSession().getValue());
+							textarea2.val(editor.getSession().getValue());
+
+							editor.setOptions({
+								enableBasicAutocompletion: true,
+								enableSnippets: true,
+								enableLiveAutocompletion: false
+							});
+						</script>
+						<!-- Settings Dropdown -->
+						<div class="pull-right">
+							<div class="dropdown">
+								<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" 
+									aria-haspopup="true" aria-expanded="true">
+									Settings
+								<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li class="dropdown-header">Key binds</li>
+									<li><a href="#" onclick='vim()'>Vim</a></li>
+									<li><a href="#" onclick='emacs()'>Emacs</a></li>
+									<li><a href="#" onclick='none()'>Default</a></li>
+									<li class="dropdown-header">Font size</li>
+								</ul>
+							</div>
+						</div>
+				</div>
+				<!-- Leave this here, editor has to be loaded before the script is. -->
+				<script src="{{url_for('static', filename='js/ace.js')}}"></script>
+			</div>
 		</div>
-		<div id="panel-body">
-			
-			<!-- Editor -->
-			<div id="editor"></div>
-			<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
-
-			<form action="upload" method="post" enctype="multipart/form-data" id="send">
-				<button type="submit" class="btn btn-primary" >Save</button>				
-				<input type="file" name="file" id ="file"> 
-    				<input type="hidden" name="fileCode" style="display: none;">
-		 		{% if session.changed %}
-    				<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
- 				{% else %}
-				<input type="hidden" name="update" style="display: none;" value ="" id="update">
-           			{% endif %}
-
-			</form>  <br />
-
-			<script>
-				var textarea = $('#code');
-				textarea.hide();
-				var textarea2 = $('input[name="fileCode"]');
-				var textarea3 = $('input[name="update"]');
-				ace.require("ace/ext/language_tools");
-				var editor = ace.edit("editor");
-				editor.setTheme("static/ace-master/lib/ace/theme//chrome");
-				editor.session.setMode("ace/mode/c_cpp");
-
-editor.getSession().setValue(textarea3.val());
-				
-				// Update text editor when there is a change
-				editor.getSession().on('change', function () {
-					textarea.val(editor.getSession().getValue());
-					textarea2.val(editor.getSession().getValue());
-				});
-
-				textarea.val(editor.getSession().getValue());
-				textarea2.val(editor.getSession().getValue());
-
-				editor.setOptions({
-					enableBasicAutocompletion: true,
-					enableSnippets: true,
-					enableLiveAutocompletion: false
-				});
-			</script>
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h1 class ="panel-title">PML Code Result</h1>
+				</div>
+				<div id="result"></div>
+			</div>
 		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h1 class ="panel-title">PML Code Result</h1>
-		</div>
-			<div id="result"></div>
 	</div>
 {% endblock %}

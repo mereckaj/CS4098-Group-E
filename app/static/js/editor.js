@@ -20,6 +20,21 @@ window.onload =function() {
 	  reader.onload = function(e) {
             editor.session.doc.setValue(reader.result);
 	  }
-	  reader.readAsText(file);  
+	  reader.readAsText(file);
     });
+}
+
+function vim(){
+	editor.setKeyboardHandler("ace/keyboard/vim");
+	console.log("Changed keybinds to vim")
+}
+
+function emacs(){
+	editor.setKeyboardHandler("ace/keyboard/emacs");
+	console.log("Changed keybinds to emacs")
+}
+
+function none(){
+	editor.setKeyboardHandler("");
+	console.log("Changed keybinds to emacs")	
 }
