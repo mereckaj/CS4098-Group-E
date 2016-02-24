@@ -25,7 +25,7 @@
 			
 			<!-- Editor -->
 			<div id="editor"></div>
-			<button type="submit" class="btn btn-primary" onclick="submitData({{ url_for('main.index') }})">Submit</button>
+			<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
 			<script>
 				ace.require("ace/ext/language_tools");
 				var editor = ace.edit("editor");
