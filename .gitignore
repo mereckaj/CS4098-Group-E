@@ -60,7 +60,7 @@ docs/_build/
 
 # venv
 venv/*
-src/tmp/*
+tmp/
 
 # Flask
 *.sqlite

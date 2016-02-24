@@ -25,17 +25,45 @@
 			
 			<!-- Editor -->
 			<div id="editor"></div>
-			<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
+			<button type="submit" class="btn btn-primary" onclick="submitData({{ url_for('main.index') }})"id="submit">Submit</button>
+		
+			<form action="upload" method="post" enctype="multipart/form-data" id="send">
+				<button type="submit" class="btn btn-primary" >Save</button>				
+				<input type="file" name="file" id ="file"> 
+    				<input type="hidden" name="fileCode" style="display: none;">
+		 		{% if session.changed %}
+    				<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
+ 				{% else %}
+				<input type="hidden" name="update" style="display: none;" value ="" id="update">
+           			{% endif %}
+
+			</form>  <br />
 			<script>
 				ace.require("ace/ext/language_tools");
+				var textarea = $('#code');
+				textarea.hide();
+				var textarea2 = $('input[name="fileCode"]');
+				var textarea3 = $('input[name="update"]');
+
 				var editor = ace.edit("editor");
 				editor.setTheme("static/ace-master/lib/ace/theme//chrome");
 				editor.session.setMode("ace/mode/c_cpp");
+				editor.getSession().setValue(textarea3.val());
+				
+				// Update text editor when there is a change
+				editor.getSession().on('change', function () {
+					textarea.val(editor.getSession().getValue());
+					textarea2.val(editor.getSession().getValue());
+				});
+
 				editor.setOptions({
 					enableBasicAutocompletion: true,
 					enableSnippets: true,
 					enableLiveAutocompletion: false
 				});
+
+				textarea.val(editor.getSession().getValue());
+				textarea2.val(editor.getSession().getValue());
 			</script>
 		</div>
 	</div>
