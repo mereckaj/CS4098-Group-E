@@ -9,18 +9,3 @@ function submitData(path){
 		}
 	});
 }
-
-window.onload =function() {
-    var fileInput = document.getElementById('file');
-
-    fileInput.addEventListener("change", function(e){
-
-	  var file = fileInput.files[0];
-	  var reader = new FileReader();
-
-	  reader.onload = function(e) {
-            editor.session.doc.setValue(reader.result);
-	  }
-	  reader.readAsText(file);  
-    });
-}

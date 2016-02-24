@@ -2,19 +2,9 @@
 
 [![Build Status](https://travis-ci.org/mereckaj/CS4098-Group-E.svg?branch=master)](https://travis-ci.org/mereckaj/CS4098-Group-E)
 
-PML is a simple programming language for describing a work flow or process that specifies the activities and roles involved in delivering some tangible outcome.
+PML is a simple programming language for describing a workflow or process that specifies the activities and roles involved in delivering some tangible outcome.
 
 This project is going to create a web based IDE for PML.
-
-Features
---------
-1. Editor
-2. Syntax Analysis 
-3. Authentication 3rd party (Facebook and Google)
-4. Authentication (without SSL)
-5. Syntax highlights
-6. Code keyword completion 
-7. Resource name completion
 
 Install
 -------
@@ -23,7 +13,7 @@ To install everything that is needed for this program run:
 ```bash
 ./install.sh
 ```
-Dependencies
+Dependancies
 ------------
 
 * [PEOS](https://github.com/jnoll/peos) (PML syntax checker)
