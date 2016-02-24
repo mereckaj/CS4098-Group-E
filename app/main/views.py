@@ -145,13 +145,12 @@ def authAndRedirectOrError(user_data,provider,next_url):
 
 	# Try to log the user in, or register a new user
 	if user is None:
-		user = User(email=email, first_name=first_name, last_name=last_name)
-		db.session.add(user)
+		new_user = User(email=email, first_name=first_name, last_name=last_name)
+		db.session.add(new_user)
 		db.session.commit()
-		login_user(user)
+		login_user(new_user)
 	else:
 		login_user(user)
-	session["uid"] = user.get_id()
 	return redirect(next_url)
 
 # Register a new user, if it's a GET then return the form, 
@@ -175,7 +174,6 @@ def register():
 				db.session.add(new_user)
 				db.session.commit()
 				login_user(new_user)
-				session["uid"] = new_user.get_id()
 				return redirect(url_for("main.index"))
 			else:
 				return render_template("register.html",error=["User already exists"])
@@ -201,7 +199,6 @@ def login():
 		else:
 			if user.check_password(password):
 				login_user(user)
-				session["uid"] = user.get_id()
 				return redirect(url_for("main.index"))
 			else:
 				return render_template("login.html",error=["Bad password :("])
