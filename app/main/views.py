@@ -1,11 +1,11 @@
-from flask import render_template, url_for, request, session, redirect, jsonify
+from flask import render_template, url_for, request, session, redirect, jsonify, current_app
 from . import main
 from .runCode import pmlchecker
 from .forms import LoginForm, RegisterForm
 from .. import db, login_manager, oauth
 from flask_login import login_required,login_user,logout_user
 from .models import User
-import json
+import json, os
 
 FACEBOOK_APP_ID = "486691024846349"
 FACEBOOK_APP_SECRET = "5654dfce0e6167725cf31272545a914e"
@@ -211,3 +211,33 @@ def get_facebook_oauth_token():
 @google.tokengetter
 def get_access_token():
 	return session.get('oauth_token')
+
+
+# This is the path to the upload directory
+UPLOAD_FOLDER = "tmp/"
+
+# Create a "tmp" folder to store the files if it does not exist and store the new file in there
+def createFolders():
+	if not os.path.exists("tmp/"):
+		os.makedirs("tmp/")
+
+# Route that will process the file upload
+@main.route("/upload", methods=["POST"])
+def upload():
+	createFolders()
+	# Request the code
+	code = request.form["fileCode"]
+	session["update"] = request.form["fileCode"]
+	session["changed"] = True
+	session["uid"] = 123
+	if session["uid"] is not None:
+		filename = '%s_upload.%s'%(session["uid"], "pml")
+
+	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
+	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),UPLOAD_FOLDER)
+	# Move the file form the temporal folder to
+	# the upload folder we setup
+	inFile = open(UPLOAD_FOLDER + filename,'w')
+	inFile.write(code)
+
+	return redirect(url_for("main.index"))
