@@ -15,6 +15,7 @@ Features
 5. Syntax highlights
 6. Code keyword completion 
 7. Resource name completion
+8. Added keybind emulation (vim,emcas)
 
 Install
 -------

@@ -29,8 +29,8 @@
 						<div class="pull-left">
 							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
 							<form action="upload" method="post" enctype="multipart/form-data" id="send">
-								<button type="submit" class="btn btn-primary" >Save</button>				
-								<input type="file" name="file" id ="file"> 
+								<button type="submit" class="btn btn-primary" style="display: none;"></button>				
+								<input type="file" name="file" id ="file" style="display: none;"> 
 								<input type="hidden" name="fileCode" style="display: none;">
 								{% if session.changed %}
 									<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
