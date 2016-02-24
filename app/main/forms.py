@@ -8,9 +8,10 @@ class RegisterForm(Form):
 	last_name = StringField('Last Name',validators=[Required()])
 	password = PasswordField('New Password', [
 		Required(),
-		EqualTo('confirm', message='Passwords must match'),
-		Regexp("(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$",
-			message="Password is too weak, make sure it meets all of the required conditions")
+		EqualTo('confirm', message='Passwords must match')
+		# Removed to ease testing
+		# Regexp("(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$",
+		# 	message="Password is too weak, make sure it meets all of the required conditions")
 	])
 	confirm = PasswordField('Repeat Password')
 	email = StringField('Email Address', [Length(min=6, max=64)])

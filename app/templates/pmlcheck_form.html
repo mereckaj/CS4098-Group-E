@@ -70,4 +70,11 @@
 			</div>
 		</div>
 	</div>
+	<div type="hidden" style="display: none;" id="editor_choice">
+		{% if editor %}
+			{{editor}}
+		{% else %}
+			NONE
+		{% endif %}
+	</div>
 {% endblock %}

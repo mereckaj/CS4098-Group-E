@@ -11,7 +11,6 @@ function submitData(path){
 }
 window.onload =function() {
 	var fileInput = document.getElementById('file');
-	console.log("Adding change listener");
 	fileInput.addEventListener("change", function(e){
 
 		var file = fileInput.files[0];
@@ -22,20 +21,46 @@ window.onload =function() {
 		}
 		reader.readAsText(file);
 	});
-	console.log("Added change listener");
+
+	// Take what the user said their favorite editor was and set it to that.
+	var ed = document.getElementById("editor_choice").innerHTML.trim();
+	console.log("ed" + ed);
+	switch(ed) {
+		case "NONE":
+			console.log("NONE");
+			none();
+			break;
+		case "VIM":
+			console.log("VIM");
+			vim();
+			break;
+		case "EMACS":
+			console.log("EMACS");
+			emacs();
+			break;
+		default:
+			none();
+	} 
 }
 
 function vim(){
 	editor.setKeyboardHandler("ace/keyboard/vim");
-	console.log("Changed keybinds to vim")
+	sendKeyBindPreference("VIM");
 }
 
 function emacs(){
 	editor.setKeyboardHandler("ace/keyboard/emacs");
-	console.log("Changed keybinds to emacs")
+	sendKeyBindPreference("EMACS");
 }
 
 function none(){
 	editor.setKeyboardHandler("");
-	console.log("Changed keybinds to emacs")	
+	sendKeyBindPreference("NONE");
+}
+
+function sendKeyBindPreference(pref){
+	$.ajax({
+		type: "GET",
+		url: "/binds/"+pref
+	});
 }

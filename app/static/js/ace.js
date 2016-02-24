@@ -1,3 +1,5 @@
+var textarea = $('#code');
+textarea.hide();
 var textarea2 = $('input[name="fileCode"]');
 var textarea3 = $('input[name="update"]');
 ace.require("ace/ext/language_tools");

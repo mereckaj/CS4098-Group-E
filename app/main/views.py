@@ -13,6 +13,7 @@ GOOGLE_APP_ID = "899383105434-k00rirsh9bvq8cu7l19i1loh029e1hgv.apps.googleuserco
 GOOGLE_APP_SECRET = "H48CFybLmBnZpTWgtLCt-ls1"
 PROVIDER_GOOGLE = "GOOGLE"
 PROVIDER_FACEBOOK = "FACEBOOK"
+UPLOAD_FOLDER = "tmp/"
 
 facebook = oauth.remote_app(
 	"facebook",
@@ -44,7 +45,11 @@ google = oauth.remote_app(
 @login_required
 def index():
 	if request.method == "GET":
-		return render_template("pmlcheck_form.html")
+		if "editor" in session:
+			editor=session["editor"]
+		else:
+			editor=None
+		return render_template("pmlcheck_form.html",editor=editor)
 	elif request.method == "POST":
 		# Extract the code from the POST request
 		code = request.form["code"]
@@ -67,6 +72,38 @@ def facebook_login():
 def google_login():
 	callback=url_for('main.google_authorized', _external=True)
 	return google.authorize(callback=callback)
+
+# ADD A DESCRIPTION OF WHAT HAPPENS HERE
+@main.route("/upload", methods=["POST"])
+def upload():
+	createFolders()
+	# Request the code
+	code = request.form["fileCode"]
+	session["update"] = request.form["fileCode"]
+	session["changed"] = True
+	filename = '%s_upload.%s'%(str(session["uid"]), "pml")
+
+	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
+	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),UPLOAD_FOLDER)
+	# Move the file form the temporal folder to
+	# the upload folder we setup
+	inFile = open(UPLOAD_FOLDER + filename,'w')
+	inFile.write(code)
+	return redirect(url_for("main.index"))
+
+# Tell the program what the users preferred editor is {NONE,VIM,EMACS}
+# Make the program remember that
+# Find the user by their UID and set their database entry for editor to be 
+# what was sent in. Javascript on the other side does the validation
+@main.route("/binds/<data>",methods=["GET"])
+def binds(data):
+	uid = session["uid"]
+	user = User.query.filter(User.id == uid).first()
+	if user is not None:
+		user.set_editor(data.upper())
+		session["editor"] = data
+	return "OK"
+
 
 # Facebook callback function, check if the reply is present,
 # Check if user gave email, if no email is given then can't register
@@ -125,12 +162,11 @@ def authAndRedirectOrError(user_data,provider,next_url):
 
 	# Try to log the user in, or register a new user
 	if user is None:
-		new_user = User(email=email, first_name=first_name, last_name=last_name)
-		db.session.add(new_user)
+		user = User(email=email, first_name=first_name, last_name=last_name)
+		db.session.add(user)
 		db.session.commit()
-		login_user(new_user)
-	else:
-		login_user(user)
+
+	login_and_load_user(user)
 	return redirect(next_url)
 
 # Register a new user, if it's a GET then return the form, 
@@ -153,7 +189,7 @@ def register():
 				new_user = User(email=email, first_name=first_name, last_name=last_name,password=password)
 				db.session.add(new_user)
 				db.session.commit()
-				login_user(new_user)
+				login_and_load_user(new_user)
 				return redirect(url_for("main.index"))
 			else:
 				return render_template("register.html",error=["User already exists"])
@@ -178,7 +214,7 @@ def login():
 			return render_template("login.html",error=["User does not exist"])
 		else:
 			if user.check_password(password):
-				login_user(user)
+				login_and_load_user(user)
 				return redirect(url_for("main.index"))
 			else:
 				return render_template("login.html",error=["Bad password :("])
@@ -212,33 +248,14 @@ def get_facebook_oauth_token():
 def get_access_token():
 	return session.get('oauth_token')
 
-
-# This is the path to the upload directory
-UPLOAD_FOLDER = "tmp/"
-
 # Create a "tmp" folder to store the files if it does not exist and store the new file in there
 def createFolders():
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
 
-# Route that will process the file upload
-@main.route("/upload", methods=["POST"])
-def upload():
-	createFolders()
-	# Request the code
-	code = request.form["fileCode"]
-	print("\n\nGOT CODE:\n\n" + code)
-	session["update"] = request.form["fileCode"]
-	session["changed"] = True
-	session["uid"] = 123
-	if session["uid"] is not None:
-		filename = '%s_upload.%s'%(session["uid"], "pml")
-
-	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
-	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),UPLOAD_FOLDER)
-	# Move the file form the temporal folder to
-	# the upload folder we setup
-	inFile = open(UPLOAD_FOLDER + filename,'w')
-	inFile.write(code)
-
-	return redirect(url_for("main.index"))
+def login_and_load_user(user):
+	login_user(user)
+	uid = user.get_id()
+	editor = user.get_editor()
+	session["uid"] = uid
+	session["editor"] = editor
