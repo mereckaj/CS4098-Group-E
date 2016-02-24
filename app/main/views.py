@@ -18,13 +18,6 @@ app = Flask(__name__)
 
 # This is the path to the upload directory
 app.config["UPLOAD_FOLDER"] = "tmp/"
-# These are the extension that we are accepting to be uploaded
-app.config["ALLOWED_EXTENSIONS"] = set(["txt", "pml", "png", "jpg", "jpeg", "gif"])
-
-# For a given file, return whether it's an allowed type or not
-def allowed_file(filename):
-	return "." in filename and \
-		filename.rsplit(".", 1)[1] in app.config["ALLOWED_EXTENSIONS"]
 
 # Create a "tmp" folder to store the files if it does not exist and store the new file in there
 def createFolders():
@@ -41,7 +34,6 @@ def root_post():
 	result = pmlchecker(code)
 	
 	return render_template("pmlcheck_result.html",result=result)
-	return session
 
 # Main page
 @main.route("/",methods=["GET"])
@@ -56,19 +48,14 @@ def upload():
 	code = request.form["fileCode"]
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
-	session["uid"] = 12304
 	if session["uid"] is not None:
-		filename = '%s_upload.%s'%(session["uid"], "pml") 
-	else:
-		filename = '%s_upload.%s'%(User.query.get(int(userid)), "pml") 
+		filename = '%s_upload.%s'%(session["uid"], "pml")
 
 	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
 	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),app.config["UPLOAD_FOLDER"])
 	# Move the file form the temporal folder to
 	# the upload folder we setup
-	inFile = open('tmp/' + filename,'w')
+	inFile = open(app.config["UPLOAD_FOLDER"] + filename,'w')
 	inFile.write(code)
 
 	return redirect(url_for("main.root_get"))
-	return session
-
