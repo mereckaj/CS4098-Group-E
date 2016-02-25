@@ -13,7 +13,6 @@ GOOGLE_APP_ID = "899383105434-k00rirsh9bvq8cu7l19i1loh029e1hgv.apps.googleuserco
 GOOGLE_APP_SECRET = "H48CFybLmBnZpTWgtLCt-ls1"
 PROVIDER_GOOGLE = "GOOGLE"
 PROVIDER_FACEBOOK = "FACEBOOK"
-UPLOAD_FOLDER = "tmp/"
 
 facebook = oauth.remote_app(
 	"facebook",
@@ -73,19 +72,25 @@ def google_login():
 	callback=url_for('main.google_authorized', _external=True)
 	return google.authorize(callback=callback)
 
-# ADD A DESCRIPTION OF WHAT HAPPENS HERE
+# Get code from the editor  
+# Create filename with counter
+# Write the code to the file and save  
 @main.route("/upload", methods=["POST"])
 def upload():
 	createFolders()
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
 	# Request the code
 	code = request.form["fileCode"]
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
-	filename = '%s_upload.%s'%(str(session["uid"]), "pml")
+	#increment counter
+	try:
+		session['counter'] += 1
+	except KeyError:
+		session['counter'] = 1
 
-	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
-	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),UPLOAD_FOLDER)
-	# Move the file form the temporal folder to
+	filename = '%s_upload.%s'%(str(session["counter"]),"pml")
+	# Move the file to
 	# the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
 	inFile.write(code)
@@ -225,6 +230,7 @@ def login():
 @main.route("/logout")
 @login_required
 def logout():
+	session["changed"] = False
 	logout_user()
 	return redirect(url_for("main.index"))
 
@@ -250,8 +256,8 @@ def get_access_token():
 
 # Create a "tmp" folder to store the files if it does not exist and store the new file in there
 def createFolders():
-	if not os.path.exists("tmp/"):
-		os.makedirs("tmp/")
+	if not os.path.exists("tmp/" + str(session["uid"])):
+		os.makedirs("tmp/" + str(session["uid"]))
 
 def login_and_load_user(user):
 	login_user(user)

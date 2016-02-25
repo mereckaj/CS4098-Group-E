@@ -15,11 +15,17 @@ window.onload =function() {
 
 		var file = fileInput.files[0];
 		var reader = new FileReader();
-
-		reader.onload = function(e) {
-			editor.session.doc.setValue(reader.result);
+		var extension = file.name.split('.').pop();
+		if (!file) {
+			alert("Failed to load file");
+		} else if (extension != "pml") {
+			alert(file.name + " is not a valid pml file");
+		} else {
+			reader.onload = function(e) {
+				editor.session.doc.setValue(reader.result);
+			}
+			reader.readAsText(file);
 		}
-		reader.readAsText(file);
 	});
 
 	// Take what the user said their favorite editor was and set it to that.
