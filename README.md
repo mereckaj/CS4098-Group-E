@@ -13,7 +13,8 @@ Features
 5. Syntax highlights
 6. Code keyword completion 
 7. Resource name completion
-8. Added keybind emulation (vim,emcas)
+8. Added key binds emulation (vim,emcas)
+9. Persistent storage of user preferences (Key binds, font size etc.)
 
 
 Known Issues
