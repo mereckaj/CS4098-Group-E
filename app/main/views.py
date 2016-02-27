@@ -90,19 +90,28 @@ def upload():
 	# the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
 	inFile.write(code)
+	inFile.close()
 	displayFile(session["counter"])
 	return redirect(url_for("main.index"))
 
-#increment counter so new file will be created
+# increment counter and add file number to list 
+# Create new pml file with file number
 @main.route("/newFile", methods =["POST"])
 def newFile():
+	fileExist()
 	try:
 		session['counter'] += 1
+		session['lst'].append(session['counter'])
 	except KeyError:
-		session['counter'] = 0
-	return "OK"
+		session['counter'] = 1
+		session['lst'].append(session['counter'])
+	filename = '%s_upload.%s'%(str(session['counter']),"pml")
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+	file = open(UPLOAD_FOLDER,'w')
+	file.close()
+	return redirect(url_for("main.index"))
 
-#
+# Get contents of file that is selected
 @main.route("/uploads/<fileNum>", methods =["GET"])
 def displayFile(fileNum):
 	filename = '%s_upload.%s'%(str(fileNum),"pml")
@@ -284,6 +293,8 @@ def login_and_load_user(user):
 	session["uid"] = uid
 	session["editor"] = editor
 
+# Set counter to last file, add counter(file number) to list
+# If no file, reset counter and list
 def fileExist():
 	i =1
 	session['lst'] = [] # Declares an empty list named lst

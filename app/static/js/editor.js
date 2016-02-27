@@ -10,6 +10,8 @@ function submitData(path){
 	});
 }
 window.onload =function() {
+
+	// Load uploaded file contents into editor 
 	var fileInput = document.getElementById('file');
 	fileInput.addEventListener("change", function(e){
 		var file = fileInput.files[0];
@@ -26,44 +28,17 @@ window.onload =function() {
 			reader.readAsText(file);
 		}
 	});
+	getNames();
 
-	var switched = document.getElementById('projects');
-	//$('.proj li').click(function(e){
+	// When click different project load into editor
 	$('.proj').on('click', 'li', function (){
-	//$('.proj').change(function () {
-		//alert("hhhh")
-    		//$('.proj').text(this.innerHTML); 
-		var strUser = $(this).text(); // switched.value; //  
-		//[int(strUser) for strUser in str.split() if strUser.isdigit()]
+		var strUser = $(this).text();  
 		strUser = strUser.replace( /^\D+/g, '');
 		path = /uploads/ + strUser;
-		//alert(strUser);
 		jQuery.get('http://localhost:8000' + path, function(data) {
     			editor.session.doc.setValue(data);
 		});
 	});
-	/*switched.onchange = function(){
-		var strUser =  switched[switched.selectedIndex].value; 
-		strUser = strUser.replace(' ', '');
-		path = /uploads/ + strUser;
-		jQuery.get('http://localhost:8000' + path, function(data) {
-    			editor.session.doc.setValue(data);
-		});
-	}*/
-
-	select_elem = document.getElementById('projects');
-	list_of_names = document.getElementById('fileNames[]').value;
-	list_of_names = list_of_names.split(',');
-	list_of_names[0] = list_of_names[0].replace('[', '');
-	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
-        if(select_elem){
-            for(var i = 0; i < list_of_names.length; i++) {
-                var option = document.createElement('li');
-                option.innerHTML = '<a>' + 'Project ' + list_of_names[i] + '</a>';
-                option.value = list_of_names[i];
-                select_elem.appendChild(option);
-            }
-        }
 
 	// Take what the user said their favorite editor was and set it to that.
 	// Don't remove from onload
@@ -130,4 +105,19 @@ function navbar_file_close_file(){
 	editor.session.doc.setValue();
 }
 
-
+// Gets a list of names and displays in dropdown
+function getNames(){
+	select_elem = document.getElementById('projects');
+	list_of_names = document.getElementById('fileNames[]').value;
+	list_of_names = list_of_names.split(',');
+	list_of_names[0] = list_of_names[0].replace('[', '');
+	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
+        if(select_elem){
+            for(var i = 0; i < list_of_names.length; i++) {
+                var option = document.createElement('li');
+                option.innerHTML = '<a>' + 'Project ' + list_of_names[i] + '</a>';
+                option.value = list_of_names[i];
+                select_elem.appendChild(option);
+            }
+        }
+}
