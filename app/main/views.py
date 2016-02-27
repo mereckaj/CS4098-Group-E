@@ -155,10 +155,6 @@ def authAndRedirectOrError(user_data,provider,next_url):
 		user = User.query.filter(User.email == email).first()
 	else:
 		return render_template("login.html",error=["Could not get email from " + provider])
-	if first_name is None:
-		first_name ="UNDEF"
-	if last_name is None:
-		last_name = "UNDEF"
 
 	# Try to log the user in, or register a new user
 	if user is None:
@@ -225,7 +221,7 @@ def login():
 @main.route("/logout")
 @login_required
 def logout():
-	logout_user()
+	logout_user_remove_session_data()
 	return redirect(url_for("main.index"))
 
 # Any unauthorized requests will be redirected to the login page.
@@ -253,6 +249,7 @@ def createFolders():
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
 
+# Login the user and set up their session information
 def login_and_load_user(user):
 	login_user(user)
 	uid = user.get_id()
@@ -262,3 +259,11 @@ def login_and_load_user(user):
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
+
+# Logout the user and remove their session information
+def logout_user_remove_session_data():
+	logout_user()
+	session.pop("uid",None)
+	session.pop("editor",None)
+	session.pop("username",None)
+	session.pop("email",None)

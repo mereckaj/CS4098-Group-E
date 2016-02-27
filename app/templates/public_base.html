@@ -25,12 +25,18 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/">IDTWHAN</a>
+				<a class="navbar-brand" href="/">
+					Welcome 
+				{% if session.username %}
+					{{session.username}}
+				{% else %}
+					{{session.email}}
+				{% endif %}
+				</a>
 			</div>	
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<!-- Navbar goes here -->
-				</ul>
+				{% block membernav %}
+				{% endblock %}
 			</div>
 		</div>
 	</nav>
