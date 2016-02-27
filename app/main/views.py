@@ -182,7 +182,7 @@ def register():
 		if form.validate_on_submit():
 			first_name = form.first_name.data
 			last_name = form.last_name.data
-			email = form.email.data
+			email = form.email.data.lower()
 			password = form.password.data
 			user = User.query.filter(User.email == email).first()
 			if user is None:
@@ -259,3 +259,6 @@ def login_and_load_user(user):
 	editor = user.get_editor()
 	session["uid"] = uid
 	session["editor"] = editor
+	if user.get_first_name() is not None:
+		session["username"] = user.get_first_name()
+	session["email"] = str(user.get_email())

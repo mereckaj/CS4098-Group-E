@@ -2,9 +2,6 @@
 
 {% block title %}PML Code Checker{% endblock %}
 
-<!-- Some code for getting autocompletion working was taken from here: https://github.com/ajaxorg/ace/blob/master/demo/autocompletion.html -->
-
-
 {% block head %}
 	{{ super() }}
 	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
@@ -27,7 +24,7 @@
 					<!-- Editor -->
 					<div id="editor"></div>
 						<div class="pull-left">
-							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
+							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Analyze</button>
 							<form action="upload" method="post" enctype="multipart/form-data" id="send">
 								<button type="submit" class="btn btn-primary" style="display: none;"></button>				
 								<input type="file" name="file" id ="file" style="display: none;"> 
@@ -38,23 +35,6 @@
 									<input type="hidden" name="update" style="display: none;" value ="" id="update">
 								{% endif %}
 							</form>
-						</div>
-						<!-- Settings Dropdown -->
-						<div class="pull-right">
-							<div class="dropdown">
-								<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" 
-									aria-haspopup="true" aria-expanded="true">
-									Settings
-								<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-									<li class="dropdown-header">Key binds</li>
-									<li><a href="#" onclick='vim()'>Vim</a></li>
-									<li><a href="#" onclick='emacs()'>Emacs</a></li>
-									<li><a href="#" onclick='none()'>Default</a></li>
-									<li class="dropdown-header">Font size</li>
-								</ul>
-							</div>
 						</div>
 				</div>
 				<!-- Leave this here, editor has to be loaded before the script is. -->

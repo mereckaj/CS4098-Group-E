@@ -46,3 +46,9 @@ class User(db.Model):
 
 	def set_editor(self, ed):
 		self.editor = ed
+
+	def get_email(self):
+		return self.email
+
+	def get_first_name(self):
+		return self.first_name

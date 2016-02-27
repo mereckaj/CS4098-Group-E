@@ -4,8 +4,6 @@
 
 PML is a simple programming language for describing a work flow or process that specifies the activities and roles involved in delivering some tangible outcome.
 
-This project is going to create a web based IDE for PML.
-
 Features
 --------
 1. Editor
@@ -17,6 +15,18 @@ Features
 7. Resource name completion
 8. Added keybind emulation (vim,emcas)
 
+
+Known Issues
+------------
+1. Emacs auto complete does not work 
+2. Vim autocompelte works with Ctrl-space in insert mode (Not Ctrl-P/Ctrl-N as the keybinds file suggests)
+
+
+Dependencies
+------------
+
+* [PEOS](https://github.com/jnoll/peos) (PML syntax checker)
+
 Install
 -------
 
@@ -24,11 +34,6 @@ To install everything that is needed for this program run:
 ```bash
 ./install.sh
 ```
-Dependencies
-------------
-
-* [PEOS](https://github.com/jnoll/peos) (PML syntax checker)
-* [ACE](https://github.com/ajaxorg/ace-builds) (Ace editor)
 
 
 Launch
@@ -57,4 +62,3 @@ Run all tests as so:
  * Ben Clear
  * Sean Lee
  * Michael Whelan
- * Eoin Higgins

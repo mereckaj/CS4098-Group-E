@@ -3,3 +3,6 @@ http://jlgdev.com/facebook-login-with-flask-login-and-flask-oauth/
 
 # Ace editor
 https://github.com/ajaxorg/ace-builds
+
+#Autocompletion
+https://github.com/ajaxorg/ace/blob/master/demo/autocompletion.html 
