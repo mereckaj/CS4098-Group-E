@@ -12,7 +12,6 @@ function submitData(path){
 window.onload =function() {
 	var fileInput = document.getElementById('file');
 	fileInput.addEventListener("change", function(e){
-
 		var file = fileInput.files[0];
 		var reader = new FileReader();
 		var extension = file.name.split('.').pop();
@@ -27,6 +26,31 @@ window.onload =function() {
 			reader.readAsText(file);
 		}
 	});
+
+	var switched = document.getElementById('projects');
+	switched.onchange = function(){
+		var strUser =  switched[switched.selectedIndex].value; 
+		strUser = strUser.replace(' ', '');
+		path = /uploads/ + strUser;
+		jQuery.get('http://localhost:8000' + path, function(data) {
+    			editor.session.doc.setValue(data);
+		});
+	}
+
+
+	select_elem = document.getElementById('projects');
+	list_of_names = document.getElementById('fileNames[]').value;
+	list_of_names = list_of_names.split(',');
+	list_of_names[0] = list_of_names[0].replace('[', '');
+	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
+        if(select_elem){
+            for(var i = 0; i < list_of_names.length; i++) {
+                var option = document.createElement('option');
+                option.innerHTML = 'Project ' + list_of_names[i];
+                option.value = list_of_names[i];
+                select_elem.appendChild(option);
+            }
+        }
 
 	// Take what the user said their favorite editor was and set it to that.
 	// Don't remove from onload
@@ -73,16 +97,24 @@ function sendKeyBindPreference(pref){
 	});
 }
 
-function navbar_file_new_file(){
-	// Add code here to actually create a new file on the server size
+function navbar_file_new_file(path){
+	$.ajax({
+		type: "POST",
+		url: path
+	});
 	editor.session.doc.setValue();
 }
+
 function navbar_file_open_file(){
 	$('#file').trigger('click');
 }
+
 function navbar_file_save(){
 	document.forms["send"].submit();
 }
+
 function navbar_file_close_file(){
 	editor.session.doc.setValue();
 }
+
+

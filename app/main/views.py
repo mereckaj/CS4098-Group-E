@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request, session, redirect, jsonify, current_app
+from flask import render_template, url_for, request, session, redirect, jsonify, make_response
 from . import main
 from .runCode import pmlchecker
 from .forms import LoginForm, RegisterForm
@@ -43,6 +43,7 @@ google = oauth.remote_app(
 @main.route("/",methods=["GET","POST"])
 @login_required
 def index():
+	fileExist()
 	if request.method == "GET":
 		if "editor" in session:
 			editor=session["editor"]
@@ -83,18 +84,32 @@ def upload():
 	code = request.form["fileCode"]
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
-	#increment counter
-	try:
-		session['counter'] += 1
-	except KeyError:
-		session['counter'] = 1
 
-	filename = '%s_upload.%s'%(str(session["counter"]),"pml")
+	filename = '%s_upload.%s'%(str(session['counter']),"pml")
 	# Move the file to
 	# the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
 	inFile.write(code)
+	displayFile(session["counter"])
 	return redirect(url_for("main.index"))
+
+#increment counter so new file will be created
+@main.route("/newFile", methods =["POST"])
+def newFile():
+	try:
+		session['counter'] += 1
+	except KeyError:
+		session['counter'] = 0
+	return "OK"
+
+#
+@main.route("/uploads/<fileNum>", methods =["GET"])
+def displayFile(fileNum):
+	filename = '%s_upload.%s'%(str(fileNum),"pml")
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+	session['counter'] = fileNum
+	resp = make_response(open(UPLOAD_FOLDER).read())
+	return resp
 
 # Tell the program what the users preferred editor is {NONE,VIM,EMACS}
 # Make the program remember that
@@ -108,7 +123,6 @@ def binds(data):
 		user.set_editor(data.upper())
 		session["editor"] = data
 	return "OK"
-
 
 # Facebook callback function, check if the reply is present,
 # Check if user gave email, if no email is given then can't register
@@ -230,7 +244,9 @@ def login():
 @main.route("/logout")
 @login_required
 def logout():
+	session['counter'] = 1
 	session["changed"] = False
+	session['lst'].clear() # Declares an empty list named lst
 	logout_user()
 	return redirect(url_for("main.index"))
 
@@ -257,6 +273,8 @@ def get_access_token():
 # Create a "tmp" folder to store the files if it does not exist and store the new file in there
 def createFolders():
 	if not os.path.exists("tmp/" + str(session["uid"])):
+		session['lst'].clear() # Declares an empty list named lst
+		session['counter'] = 1
 		os.makedirs("tmp/" + str(session["uid"]))
 
 def login_and_load_user(user):
@@ -265,3 +283,17 @@ def login_and_load_user(user):
 	editor = user.get_editor()
 	session["uid"] = uid
 	session["editor"] = editor
+
+def fileExist():
+	i =1
+	session['lst'] = [] # Declares an empty list named lst
+	session['lst'].clear() # Declares an empty list named lst
+	while os.path.isfile("tmp/" + str(session["uid"]) + '/' + str(i) + "_upload.pml"):
+		#increment counter
+		try:
+			session['counter'] = i
+			session['lst'].append(session['counter'])
+			i += 1
+		except KeyError:
+			session['counter'] = 1
+			session['lst'].append(session['counter'])

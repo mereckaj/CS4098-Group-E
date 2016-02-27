@@ -57,6 +57,14 @@
 							</div>
 						</div>
 				</div>
+
+				<body >
+						<!-- Temporary filedrop -->
+						<input name="fileNames[]" id = "fileNames[]" type="hidden" value = "{{session['lst']}}"/>
+						<select id="projects">
+							<option><li><a >Projects</a></li></option>
+						</select>
+				</body>
 				<!-- Leave this here, editor has to be loaded before the script is. -->
 				<script src="{{url_for('static', filename='js/ace.js')}}"></script>
 			</div>
