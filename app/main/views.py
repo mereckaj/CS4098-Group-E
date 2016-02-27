@@ -49,7 +49,7 @@ def index():
 			editor=session["editor"]
 		else:
 			editor=None
-		return render_template("pmlcheck_form.html",editor=editor,fontsize=fontsize)
+		return render_template("pmlcheck_form.html")
 	elif request.method == "POST":
 		# Extract the code from the POST request
 		code = request.form["code"]
@@ -83,36 +83,53 @@ def upload():
 	session["changed"] = True
 	filename = '%s_upload.%s'%(str(session["uid"]), "pml")
 
-	# Take the current applications root folder, add on the relative UPLOAD_FOLDER path
-	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),UPLOAD_FOLDER)
+	# Take the current applications root folder, add on the relative 
+	# UPLOAD_FOLDER path
+	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),
+		UPLOAD_FOLDER)
 	# Move the file form the temporal folder to
 	# the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
 	inFile.write(code)
 	return redirect(url_for("main.index"))
 
-# Tell the program what the users preferred editor is {NONE,VIM,EMACS}
-# Make the program remember that
-# Find the user by their UID and set their database entry for editor to be 
-# what was sent in. Javascript on the other side does the validation
-@main.route("/binds/<data>",methods=["GET"])
-def binds(data):
-	uid = session["uid"]
-	user = User.query.filter(User.id == uid).first()
-	if user is not None:
-		user.set_editor(data.upper())
-		session["editor"] = data
-	return "OK"
+# Either get or set some settings that the user decided to change
+@main.route("/settings/<string:key>/<string:value>",methods=["POST"])
+@main.route("/settings/<string:key>",methods=["GET"])
+def settings(key,value=None):
+	if request.method == "GET":
+		uid = session["uid"]
+		user = User.query.filter(User.id == uid).first()
+		if user is None:
+			return jsonify({"error":"no user"})
+		else:
+			data = getUserData(user,key)
+			if data is None:
+				return jsonify({"error":"invalid key: " + key})
+			else:
+				return jsonify({"data": data })
+	elif request.method == "POST":
+		uid = session["uid"]
+		user = User.query.filter(User.id == uid).first()
+		if user is None:
+			return jsonify({"error":"no user"})
+		else:
+			data = setUserData(user,key,value)
+			return jsonify({ "data": data})
 
-@main.route("/fontsize/<data>",methods=["GET"])
-def fontsize(data):
-	uid = session["uid"]
-	user = User.query.filter(User.id == uid).first()
-	if user is not None:
-		user.set_editor(data.upper())
-		user.set_fontsize(data)
-		session["fontsize"] = data
-	return "OK"
+def setUserData(user,key,value):
+	if key is "editor":
+		user.set_editor = value
+	if key is "fontsize":
+		user.set_fontsize = value
+	return "ok"
+
+# Basically a switch statement (which python doesn't have)
+def getUserData(user,key):
+	return {
+		"editor" : str(user.get_editor()),
+		"fontsize" : str(user.get_fontsize())
+	}.get(key,None)
 
 # Facebook callback function, check if the reply is present,
 # Check if user gave email, if no email is given then can't register
@@ -154,7 +171,8 @@ def authAndRedirectOrError(user_data,provider,next_url):
 		first_name = user_data["first_name"]
 		last_name = user_data["last_name"]
 	else:
-		return render_template("login.html",error="[Error getting first and last names]")
+		return render_template("login.html",
+			error="[Error getting first and last names]")
 
 	# Conver email to lower case to prevent strign comparison issues
 	email = email.lower()
@@ -163,7 +181,8 @@ def authAndRedirectOrError(user_data,provider,next_url):
 	if email is not None:
 		user = User.query.filter(User.email == email).first()
 	else:
-		return render_template("login.html",error=["Could not get email from " + provider])	
+		return render_template("login.html",error=["Could not get email from " 
+			+ provider])	
 
 	# Try to log the user in, or register a new user
 	if user is None:
@@ -191,13 +210,15 @@ def register():
 			password = form.password.data
 			user = User.query.filter(User.email == email).first()
 			if user is None:
-				new_user = User(email=email, first_name=first_name, last_name=last_name,password=password)
+				new_user = User(email=email, first_name=first_name, 
+					last_name=last_name,password=password)
 				db.session.add(new_user)
 				db.session.commit()
 				login_and_load_user(new_user)
 				return redirect(url_for("main.index"))
 			else:
-				return render_template("register.html",error=["User already exists"])
+				return render_template("register.html",
+					error=["User already exists"])
 		else:
 			ers = []
 			for (field, errors) in form.errors.items():
@@ -253,7 +274,8 @@ def get_facebook_oauth_token():
 def get_access_token():
 	return session.get('oauth_token')
 
-# Create a "tmp" folder to store the files if it does not exist and store the new file in there
+# Create a "tmp" folder to store the files if it does not exist and store the 
+# new file in there
 def createFolders():
 	if not os.path.exists("tmp/"):
 		os.makedirs("tmp/")
@@ -262,11 +284,7 @@ def createFolders():
 def login_and_load_user(user):
 	login_user(user)
 	uid = user.get_id()
-	editor = user.get_editor()
-	fontsize = user.get_fontsize()
 	session["uid"] = uid
-	session["editor"] = editor
-	session["fontsize"] = fontsize
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
@@ -275,7 +293,4 @@ def login_and_load_user(user):
 def logout_user_remove_session_data():
 	logout_user()
 	session.pop("uid",None)
-	session.pop("editor",None)
-	session.pop("username",None)
 	session.pop("email",None)
-	session.pop("fontsize",None)

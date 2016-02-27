@@ -24,9 +24,9 @@
 			</a>
 			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 				<li class="dropdown-header">Key binds</li>
-				<li><a onclick='vim()'>Vim</a></li>
-				<li><a onclick='emacs()'>Emacs</a></li>
-				<li><a onclick='none()'>Default</a></li>
+				<li><a onclick='setEditor("VIM")'>Vim</a></li>
+				<li><a onclick='setEditor("EMACS")'>Emacs</a></li>
+				<li><a onclick='setEditor("NONE")'>Default</a></li>
 				<li class="dropdown-header">Font size (12-26)</li>
 				<li>
 					<input id="fontsize" type="text" class="form-control" placeholder="12" aria-describedby="basic-addon1">
@@ -37,6 +37,4 @@
 	<ul class="nav navbar-nav navbar-right">
 		<li><a href="/logout">Logout</a></li>
 	</ul>
-	<!-- Leave this here, editor has to be loaded before the script is. -->
-	<script src="{{url_for('static', filename='js/navbar.js')}}"></script>
 {% endblock %}
