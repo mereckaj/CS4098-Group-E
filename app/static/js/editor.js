@@ -28,15 +28,28 @@ window.onload =function() {
 	});
 
 	var switched = document.getElementById('projects');
-	switched.onchange = function(){
+	//$('.proj li').click(function(e){
+	$('.proj').on('click', 'li', function (){
+	//$('.proj').change(function () {
+		//alert("hhhh")
+    		//$('.proj').text(this.innerHTML); 
+		var strUser = $(this).text(); // switched.value; //  
+		//[int(strUser) for strUser in str.split() if strUser.isdigit()]
+		strUser = strUser.replace( /^\D+/g, '');
+		path = /uploads/ + strUser;
+		//alert(strUser);
+		jQuery.get('http://localhost:8000' + path, function(data) {
+    			editor.session.doc.setValue(data);
+		});
+	});
+	/*switched.onchange = function(){
 		var strUser =  switched[switched.selectedIndex].value; 
 		strUser = strUser.replace(' ', '');
 		path = /uploads/ + strUser;
 		jQuery.get('http://localhost:8000' + path, function(data) {
     			editor.session.doc.setValue(data);
 		});
-	}
-
+	}*/
 
 	select_elem = document.getElementById('projects');
 	list_of_names = document.getElementById('fileNames[]').value;
@@ -45,8 +58,8 @@ window.onload =function() {
 	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
         if(select_elem){
             for(var i = 0; i < list_of_names.length; i++) {
-                var option = document.createElement('option');
-                option.innerHTML = 'Project ' + list_of_names[i];
+                var option = document.createElement('li');
+                option.innerHTML = '<a>' + 'Project ' + list_of_names[i] + '</a>';
                 option.value = list_of_names[i];
                 select_elem.appendChild(option);
             }
