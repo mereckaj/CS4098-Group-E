@@ -49,7 +49,7 @@ def index():
 			editor=session["editor"]
 		else:
 			editor=None
-		return render_template("pmlcheck_form.html",editor=editor)
+		return render_template("pmlcheck_form.html",editor=editor,fontsize=fontsize)
 	elif request.method == "POST":
 		# Extract the code from the POST request
 		code = request.form["code"]
@@ -104,6 +104,15 @@ def binds(data):
 		session["editor"] = data
 	return "OK"
 
+@main.route("/fontsize/<data>",methods=["GET"])
+def fontsize(data):
+	uid = session["uid"]
+	user = User.query.filter(User.id == uid).first()
+	if user is not None:
+		user.set_editor(data.upper())
+		user.set_fontsize(data)
+		session["fontsize"] = data
+	return "OK"
 
 # Facebook callback function, check if the reply is present,
 # Check if user gave email, if no email is given then can't register
@@ -154,7 +163,7 @@ def authAndRedirectOrError(user_data,provider,next_url):
 	if email is not None:
 		user = User.query.filter(User.email == email).first()
 	else:
-		return render_template("login.html",error=["Could not get email from " + provider])
+		return render_template("login.html",error=["Could not get email from " + provider])	
 
 	# Try to log the user in, or register a new user
 	if user is None:
@@ -254,8 +263,10 @@ def login_and_load_user(user):
 	login_user(user)
 	uid = user.get_id()
 	editor = user.get_editor()
+	fontsize = user.get_fontsize()
 	session["uid"] = uid
 	session["editor"] = editor
+	session["fontsize"] = fontsize
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
@@ -267,3 +278,4 @@ def logout_user_remove_session_data():
 	session.pop("editor",None)
 	session.pop("username",None)
 	session.pop("email",None)
+	session.pop("fontsize",None)

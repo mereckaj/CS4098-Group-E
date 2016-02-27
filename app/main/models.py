@@ -10,6 +10,7 @@ class User(db.Model):
 	last_name = db.Column(db.String)
 	pw_hash = db.Column(db.String)
 	editor = db.Column(db.String)
+	fontsize = db.Column(db.String)
 	
 	def __init__(self, email, first_name=None, last_name=None,password=None):
 		self.email = email.lower()
@@ -17,6 +18,7 @@ class User(db.Model):
 		self.last_name = last_name
 		self.set_password(password)
 		self.editor = "NONE"
+		self.fontsize = "12"
 
 	def set_password(self, password):
 		# If the password was not specified (Login from Facebook/Google then create a random 32 charachter password)
@@ -52,3 +54,9 @@ class User(db.Model):
 
 	def get_first_name(self):
 		return self.first_name
+
+	def get_fontsize(self):
+		return self.fontsize
+
+	def set_fontsize(self, fs):
+		self.fontsize = fs

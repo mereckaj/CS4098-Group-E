@@ -37,8 +37,9 @@
 							</form>
 						</div>
 				</div>
-				<!-- Leave this here, editor has to be loaded before the script is. -->
+				<!-- Leave this here, editor has to be loaded before the scripts . -->
 				<script src="{{url_for('static', filename='js/ace.js')}}"></script>
+				<script src="{{url_for('static', filename='js/navbar.js')}}"></script>
 			</div>
 		</div>
 		<div class="row">
@@ -55,6 +56,13 @@
 			{{editor}}
 		{% else %}
 			NONE
+		{% endif %}
+	</div>
+	<div type="hidden" style="display: none;" id="fontsize_choice">
+		{% if fontsize %}
+			{{fontsize}}
+		{% else %}
+			12
 		{% endif %}
 	</div>
 {% endblock %}

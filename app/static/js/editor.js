@@ -36,7 +36,20 @@ window.onload =function() {
 			break;
 		default:
 			none();
-	} 
+	}
+	switch(document.getElementById("fontsize_choice").innerHTML.trim()) {
+		case "NONE":
+			none();
+			break;
+		case "VIM":
+			vim();
+			break;
+		case "EMACS":
+			emacs();
+			break;
+		default:
+			none();
+	}
 }
 
 // Set the keybinds to vim
