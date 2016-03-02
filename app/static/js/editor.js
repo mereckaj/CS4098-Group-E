@@ -11,7 +11,7 @@ function submitData(path){
 }
 window.onload =function() {
 
-	// Load uploaded file contents into editor 
+	// Load uploaded file contents into new project and save 
 	var fileInput = document.getElementById('file');
 	fileInput.addEventListener("change", function(e){
 		var file = fileInput.files[0];
@@ -23,7 +23,12 @@ window.onload =function() {
 			alert(file.name + " is not a valid pml file");
 		} else {
 			reader.onload = function(e) {
+				$.ajax({
+					type: "POST",
+					url: "/newFile"
+				});
 				editor.session.doc.setValue(reader.result);
+				navbar_file_save()
 			}
 			reader.readAsText(file);
 		}
