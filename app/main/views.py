@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, session, redirect, jsonify, current_app
 from . import main
-from .runCode import pmlchecker
+from .runCode import pmlchecker, pml_to_dot
 from .forms import LoginForm, RegisterForm
 from .. import db, login_manager, oauth
 from flask_login import login_required,login_user,logout_user
@@ -45,10 +45,6 @@ google = oauth.remote_app(
 @login_required
 def index():
 	if request.method == "GET":
-		if "editor" in session:
-			editor=session["editor"]
-		else:
-			editor=None
 		return render_template("pmlcheck_form.html")
 	elif request.method == "POST":
 		# Extract the code from the POST request
@@ -56,6 +52,12 @@ def index():
 		# Run the code through the pmlheck tool and get the result
 		result = pmlchecker(code)
 		return render_template("pmlcheck_result.html",result=result)
+
+@main.route("/dot",methods=["POST"])
+def dot():
+	code = request.get_data()
+	result = pml_to_dot(code)
+	return result
 
 # Url to go to if you want to log in through facebook, it basically
 # calls the facebook url for loging in, on return it will redirect to
@@ -83,7 +85,7 @@ def upload():
 	session["changed"] = True
 	filename = '%s_upload.%s'%(str(session["uid"]), "pml")
 
-	# Take the current applications root folder, add on the relative 
+	# Take the current applications root folder, add on the relative
 	# UPLOAD_FOLDER path
 	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),
 		UPLOAD_FOLDER)
@@ -181,8 +183,8 @@ def authAndRedirectOrError(user_data,provider,next_url):
 	if email is not None:
 		user = User.query.filter(User.email == email).first()
 	else:
-		return render_template("login.html",error=["Could not get email from " 
-			+ provider])	
+		return render_template("login.html",error=["Could not get email from "
+			+ provider])
 
 	# Try to log the user in, or register a new user
 	if user is None:
@@ -193,7 +195,7 @@ def authAndRedirectOrError(user_data,provider,next_url):
 	login_and_load_user(user)
 	return redirect(next_url)
 
-# Register a new user, if it's a GET then return the form, 
+# Register a new user, if it's a GET then return the form,
 # If its a post then validate the users form
 # If this email already exists then return an error
 # Otherwise register a new user and log them in straight away
@@ -210,7 +212,7 @@ def register():
 			password = form.password.data
 			user = User.query.filter(User.email == email).first()
 			if user is None:
-				new_user = User(email=email, first_name=first_name, 
+				new_user = User(email=email, first_name=first_name,
 					last_name=last_name,password=password)
 				db.session.add(new_user)
 				db.session.commit()
@@ -274,7 +276,7 @@ def get_facebook_oauth_token():
 def get_access_token():
 	return session.get('oauth_token')
 
-# Create a "tmp" folder to store the files if it does not exist and store the 
+# Create a "tmp" folder to store the files if it does not exist and store the
 # new file in there
 def createFolders():
 	if not os.path.exists("tmp/"):
