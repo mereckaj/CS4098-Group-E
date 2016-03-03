@@ -20,6 +20,7 @@ rm -f *.sqlite
 
 # Remove dependencies
 rm -f  pmlcheck
+rm -f traverse
 
 # Remove .pyc, __pycache__
 find . -type f -iname \*.pyc -not -path "./.*" -delete && find . -type d -name __pycache__ -not -path "./.*" -delete;
