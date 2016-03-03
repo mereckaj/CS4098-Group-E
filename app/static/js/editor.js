@@ -34,10 +34,6 @@ window.onload =function() {
 		}
 	});
 
-	// Get file names and display in both dropdown menus
-	getNames('projects');	
-	getNames('deleting');
-
 	// When select project load it into the editor
 	$('.proj').on('click', 'li', function (){
 		var strUser = $(this).text();  
@@ -46,18 +42,21 @@ window.onload =function() {
 		jQuery.get('http://localhost:8000' + path, function(data) {
     			editor.session.doc.setValue(data);
 		});
+
 	});
 
 	// When click project delete the project and file
 	$('.del').on('click', 'li', function (){
 		var strUser = $(this).text();  
-		number = strUser.replace( /^\D+/g, '');	// get project number	
-		path = /uploads/ + number;
-		jQuery.get('http://localhost:8000' + path, function(data) {
-    			editor.session.doc.setValue(data);
-		});
-		navbar_delete_project()
+		number = strUser.replace( /^\D+/g, '');	// get project number
+		path = /delete_item/ + number;
+		jQuery.post('http://localhost:8000' + path);
+		refresh()
 	});
+
+	// Get file names and display in both dropdown menus
+	getNames('projects');	
+	getNames('deleting');
 
 	// Take what the user said their favorite editor was and set it to that.
 	// Don't remove from onload
@@ -109,7 +108,7 @@ function navbar_file_new_file(path){
 		type: "POST",
 		url: path
 	});
-	editor.session.doc.setValue();
+	refresh();
 }
 
 function navbar_file_open_file(){
@@ -120,18 +119,19 @@ function navbar_file_save(){
 	document.forms["send"].submit();
 }
 
-function navbar_delete_project(){
-	document.forms["delete"].submit();
-}
-
 function navbar_file_close_file(){
 	editor.session.doc.setValue();
+}
+
+// refresh so the contents in drop down menu is updated
+function refresh(){
+	document.forms["refreshed"].submit();	
 }
 
 // Gets a list of names and displays in dropdown
 function getNames(dropdown){
 	select_elem = document.getElementById(dropdown);
-	list_of_names = document.getElementById('fileNames[]').value;
+	list_of_names = document.getElementById('fileNames').value;
 	list_of_names = list_of_names.split(',');
 	list_of_names[0] = list_of_names[0].replace('[', '');
 	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');

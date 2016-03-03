@@ -39,7 +39,7 @@
 									<input type="hidden" name="update" style="display: none;" value ="" id="update">
 								{% endif %}
 							</form>
-							<form action="delete_item" method="post" id="delete">
+							<form action="refresh" method="post" id="refreshed">
 								
 							</form>
 						</div>
@@ -63,7 +63,7 @@
 				</div>
 
 				<body >
-						<input name="fileNames[]" id = "fileNames[]" type="hidden" value = "{{session['lst']}}"/>
+						<input name="fileNames[]" id = "fileNames" type="hidden" value = "{{session['lst']}}"/>
 				</body>
 				<!-- Leave this here, editor has to be loaded before the script is. -->
 				<script src="{{url_for('static', filename='js/ace.js')}}"></script>

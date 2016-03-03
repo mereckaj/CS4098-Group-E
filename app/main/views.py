@@ -99,10 +99,6 @@ def upload():
 @main.route("/newFile", methods =["POST"])
 def newFile():
 	fileExist()
-	try:
-		session['counter'] += 1
-	except KeyError:
-		session['counter'] = 1
 	filename = 'Project %s'%(str(session['counter']))
 	session['lst'].append(filename)
 	session['lst'].sort()
@@ -120,16 +116,17 @@ def displayFile(fileNum):
 	resp = make_response(open(UPLOAD_FOLDER).read())
 	return resp
 
-@main.route('/delete_item', methods=['GET', 'POST'])
-def delete_item():
-	filename = 'Project %s'%(str(session['counter']))
+@main.route('/delete_item/<fileNum>', methods=['POST'])
+def delete_item(fileNum):
+	filename = 'Project %s'%(str(fileNum))
 	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
 	os.remove(UPLOAD_FOLDER)
 	fileExist()
-	try:
-		session['counter'] += 1
-	except KeyError:
-		session['counter'] = 1
+
+	return redirect(url_for("main.index"))
+
+@main.route("/refresh", methods=["POST"])
+def refresh():
 	session["changed"] = False
 	return redirect(url_for("main.index"))
 
@@ -311,7 +308,6 @@ def login_and_load_user(user):
 # Sets the counter to the next valid file number
 def fileExist():
 	i =1
-	session['counter'] = 0
 	session['lst'] = [] # Declares an empty list named lst
 	session['lst'].clear() # Declares an empty list named lst
 	if not os.path.exists("tmp/" + str(session["uid"])):
@@ -320,7 +316,6 @@ def fileExist():
 	names.sort()
 	for file in names:	
 		session['lst'].append(file)
-	print('success for one')
 	while os.path.isfile("tmp/" + str(session["uid"]) + '/' + 'Project ' + str(i)):
 		#increment counter
 		try:
@@ -328,3 +323,4 @@ def fileExist():
 			i += 1
 		except KeyError:
 			session['counter'] = 1
+	session['counter'] = i
