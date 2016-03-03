@@ -1,7 +1,8 @@
 # /bin/bash
 
 ORIGIN=$(pwd)
-echo "[Install]"
+PML=pmlcheck
+echo "Install"
 
 #Found most of this bash script snippet on http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
 #mainly used the answer by Urhixidur.
@@ -44,9 +45,17 @@ virtualenv -p /usr/bin/python3.4 venv >> install.log
 echo "[Done]"
 
 # Install dependancies
-echo "[Installing dependancies]"
+echo -n "[Installing dependancies]"
 sudo apt-get install --force-yes --yes libssl-dev libffi-dev python3.4-dev >> install.log 
-echo "[Installing from requirements.txt]"
+echo "[Done]"
+
+echo -n "[Installing from requirements.txt]"
 source venv/bin/activate &&  pip install -r requirements.txt >> install.log
-echo "[Compiling peos]"
-cd $ORIGIN && bash peos.sh
+echo "[Done]"
+
+[ -f $PML ] && echo "[Found $PML, skipping recompile]" || { echo "[Compiling peos]"; cd $ORIGIN && bash peos.sh;}
+
+# Post install checks
+echo "[Running post install checks]"
+bash install_check.sh
+echo "[Done]"
