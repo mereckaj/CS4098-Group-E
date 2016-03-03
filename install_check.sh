@@ -3,9 +3,5 @@
 # Required files
 PML=pmlcheck
 
-echo "[Running post install checks]"
-
 # Check if $PML exists otherwise print error message and exit
-[ -f $PML ] && echo "$PML [OK]" || { echo "$PML [FAIL]"; exit 1;}
-
-echo "[Success]"
+[ -f $PML ] && echo -e "\t $PML [OK]" || { echo -e "\t $PML [FAIL]"; exit 1;}
