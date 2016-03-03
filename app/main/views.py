@@ -43,7 +43,7 @@ google = oauth.remote_app(
 @main.route("/",methods=["GET","POST"])
 @login_required
 def index():
-	fileExist()
+	print('refreshed: ' + str(session['counter']))
 	if request.method == "GET":
 		if "editor" in session:
 			editor=session["editor"]
@@ -85,13 +85,14 @@ def upload():
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
 
-	filename = '%s_upload.%s'%(str(session['counter']),"pml")
+	filename = 'Project %s'%(str(session['counter']))
 	# Move the file to
 	# the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
 	inFile.write(code)
 	inFile.close()
 	displayFile(session["counter"])
+	fileExist()
 	return redirect(url_for("main.index"))
 
 # increment counter and add file number to list 
@@ -101,11 +102,11 @@ def newFile():
 	fileExist()
 	try:
 		session['counter'] += 1
-		session['lst'].append(session['counter'])
 	except KeyError:
 		session['counter'] = 1
-		session['lst'].append(session['counter'])
-	filename = '%s_upload.%s'%(str(session['counter']),"pml")
+	filename = 'Project %s'%(str(session['counter']))
+	session['lst'].append(filename)
+	session['lst'].sort()
 	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
 	file = open(UPLOAD_FOLDER,'w')
 	file.close()
@@ -114,11 +115,24 @@ def newFile():
 # Get contents of file that is selected
 @main.route("/uploads/<fileNum>", methods =["GET"])
 def displayFile(fileNum):
-	filename = '%s_upload.%s'%(str(fileNum),"pml")
+	filename = 'Project %s'%(str(fileNum))
 	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
 	session['counter'] = fileNum
 	resp = make_response(open(UPLOAD_FOLDER).read())
 	return resp
+
+@main.route('/delete_item', methods=['GET', 'POST'])
+def delete_item():
+	filename = 'Project %s'%(str(session['counter']))
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+	os.remove(UPLOAD_FOLDER)
+	fileExist()
+	try:
+		session['counter'] += 1
+	except KeyError:
+		session['counter'] = 1
+	session["changed"] = False
+	return redirect(url_for("main.index"))
 
 # Tell the program what the users preferred editor is {NONE,VIM,EMACS}
 # Make the program remember that
@@ -292,19 +306,26 @@ def login_and_load_user(user):
 	editor = user.get_editor()
 	session["uid"] = uid
 	session["editor"] = editor
+	fileExist()
 
-# Set counter to last file, add counter(file number) to list
-# If no file, reset counter and list
+# Gets all files that exist under the user and adds it to the drop down menu
+# Sets the counter to the next valid file number
 def fileExist():
 	i =1
+	session['counter'] = 0
 	session['lst'] = [] # Declares an empty list named lst
 	session['lst'].clear() # Declares an empty list named lst
-	while os.path.isfile("tmp/" + str(session["uid"]) + '/' + str(i) + "_upload.pml"):
+	if not os.path.exists("tmp/" + str(session["uid"])):
+		createFolders()
+	names = os.listdir("tmp/" + str(session["uid"]) + '/')
+	names.sort()
+	for file in names:	
+		session['lst'].append(file)
+	print('success for one')
+	while os.path.isfile("tmp/" + str(session["uid"]) + '/' + 'Project ' + str(i)):
 		#increment counter
 		try:
 			session['counter'] = i
-			session['lst'].append(session['counter'])
 			i += 1
 		except KeyError:
 			session['counter'] = 1
-			session['lst'].append(session['counter'])

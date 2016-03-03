@@ -38,8 +38,9 @@ window.onload =function() {
 	// When click different project load into editor
 	$('.proj').on('click', 'li', function (){
 		var strUser = $(this).text();  
-		strUser = strUser.replace( /^\D+/g, '');
-		path = /uploads/ + strUser;
+		number = strUser.replace( /^\D+/g, '');
+		//alert(number);
+		path = /uploads/ + number;
 		jQuery.get('http://localhost:8000' + path, function(data) {
     			editor.session.doc.setValue(data);
 		});
@@ -106,6 +107,10 @@ function navbar_file_save(){
 	document.forms["send"].submit();
 }
 
+function navbar_delete_project(){
+	document.forms["delete"].submit();
+}
+
 function navbar_file_close_file(){
 	editor.session.doc.setValue();
 }
@@ -119,8 +124,9 @@ function getNames(){
 	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
         if(select_elem){
             for(var i = 0; i < list_of_names.length; i++) {
+		list_of_names[i] = list_of_names[i].replace( /'/g, '');
                 var option = document.createElement('li');
-                option.innerHTML = '<a>' + 'Project ' + list_of_names[i] + '</a>';
+                option.innerHTML = '<a>' + list_of_names[i] + '</a>';
                 option.value = list_of_names[i];
                 select_elem.appendChild(option);
             }
