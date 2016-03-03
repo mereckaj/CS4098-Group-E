@@ -43,7 +43,6 @@ google = oauth.remote_app(
 @main.route("/",methods=["GET","POST"])
 @login_required
 def index():
-	print('refreshed: ' + str(session['counter']))
 	if request.method == "GET":
 		if "editor" in session:
 			editor=session["editor"]
@@ -95,8 +94,8 @@ def upload():
 	fileExist()
 	return redirect(url_for("main.index"))
 
-# increment counter and add file number to list 
-# Create new pml file with file number
+# increment counter and add filename to list 
+# Create new pml file with filename
 @main.route("/newFile", methods =["POST"])
 def newFile():
 	fileExist()

@@ -33,17 +33,30 @@ window.onload =function() {
 			reader.readAsText(file);
 		}
 	});
-	getNames();
 
-	// When click different project load into editor
+	// Get file names and display in both dropdown menus
+	getNames('projects');	
+	getNames('deleting');
+
+	// When select project load it into the editor
 	$('.proj').on('click', 'li', function (){
 		var strUser = $(this).text();  
-		number = strUser.replace( /^\D+/g, '');
-		//alert(number);
+		number = strUser.replace( /^\D+/g, ''); // get project number
 		path = /uploads/ + number;
 		jQuery.get('http://localhost:8000' + path, function(data) {
     			editor.session.doc.setValue(data);
 		});
+	});
+
+	// When click project delete the project and file
+	$('.del').on('click', 'li', function (){
+		var strUser = $(this).text();  
+		number = strUser.replace( /^\D+/g, '');	// get project number	
+		path = /uploads/ + number;
+		jQuery.get('http://localhost:8000' + path, function(data) {
+    			editor.session.doc.setValue(data);
+		});
+		navbar_delete_project()
 	});
 
 	// Take what the user said their favorite editor was and set it to that.
@@ -116,8 +129,8 @@ function navbar_file_close_file(){
 }
 
 // Gets a list of names and displays in dropdown
-function getNames(){
-	select_elem = document.getElementById('projects');
+function getNames(dropdown){
+	select_elem = document.getElementById(dropdown);
 	list_of_names = document.getElementById('fileNames[]').value;
 	list_of_names = list_of_names.split(',');
 	list_of_names[0] = list_of_names[0].replace('[', '');
