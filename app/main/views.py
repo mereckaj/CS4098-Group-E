@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request, session, redirect, jsonify, current_app
+from flask import render_template, url_for, request, session, redirect, jsonify, make_response
 from . import main
 from .runCode import pmlchecker
 from .forms import LoginForm, RegisterForm
@@ -13,7 +13,6 @@ GOOGLE_APP_ID = "899383105434-k00rirsh9bvq8cu7l19i1loh029e1hgv.apps.googleuserco
 GOOGLE_APP_SECRET = "H48CFybLmBnZpTWgtLCt-ls1"
 PROVIDER_GOOGLE = "GOOGLE"
 PROVIDER_FACEBOOK = "FACEBOOK"
-UPLOAD_FOLDER = "tmp/"
 
 facebook = oauth.remote_app(
 	"facebook",
@@ -73,24 +72,62 @@ def google_login():
 	callback=url_for('main.google_authorized', _external=True)
 	return google.authorize(callback=callback)
 
-# ADD A DESCRIPTION OF WHAT HAPPENS HERE
+# Get code from the editor
+# Create filename with counter
+# Write the code to the file and save
 @main.route("/upload", methods=["POST"])
 def upload():
 	createFolders()
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
 	# Request the code
 	code = request.form["fileCode"]
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
-	filename = '%s_upload.%s'%(str(session["uid"]), "pml")
 
-	# Take the current applications root folder, add on the relative 
-	# UPLOAD_FOLDER path
-	filepath = os.path.join(os.path.abspath(os.path.dirname(__name__)),
-		UPLOAD_FOLDER)
-	# Move the file form the temporal folder to
-	# the upload folder we setup
+
+	filename = 'Project %s'%(str(session['counter']))
+	# Move the file to the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
 	inFile.write(code)
+	inFile.close()
+	displayFile(session["counter"])
+	fileExist()
+	return redirect(url_for("main.index"))
+
+# increment counter and add filename to list
+# Create new pml file with filename
+@main.route("/newFile", methods =["POST"])
+def newFile():
+	fileExist()
+	filename = 'Project %s'%(str(session['counter']))
+	session['lst'].append(filename)
+	session['lst'].sort()
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+	file = open(UPLOAD_FOLDER,'w')
+	file.close()
+	return redirect(url_for("main.index"))
+
+# Get contents of file that is selected
+@main.route("/uploads/<fileNum>", methods =["GET"])
+def displayFile(fileNum):
+	filename = 'Project %s'%(str(fileNum))
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+	session['counter'] = fileNum
+	resp = make_response(open(UPLOAD_FOLDER).read())
+	return resp
+
+@main.route('/delete_item/<fileNum>', methods=['POST'])
+def delete_item(fileNum):
+	filename = 'Project %s'%(str(fileNum))
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+	os.remove(UPLOAD_FOLDER)
+	fileExist()
+
+	return redirect(url_for("main.index"))
+
+@main.route("/refresh", methods=["POST"])
+def refresh():
+	session["changed"] = False
 	return redirect(url_for("main.index"))
 
 # Either get or set some settings that the user decided to change
@@ -181,8 +218,8 @@ def authAndRedirectOrError(user_data,provider,next_url):
 	if email is not None:
 		user = User.query.filter(User.email == email).first()
 	else:
-		return render_template("login.html",error=["Could not get email from " 
-			+ provider])	
+		return render_template("login.html",error=["Could not get email from "
+			+ provider])
 
 	# Try to log the user in, or register a new user
 	if user is None:
@@ -193,7 +230,7 @@ def authAndRedirectOrError(user_data,provider,next_url):
 	login_and_load_user(user)
 	return redirect(next_url)
 
-# Register a new user, if it's a GET then return the form, 
+# Register a new user, if it's a GET then return the form,
 # If its a post then validate the users form
 # If this email already exists then return an error
 # Otherwise register a new user and log them in straight away
@@ -210,7 +247,7 @@ def register():
 			password = form.password.data
 			user = User.query.filter(User.email == email).first()
 			if user is None:
-				new_user = User(email=email, first_name=first_name, 
+				new_user = User(email=email, first_name=first_name,
 					last_name=last_name,password=password)
 				db.session.add(new_user)
 				db.session.commit()
@@ -252,6 +289,9 @@ def login():
 @login_required
 def logout():
 	logout_user_remove_session_data()
+	session['counter'] = 1
+	session["changed"] = False
+	session['lst'].clear() # Declares an empty list named
 	return redirect(url_for("main.index"))
 
 # Any unauthorized requests will be redirected to the login page.
@@ -274,11 +314,13 @@ def get_facebook_oauth_token():
 def get_access_token():
 	return session.get('oauth_token')
 
-# Create a "tmp" folder to store the files if it does not exist and store the 
+# Create a "tmp" folder to store the files if it does not exist and store the
 # new file in there
 def createFolders():
-	if not os.path.exists("tmp/"):
-		os.makedirs("tmp/")
+	if not os.path.exists("tmp/" + str(session["uid"])):
+		session['lst'].clear() # Declares an empty list named lst
+		session['counter'] = 1
+		os.makedirs("tmp/" + str(session["uid"]))
 
 # Login the user and set up their session information
 def login_and_load_user(user):
@@ -288,6 +330,7 @@ def login_and_load_user(user):
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
+	fileExist()
 
 # Logout the user and remove their session information
 def logout_user_remove_session_data():
@@ -295,3 +338,24 @@ def logout_user_remove_session_data():
 	session.pop("uid",None)
 	session.pop("email",None)
 	session.pop("username",None)
+
+# Gets all files that exist under the user and adds it to the drop down menu
+# Sets the counter to the next valid file number
+def fileExist():
+	i =1
+	session['lst'] = [] # Declares an empty list named lst
+	session['lst'].clear() # Declares an empty list named lst
+	if not os.path.exists("tmp/" + str(session["uid"])):
+		createFolders()
+	names = os.listdir("tmp/" + str(session["uid"]) + '/')
+	names.sort()
+	for file in names:
+		session['lst'].append(file)
+	while os.path.isfile("tmp/" + str(session["uid"]) + '/' + 'Project ' + str(i)):
+		#increment counter
+		try:
+			session['counter'] = i
+			i += 1
+		except KeyError:
+			session['counter'] = 1
+	session['counter'] = i
