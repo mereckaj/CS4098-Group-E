@@ -337,7 +337,7 @@ def logout_user_remove_session_data():
 	logout_user()
 	session.pop("uid",None)
 	session.pop("email",None)
-	session.pop("username",None
+	session.pop("username",None)
 
 # Gets all files that exist under the user and adds it to the drop down menu
 # Sets the counter to the next valid file number
