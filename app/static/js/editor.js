@@ -16,8 +16,8 @@ window.onload =function() {
 	// When select project load it into the editor
 	$('.proj').on('click', 'li', function (){
 		var strUser = $(this).text();
-		number = strUser.replace( /^\D+/g, ''); // get project number
-		path = /uploads/ + number;
+		var number = strUser.replace( /^\D+/g, ''); // get project number
+		var path = /uploads/ + number;
 		jQuery.get('http://localhost:8000' + path, function(data) {
     			editor.session.doc.setValue(data);
 		});
@@ -27,8 +27,8 @@ window.onload =function() {
 	// When click project delete the project and file
 	$('.del').on('click', 'li', function (){
 		var strUser = $(this).text();
-		number = strUser.replace( /^\D+/g, '');	// get project number
-		path = /delete_item/ + number;
+		var number = strUser.replace( /^\D+/g, '');	// get project number
+		var path = /delete_item/ + number;
 		jQuery.post('http://localhost:8000' + path);
 		refresh()
 	});
@@ -307,14 +307,14 @@ function refresh(){
 
 // Gets a list of names and displays in dropdown
 function getNames(dropdown){
-	select_elem = document.getElementById(dropdown);
-	list_of_names = document.getElementById('fileNames').value;
+	var select_elem = document.getElementById(dropdown);
+	var list_of_names = document.getElementById('fileNames').value;
 	list_of_names = list_of_names.split(',');
 	list_of_names[0] = list_of_names[0].replace('[', '');
 	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
         if(select_elem){
             for(var i = 0; i < list_of_names.length; i++) {
-		list_of_names[i] = list_of_names[i].replace( /'/g, '');
+		        list_of_names[i] = list_of_names[i].replace( /'/g, '');
                 var option = document.createElement('li');
                 option.innerHTML = '<a>' + list_of_names[i] + '</a>';
                 option.value = list_of_names[i];

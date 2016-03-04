@@ -1,6 +1,5 @@
 {% extends "public_base.html" %}
 
-<<<<<<< HEAD
 {% block membernav %}
 	<ul class="nav navbar-nav">
 		<!-- <div class="pull-right"> -->
@@ -14,7 +13,12 @@
 				<li><a onclick="navbar_file_open_file()">Open File</a></li>
 				<li><a onclick="navbar_file_save()">Save</a></li>
 				<li><a onclick="navbar_file_close_file()">Close File</a></li>
-				<!-- <li role="separator" class="divider"></li> -->
+                <li class="divider"></li>
+                <li class="dropdown-submenu">
+                  <a>Delete Project</a>
+                    <ul class="dropdown-menu del" id = 'deleting'>
+                    </ul>
+                </li>
 			</ul>
 		</li>
 		<!-- Settings Dropdown -->

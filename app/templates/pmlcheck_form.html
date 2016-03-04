@@ -8,7 +8,7 @@
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ace.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ext-language_tools.js')}}"></script>
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -26,7 +26,7 @@
 						<div class="pull-left">
 							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
 							<form action="upload" method="post" enctype="multipart/form-data" id="send">
-								<button type="submit" class="btn btn-primary" style="display: none;"></button>
+							<button type="submit" class="btn btn-primary" style="display: none;"></button>
 								<input type="file" name="file" id ="file" style="display: none;">
 								<input type="hidden" name="fileCode" style="display: none;">
 								{% if session.changed %}
