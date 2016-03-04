@@ -52,7 +52,7 @@ def pml_to_dot(code):
 	output = output.decode("utf-8")
 
 	# Remove the file (If left there's a change it will cause collisions)
-	# os.remove(filename)
+	os.remove(filename)
 
 	# Return the data as [str]
 	return output
