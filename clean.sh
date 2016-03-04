@@ -18,11 +18,10 @@ rm *.log &> /dev/null
 echo "Removing database"
 rm -f *.sqlite
 
-# Remove dependancies
+# Remove dependencies
 rm -f  pmlcheck
 
 # Remove .pyc, __pycache__
-# Code from: https://gist.github.com/peter-stratton/c127d6df835290261027
 find . -type f -iname \*.pyc -not -path "./.*" -delete && find . -type d -name __pycache__ -not -path "./.*" -delete;
 
 echo "Files Removed"

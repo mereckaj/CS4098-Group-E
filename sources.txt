@@ -6,6 +6,10 @@ https://github.com/ajaxorg/ace-builds
 
 # Autocompletion
 https://github.com/ajaxorg/ace/blob/master/demo/autocompletion.html 
+# Post install checks
+http://www.cyberciti.biz/faq/unix-linux-test-existence-of-file-in-bash/
 
 # Cookies 
 http://www.w3schools.com/js/js_cookies.asp
+# clean.sh 
+https://gist.github.com/peter-stratton/c127d6df835290261027
