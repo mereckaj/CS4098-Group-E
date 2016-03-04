@@ -20,14 +20,14 @@
 					<h1 class ="panel-title">PML Code Checker</h1>
 				</div>
 				<div id="panel-body">
-					
+
 					<!-- Editor -->
 					<div id="editor"></div>
 						<div class="pull-left">
-							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Analyze</button>
+							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
 							<form action="upload" method="post" enctype="multipart/form-data" id="send">
-								<button type="submit" class="btn btn-primary" style="display: none;"></button>				
-								<input type="file" name="file" id ="file" style="display: none;"> 
+								<button type="submit" class="btn btn-primary" style="display: none;"></button>
+								<input type="file" name="file" id ="file" style="display: none;">
 								<input type="hidden" name="fileCode" style="display: none;">
 								{% if session.changed %}
 									<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
@@ -35,9 +35,15 @@
 									<input type="hidden" name="update" style="display: none;" value ="" id="update">
 								{% endif %}
 							</form>
+							<form action="refresh" method="post" id="refreshed">
+
+							</form>
 						</div>
 				</div>
-				<!-- Leave this here, editor has to be loaded before the scripts . -->
+                <body >
+					<input name="fileNames[]" id = "fileNames" type="hidden" value = "{{session['lst']}}"/>
+				</body>
+				<!-- Leave this here, editor has to be loaded before the script is. -->
 				<script src="{{url_for('static', filename='js/ace.js')}}"></script>
 			</div>
 		</div>

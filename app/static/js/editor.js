@@ -1,6 +1,6 @@
 "use strict"; // Prevent javascript from doing stupid shit.
 /*
-	Tell the program what to do when the page loads which is 
+	Tell the program what to do when the page loads which is
 	basically initialization
 */
 window.onload =function() {
@@ -11,8 +11,32 @@ window.onload =function() {
 	});
 	setupUpload();
 	loadUserSettings();
-}
 
+
+	// When select project load it into the editor
+	$('.proj').on('click', 'li', function (){
+		var strUser = $(this).text();
+		number = strUser.replace( /^\D+/g, ''); // get project number
+		path = /uploads/ + number;
+		jQuery.get('http://localhost:8000' + path, function(data) {
+    			editor.session.doc.setValue(data);
+		});
+
+	});
+
+	// When click project delete the project and file
+	$('.del').on('click', 'li', function (){
+		var strUser = $(this).text();
+		number = strUser.replace( /^\D+/g, '');	// get project number
+		path = /delete_item/ + number;
+		jQuery.post('http://localhost:8000' + path);
+		refresh()
+	});
+
+	// Get file names and display in both dropdown menus
+	getNames('projects');
+	getNames('deleting');
+}
 /*
 	When user tries to upload a file put it into the text editor
 */
@@ -20,14 +44,24 @@ function setupUpload(){
 	console.log("Setting up upload button");
 	var fileInput = document.getElementById('file');
 	fileInput.addEventListener("change", function(e){
-
 		var file = fileInput.files[0];
 		var reader = new FileReader();
-
-		reader.onload = function(e) {
-			editor.session.doc.setValue(reader.result);
+		var extension = file.name.split('.').pop();
+		if (!file) {
+			alert("Failed to load file");
+		} else if (extension != "pml") {
+			alert(file.name + " is not a valid pml file");
+		} else {
+			reader.onload = function(e) {
+				$.ajax({
+					type: "POST",
+					url: "/newFile"
+				});
+				editor.session.doc.setValue(reader.result);
+				navbar_file_save()
+			}
+			reader.readAsText(file);
 		}
-		reader.readAsText(file);
 	});
 }
 
@@ -76,6 +110,8 @@ function parseSettingReplyEditor(data){
 
 function setEditor(editor){
 	switch(editor) {
+	// Take what the user said their favorite editor was and set it to that.
+	// Don't remove from onload
 		case "NONE":
 			changeKeyBinds("","NONE");
 			break;
@@ -160,7 +196,7 @@ function changeKeyBinds(handler,shortname){
 	console.log("Set editor to " + shortname)
 }
 
-/* 
+/*
 	Send information to the server about some setting
 */
 function sendSetting(key,value){
@@ -183,25 +219,30 @@ function getSetting(key,success,failure){
 		error : failure
 	});
 }
-
 /*
 	Tell the program what to do when user clicks menu buttons
 */
-function navbar_file_new_file(){
-	// Add code here to actually create a new file on the server size
-	editor.session.doc.setValue("");
+function navbar_file_new_file(path){
+	$.ajax({
+		type: "POST",
+		url: path
+	});
+	refresh();
 }
+
 function navbar_file_open_file(){
 	$('#file').trigger('click');
 }
+
 function navbar_file_save(){
 	document.forms["send"].submit();
 }
+
 function navbar_file_close_file(){
 	editor.session.doc.setValue("");
 }
-/* 	ACE editor can't, for some stupid reason, take actual arguments to 
-	setOption. So we hack oh and we hack nasty. This here should get people 
+/* 	ACE editor can't, for some stupid reason, take actual arguments to
+	setOption. So we hack oh and we hack nasty. This here should get people
 	expelled from college in a normal case.
 */
 function changeFontSize(val){
@@ -256,4 +297,28 @@ function changeFontSize(val){
 	}
 	setCookie("fontsize",val,1024);
 	$("#fontsize").attr("placeholder", val);
+}
+
+
+// refresh so the contents in drop down menu is updated
+function refresh(){
+	document.forms["refreshed"].submit();
+}
+
+// Gets a list of names and displays in dropdown
+function getNames(dropdown){
+	select_elem = document.getElementById(dropdown);
+	list_of_names = document.getElementById('fileNames').value;
+	list_of_names = list_of_names.split(',');
+	list_of_names[0] = list_of_names[0].replace('[', '');
+	list_of_names[list_of_names.length-1] = list_of_names[list_of_names.length-1].replace(']', '');
+        if(select_elem){
+            for(var i = 0; i < list_of_names.length; i++) {
+		list_of_names[i] = list_of_names[i].replace( /'/g, '');
+                var option = document.createElement('li');
+                option.innerHTML = '<a>' + list_of_names[i] + '</a>';
+                option.value = list_of_names[i];
+                select_elem.appendChild(option);
+            }
+        }
 }
