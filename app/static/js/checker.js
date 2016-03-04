@@ -1,6 +1,8 @@
 "use strict"
-function convertPmlToDot(){
-    var data = editor.session.doc.getValue();
+function convertPmlToDot(data){
+    if(!data){
+        var data = editor.session.doc.getValue
+    }
     sendDataToServer("POST","/dot",data,convertSuccess,convertFailure);
 }
 function convertSuccess(data){
