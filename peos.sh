@@ -23,6 +23,7 @@ echo "[DONE]"
 echo -n "Compiling everything "
 cd peos && make >> $LOG
 mv pml/check/pmlcheck $ORIGIN
+mv pml/graph/traverse $ORIGIN
 echo "[DONE]"
 
 echo -n "Cleaning up "

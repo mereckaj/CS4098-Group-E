@@ -41,7 +41,6 @@ window.onload =function() {
 	When user tries to upload a file put it into the text editor
 */
 function setupUpload(){
-	console.log("Setting up upload button");
 	var fileInput = document.getElementById('file');
 	fileInput.addEventListener("change", function(e){
 		var file = fileInput.files[0];
@@ -84,27 +83,20 @@ function submitData(path){
 	Load all user settings here
 */
 function loadUserSettings(){
-	console.log("Setting up user settings");
 	loadKeyBinds();
 	loadFontSize();
 }
 function loadKeyBinds(){
-	console.log("Loading user key bind preference");
 	var cookieValue = getCookie("editor");
-	console.log("-->" + cookieValue +"<--");
 
 	// Check if in cookie or get from server
 	if(cookieValue!="" && cookieValue != null){
-		console.log("Key binds from cookie");
 		setEditor(cookieValue);
 	}else{
-		console.log("Key binds from server");
 		getSetting("editor",parseSettingReplyEditor,errorSettingReplyEditor);
-		console.log("Got key binds from server");
 	}
 }
 function parseSettingReplyEditor(data){
-	console.log("Success getting editor from server ");
 	setEditor(data.data);
 }
 
@@ -128,25 +120,20 @@ function setEditor(editor){
 
 function errorSettingReplyEditor(data){
 	console.log("Error getting editor from server");
-	console.log(data);
+	console.log(data.data);
 	// set it to default
 	none();
 }
 function loadFontSize(data){
-	console.log("Loading user fontsize preference");
 	var cookieValue = getCookie("fontsize");
-	console.log("-->" + cookieValue +"<--");
 	if(cookieValue!="" && cookieValue != null){
-		console.log("font size from cookie")
 		changeFontSize(cookieValue);
 	}else{
-		console.log("font size from server")
 		getSetting("fontsize",parseSettingReplyFontsize,errorSettingReplyFontsize);
 	}
 }
 
 function parseSettingReplyFontsize(data){
-	console.log("Success getting fontsize from server ");
 	changeFontSize(data.data);
 }
 
@@ -157,7 +144,6 @@ function errorSettingReplyFontsize(data){
 	changeFontSize("12");
 }
 function setCookie(cname, cvalue, exdays) {
-	console.log("Creating cookie " + cname + " with value " + cvalue);
 	var d = new Date();
 	d.setTime(d.getTime() + (exdays*24*60*60*1000));
 	var expires = "expires="+d.toUTCString();
@@ -193,14 +179,12 @@ function changeKeyBinds(handler,shortname){
 	editor.setKeyboardHandler(handler);
 	sendSetting("editor",shortname);
 	setCookie("editor",shortname,1024);
-	console.log("Set editor to " + shortname)
 }
 
 /*
 	Send information to the server about some setting
 */
 function sendSetting(key,value){
-	console.log("Sent setting " + key +" with value " + value)
 	$.ajax({
 		type: "POST",
 		url: "/settings/"+key+"/"+value
@@ -211,7 +195,6 @@ function sendSetting(key,value){
 	to wait for a long time for the editor to load.
 */
 function getSetting(key,success,failure){
-	console.log("Getting setting " + key);
 	$.ajax({
 		type: "GET",
 		url: "/settings/"+key,
@@ -298,7 +281,6 @@ function changeFontSize(val){
 	setCookie("fontsize",val,1024);
 	$("#fontsize").attr("placeholder", val);
 }
-
 
 // refresh so the contents in drop down menu is updated
 function refresh(){

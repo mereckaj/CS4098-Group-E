@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, session, redirect, jsonify, make_response
 from . import main
-from .runCode import pmlchecker
+from .runCode import pmlchecker, pml_to_dot
 from .forms import LoginForm, RegisterForm
 from .. import db, login_manager, oauth
 from flask_login import login_required,login_user,logout_user
@@ -44,10 +44,6 @@ google = oauth.remote_app(
 @login_required
 def index():
 	if request.method == "GET":
-		if "editor" in session:
-			editor=session["editor"]
-		else:
-			editor=None
 		return render_template("pmlcheck_form.html")
 	elif request.method == "POST":
 		# Extract the code from the POST request
@@ -55,6 +51,12 @@ def index():
 		# Run the code through the pmlheck tool and get the result
 		result = pmlchecker(code)
 		return render_template("pmlcheck_result.html",result=result)
+
+@main.route("/dot",methods=["POST"])
+def dot():
+	code = request.get_data()
+	result = pml_to_dot(code)
+	return result
 
 # Url to go to if you want to log in through facebook, it basically
 # calls the facebook url for loging in, on return it will redirect to
@@ -83,8 +85,6 @@ def upload():
 	code = request.form["fileCode"]
 	session["update"] = request.form["fileCode"]
 	session["changed"] = True
-
-
 	filename = 'Project %s'%(str(session['counter']))
 	# Move the file to the upload folder we setup
 	inFile = open(UPLOAD_FOLDER + filename,'w')
@@ -337,7 +337,7 @@ def logout_user_remove_session_data():
 	logout_user()
 	session.pop("uid",None)
 	session.pop("email",None)
-	session.pop("username",None)
+	session.pop("username",None
 
 # Gets all files that exist under the user and adds it to the drop down menu
 # Sets the counter to the next valid file number

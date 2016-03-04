@@ -2,6 +2,7 @@
 
 ORIGIN=$(pwd)
 PML=pmlcheck
+TRAVERSE=traverse
 echo "Install"
 
 #Found most of this bash script snippet on http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
@@ -55,6 +56,7 @@ echo "[Done]"
 
 [ -f $PML ] && echo "[Found $PML, skipping recompile]" || { echo "[Compiling peos]"; cd $ORIGIN && bash peos.sh;}
 
+[ -f $TRAVERSE ] && echo "[Found $TRAVERSE, skipping recompile]" || { echo "[Compiling peos]"; cd $ORIGIN && bash peos.sh;}
 # Post install checks
 echo "[Running post install checks]"
 bash install_check.sh
