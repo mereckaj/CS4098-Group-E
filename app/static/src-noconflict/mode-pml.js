@@ -61,23 +61,23 @@ var c_cppHighlightRules = function() {
 
 
     var keywordControls = (
-        "process"
+        "process|agent|action"
     );
     
     var storageType = (
-        "iteration|sequence|branch|action"
+        "iteration"
     );
 
     var storageModifiers = (
-        "==|!=|<|>|<=|>=|manual|executable"
+        "op"
     );
 
     var keywordOperators = (
-        "provides|requires|tool|agent|script"
+        "provides|requires"
     );
 
     var builtinConstants = (
-        "|| | &&"
+        "value"
     );
 
     var keywordMapper = this.$keywords = this.createKeywordMapper({

@@ -50,16 +50,13 @@ def index():
 		code = request.form["code"]
 		# Run the code through the pmlheck tool and get the result
 		result = pmlchecker(code)
-		return jsonify({'data':result})
+		return render_template("pmlcheck_result.html")
 
 @main.route("/dot",methods=["POST"])
 def dot():
 	code = request.get_data()
-	filename,result = pml_to_dot(code)
-	return jsonify({
-		"data":result,
-		"filename":filename
-	})
+	result = pml_to_dot(code)
+	return result
 
 # Url to go to if you want to log in through facebook, it basically
 # calls the facebook url for loging in, on return it will redirect to

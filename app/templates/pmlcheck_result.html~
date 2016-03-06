@@ -15,7 +15,7 @@
 <p id = 'test'>line</p>
 <script>
 	var x = document.getElementById("test").innterHTML;
-	document.write('line');
+	document.write(line);
 </script>
 {% endfor %}
 

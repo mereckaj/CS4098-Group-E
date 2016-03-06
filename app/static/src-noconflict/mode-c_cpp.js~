@@ -61,11 +61,11 @@ var c_cppHighlightRules = function() {
 
 
     var keywordControls = (
-        "process"
+        "process|action|sequence"
     );
     
     var storageType = (
-        "iteration|sequence|branch|action"
+        "iteration|sequence|branch"
     );
 
     var storageModifiers = (
