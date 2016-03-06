@@ -7,27 +7,29 @@ PML is a simple programming language for describing a work flow or process that 
 Features
 --------
 1. Editor
-2. Syntax Analysis 
+2. Syntax Analysis
 3. Authentication 3rd party (Facebook and Google)
 4. Authentication (without SSL)
 5. Syntax highlights
-6. Code keyword completion 
+6. Code keyword completion
 7. Resource name completion
 8. Added key binds emulation (vim,emcas)
 9. Persistent storage of user preferences (Key binds, font size etc.)
 10. File saving & deletion
 11. File uploading
+12. Resource Flow
+12. Flow graphs
 
 Known Issues
 ------------
-1. Emacs auto complete does not work 
+1. Emacs auto complete does not work
 2. Vim autocompelte works with Ctrl-space in insert mode (Not Ctrl-P/Ctrl-N as the keybinds file suggests)
 
 
 Dependencies
 ------------
 
-* [PEOS](https://github.com/jnoll/peos) (PML syntax checker)
+* [PEOS](https://github.com/jnoll/peos) (PML syntax checker and converter to DOT)
 
 Install
 -------

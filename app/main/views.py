@@ -55,8 +55,11 @@ def index():
 @main.route("/dot",methods=["POST"])
 def dot():
 	code = request.get_data()
-	result = pml_to_dot(code)
-	return result
+	filename,result = pml_to_dot(code)
+	return jsonify({
+		"data":result,
+		"filename":filename
+	})
 
 # Url to go to if you want to log in through facebook, it basically
 # calls the facebook url for loging in, on return it will redirect to

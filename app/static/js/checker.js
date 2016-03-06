@@ -1,7 +1,7 @@
 "use strict"
-function convertPmlToDot(data){
-    if(!data){
-        var data = editor.session.doc.getValue
+function convertPmlToDot(data,convertSuccess){
+    if(data===""){
+        var data = editor.session.doc.getValue();
     }
     sendDataToServer("POST","/dot",data,convertSuccess,convertFailure);
 }
@@ -9,8 +9,9 @@ function convertSuccess(data){
     return data
 }
 function convertFailure(data){
-    console.log("Error");
-    console.log(data);
+	console.log("Error");
+	console.log(data);
+	return "undefined";
 }
 /*
 	Put some data to the server, use callbacks so that user never sees any
@@ -20,7 +21,7 @@ function sendDataToServer(method,path,dataToSend,success,failure){
 	$.ajax({
 		type: method,
 		url: path,
-        data: dataToSend,
+		data: dataToSend,
 		success : success,
 		error : failure
 	});

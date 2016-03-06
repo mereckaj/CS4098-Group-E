@@ -5,9 +5,11 @@
 {% block head %}
 	{{ super() }}
 	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
+	<link href="{{url_for('static', filename='css/vis.css')}}" rel="stylesheet">
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 	<script src="{{url_for('static', filename='js/checker.js')}}"></script>
-	<script src="{{url_for('static', filename='js/graphlib-dot.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/vis.js')}}"></script>
+	<script src="{{url_for('static', filename='js/underscore.js')}}"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ace.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ext-language_tools.js')}}"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -26,7 +28,7 @@
 					<!-- Editor -->
 					<div id="editor"></div>
 						<div class="pull-left">
-							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Submit</button>
+							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Analyze</button>
 							<form action="upload" method="post" enctype="multipart/form-data" id="send">
 							<button type="submit" class="btn btn-primary" style="display: none;"></button>
 								<input type="file" name="file" id ="file" style="display: none;">
@@ -42,9 +44,7 @@
 							</form>
 						</div>
 				</div>
-				<body >
-					<input name="fileNames[]" id = "fileNames" type="hidden" value = "{{session['lst']}}"/>
-				</body>
+				<input name="fileNames[]" id = "fileNames" type="hidden" value = "{{session['lst']}}"/>
 				<!-- Leave this here, editor has to be loaded before the script is. -->
 				<script src="{{url_for('static', filename='js/ace.js')}}"></script>
 			</div>
@@ -58,4 +58,5 @@
 			</div>
 		</div>
 	</div>
+	<div id="visualization" class="graphics"></div>
 {% endblock %}
