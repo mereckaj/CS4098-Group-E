@@ -26,10 +26,11 @@ Known Issues
 2. Vim autocompelte works with Ctrl-space in insert mode (Not Ctrl-P/Ctrl-N as the keybinds file suggests)
 
 
-Dependencies
-------------
+External Dependencies
+---------------------
 
 * [PEOS](https://github.com/jnoll/peos) (PML syntax checker and converter to DOT)
+* [vis.js](https://github.com/almende/vis/) (DOT parser and graph visualizer)
 
 Install
 -------
