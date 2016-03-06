@@ -9,7 +9,6 @@
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 	<script src="{{url_for('static', filename='js/checker.js')}}"></script>
 	<script src="{{url_for('static', filename='js/vis.js')}}"></script>
-	<script src="{{url_for('static', filename='js/underscore.js')}}"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ace.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ext-language_tools.js')}}"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -24,7 +23,6 @@
 					<h1 class ="panel-title">PML Code Checker</h1>
 				</div>
 				<div id="panel-body">
-
 					<!-- Editor -->
 					<div id="editor"></div>
 						<div class="pull-left">
@@ -57,6 +55,23 @@
 				<div id="result"></div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h1 class ="panel-title">Visualization</h1>
+				</div>
+				<div id="panel-body">
+					<div class="alert alert-info" role="alert">
+						<ul>
+							<li>You can use your mouse to navigate the graph</li>
+							<li>Mouse wheel up/down to zoom in/out</li>
+							<li>Click + drag to move graph around</li>
+							<li>Click on a node + drag to move nodes around</li>
+						</ul>
+					</div>
+					<div id="visualization" class="graphics"></div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div id="visualization" class="graphics"></div>
 {% endblock %}
