@@ -73,33 +73,28 @@ function submitData(path){
 		url: path,
 		data: { code: data},
 		success: function(d){
-
-
+			/*
+				Code to show the errors and warnings inside the editor
+			*/
 			var errorRows = []
 			var errorMessages = []
-			console.log(d.data);
-			for (var i = 0; i < d.data.length-1; i++) { 
-	      
+			for (var i = 0; i < d.data.length-1; i++) {
 				var colonSplit = d.data[i].split(':');
 				var rowNumber = parseInt(colonSplit[1]);
 				errorRows.push(rowNumber-1);
 				var errorMessage = colonSplit[2].toString();
-
 				errorMessages.push(errorMessage);
 			}
-
 			var annotations = []
 			for(var i = 0; i < errorRows.length;i++){
-
-				    annotations.push({ 
-       			           row: errorRows[i], 
-       			           column: 2, 
-        			   text: errorMessages[i], 
-        		           type: "error" 
-               			});
-
+				annotations.push({
+					row: errorRows[i],
+					column: 2,
+					text: errorMessages[i],
+					type: "error"
+				});
 			}
- 			editor.session.setAnnotations(annotations); 
+			editor.session.setAnnotations(annotations);
 		}
 	});
 }
