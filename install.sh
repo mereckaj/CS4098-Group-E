@@ -3,7 +3,13 @@
 ORIGIN=$(pwd)
 PML=pmlcheck
 TRAVERSE=traverse
+DB=*.sqlite
 echo "Install"
+
+# Check if a db exists, if it does remove it
+echo -n "[Checking if a database already exists]"
+[ -f $DB ] && rm $DB && echo -n "[Removed]"
+echo "[OK]"
 
 #Found most of this bash script snippet on http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
 #mainly used the answer by Urhixidur.
@@ -47,7 +53,7 @@ echo "[Done]"
 
 # Install dependancies
 echo -n "[Installing dependancies]"
-sudo apt-get install --force-yes --yes libssl-dev libffi-dev python3.4-dev >> install.log 
+sudo apt-get install --force-yes --yes libssl-dev libffi-dev python3.4-dev >> install.log
 echo "[Done]"
 
 echo -n "[Installing from requirements.txt]"
