@@ -1,14 +1,19 @@
 import subprocess, hashlib, os
-def pmlchecker(code):
+def pmlchecker(code,options):
 	# Create a somewhat unique name for the temp file
 	filename = storeInFile(code)
 
+	# Run the code through the checker and get the output, in case options have
+	# been passed in then use them.
 	try:
-		# Run the code through the checker and get the output
-		output = subprocess.check_output(["./pmlcheck",filename],stderr=subprocess.STDOUT)
+		if options is None:
+			output = subprocess.check_output(["./pmlcheck",filename],
+				stderr=subprocess.STDOUT)
+		else:
+			output = subprocess.check_output(["./pmlcheck"] + options +
+				[filename],stderr=subprocess.STDOUT)
 	except subprocess.CalledProcessError as e:
 		output = e.output
-
 	#convert output into a string
 	output = output.decode("utf-8")
 

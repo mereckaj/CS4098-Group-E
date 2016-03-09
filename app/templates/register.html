@@ -18,7 +18,7 @@
 					{% if error %}
 						{% for line in error %}
 							<div class="alert alert-danger" role="alert">{{ line }}</div>
-						{% endfor %}						
+						{% endfor %}
 						<button type="submit" class="btn" id="back"
 							onclick="window.location.href='{{url_for('main.register')}}'">Back
 						</button>
@@ -35,8 +35,11 @@
 								<li>Must have <b>1</b> digit</li>
 							</ul>
 						</div>
-						<div class="alert alert-danger" role="alert">No HTTPS support (Passwords are sent in plaintext)<br>
-						<b> Please don't use a password you don't want people to know about<b></div>
+						<div class="alert alert-danger" role="alert">
+							No HTTPS support (Passwords are sent in plaintext)
+							<br>
+							<b> Please don't use a password you don't want people to know about<b>
+						</div>
 						{{ wtf.quick_form(form,id=id) }}
 					{% endif %}
 				</div>

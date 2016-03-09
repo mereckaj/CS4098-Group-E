@@ -49,9 +49,8 @@ def index():
 		# Extract the code from the POST request
 		code = request.form["code"]
 		# Run the code through the pmlheck tool and get the result
-		result = pmlchecker(code)
+		result = pmlchecker(code,None)
 		return jsonify({'data':result})
-
 @main.route("/dot",methods=["POST"])
 def dot():
 	code = request.get_data()
@@ -60,6 +59,46 @@ def dot():
 		"data":result,
 		"filename":filename
 	})
+
+# Run a full pmlcheck on the code sent in
+@main.route("/pml/full",methods=["POST"])
+def pml_full_check():
+	return pmlchecker(request.get_data(),None)
+
+# provides resource never required
+@main.route("/pml/resource/pnr",methods=["POST"])
+def resource_provides_never_required():
+	return pmlchecker(request.get_data(),["-p"])
+
+# requires resource that is never provided
+@main.route("/pml/resource/rnp",methods=["POST"])
+def resource_requires_never_provided():
+	return pmlchecker(request.get_data(),["-r"])
+
+# action neither requires nor provides resources
+@main.route("/pml/action/empty",methods=["POST"])
+def action_empty():
+	return pmlchecker(request.get_data(),["-e"])
+
+#  action provides but does not require resources
+@main.route("/pml/action/miracle",methods=["POST"])
+def action_miracle():
+	return pmlchecker(request.get_data(),["-m"])
+
+# action requires but does not provide resources
+@main.route("/pml/action/blackhole",methods=["POST"])
+def action_blackhole():
+	return pmlchecker(request.get_data(),["-b"])
+
+# action provides different resources than required
+@main.route("/pml/action/transformation",methods=["POST"])
+def action_transformation():
+	return pmlchecker(request.get_data(),["-t"])
+
+# expression check
+@main.route("/pml/expression/check",methods=["POST"])
+def expression_check():
+	return pmlchecker(request.get_data(),["-x"])
 
 # Url to go to if you want to log in through facebook, it basically
 # calls the facebook url for loging in, on return it will redirect to
