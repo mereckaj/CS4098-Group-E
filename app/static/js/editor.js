@@ -17,7 +17,8 @@ window.onload =function() {
 		var strUser = $(this).text();
 		var number = strUser.replace( /^\D+/g, ''); // get project number
 		var path = /uploads/ + number;
-		jQuery.get('http://localhost:8000' + path, function(data) {
+    		document.getElementById('title').innerHTML = "Project " + number;
+		jQuery.get(path, function(data) {
 			editor.session.doc.setValue(data);
 		});
 
@@ -28,8 +29,8 @@ window.onload =function() {
 		var strUser = $(this).text();
 		var number = strUser.replace( /^\D+/g, '');	// get project number
 		var path = /delete_item/ + number;
-		jQuery.post('http://localhost:8000' + path);
-		refresh()
+		jQuery.post(path);
+		refresh();
 	});
 
 	// Get file names and display in both dropdown menus
@@ -56,7 +57,7 @@ function setupUpload(){
 					url: "/newFile"
 				});
 				editor.session.doc.setValue(reader.result);
-				navbar_file_save()
+				navbar_file_save();
 			}
 			reader.readAsText(file);
 		}
@@ -228,7 +229,7 @@ function getSetting(key,success,failure){
 function navbar_file_new_file(path){
 	$.ajax({
 		type: "POST",
-		url: path
+		url: "/newFile"
 	});
 	refresh();
 }

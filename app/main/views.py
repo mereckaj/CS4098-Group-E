@@ -169,6 +169,7 @@ def delete_item(fileNum):
 
 @main.route("/refresh", methods=["POST"])
 def refresh():
+	fileExist()
 	session["changed"] = False
 	return redirect(url_for("main.index"))
 
