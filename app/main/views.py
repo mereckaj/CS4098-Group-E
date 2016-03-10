@@ -54,8 +54,9 @@ def index():
 @main.route("/dot",methods=["POST"])
 def dot():
 	code = request.get_data()
-	filename,result = pml_to_dot(code)
+	filename,result,success = pml_to_dot(code)
 	return jsonify({
+		"success" : success,
 		"data":result,
 		"filename":filename
 	})

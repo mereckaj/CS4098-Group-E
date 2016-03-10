@@ -21,4 +21,5 @@ editor.setOptions({
 	enableBasicAutocompletion: true,
 	enableSnippets: true,
 	enableLiveAutocompletion: false
+	// maxLines: editor.session.getLength()
 });

@@ -16,12 +16,13 @@ class RegisterForm(Form):
 	])
 	password = PasswordField('Password', validators=[
 		Required(),
-		EqualTo("confirm", message="Passwords must match")
+		EqualTo("confirm", message="Passwords must match"),
 		Length(min=8,max=64,
-			message="Password must be between 8 and 64 characters long"),
+			message="Password must be between 8 and 64 characters long")
 		# Regexp("(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$",
 		# 	message="Password is too weak, make sure it meets all of the required conditions")
 	])
+	test = TextField("test")
 	confirm = PasswordField('Repeat Password')
 	email = StringField('Email Address', validators=[
 		Length(min=6, max=64,

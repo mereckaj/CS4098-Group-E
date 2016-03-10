@@ -26,23 +26,20 @@
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" href="/">
-					Welcome 
+					Welcome
 				{% if session.username %}
 					{{session.username}}
 				{% else %}
 					{{session.email}}
 				{% endif %}
 				</a>
-			</div>	
+			</div>
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				{% block membernav %}
 				{% endblock %}
 			</div>
 		</div>
 	</nav>
-
-<div class="container">
 	{% block content %}
 	{% endblock %}
-</div>
 {% endblock %}

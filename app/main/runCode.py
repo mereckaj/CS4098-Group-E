@@ -56,8 +56,10 @@ def pml_to_dot(code):
 	try:
 		# Run the code through the checker and get the output
 		output = subprocess.check_output(["./traverse","-l",filename],stderr=subprocess.STDOUT)
+		success = True
 	except subprocess.CalledProcessError as e:
 		output = e.output
+		success = False
 
 	#convert output into a string
 	output = output.decode("utf-8")
@@ -66,4 +68,4 @@ def pml_to_dot(code):
 	os.remove(filename)
 
 	# Return the filename and output as a tupple
-	return (filename, output)
+	return (filename, output,success)

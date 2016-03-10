@@ -16,13 +16,12 @@
 
 {% block content %}
 	{{super()}}
-	<!-- <div class="row"> -->
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h1 class ="panel-title">PML Code Checker</h1>
 				</div>
-				<div id="panel-body">
+				<div id="panel-body" class="fullheight">
 					<!-- Editor -->
 					<div id="editor"></div>
 						<div class="pull-right">
@@ -53,15 +52,15 @@
 					<h1 class ="panel-title">Visualization</h1>
 				</div>
 				<div id="panel-body">
-					<div class="alert alert-info" role="alert">
+					<!-- <div class="alert alert-info" role="alert">
 						<ul>
 							<li>You can use your mouse to navigate the graph</li>
 							<li>Mouse wheel up/down to zoom in/out</li>
 							<li>Click + drag to move graph around</li>
 							<li>Click on a node + drag to move nodes around</li>
 						</ul>
-					</div>
-					<div id="visualization" class="graphics" style="border:1px solid black;"></div>
+					</div> -->
+					<div id="visualization" class="graphics"></div>
 				</div>
 			</div>
 		</div>

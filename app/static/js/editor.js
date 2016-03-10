@@ -290,6 +290,11 @@ function processDot(data){
 		data was.
 	*/
 	var filename = data.filename;
+	var success = data.success;
+	if (success != true){
+		alert("An error occured when creating the visualization, please check" +
+			"that there are no syntax mistakes.");
+	}
 	data = data.data;
 	/*
 		rename all of the r: and p: with requires and provides
@@ -319,14 +324,20 @@ function processDot(data){
 	var options = parsedData.options;
 
 	options = {
+		manipulation: false,
 		width : "100%",
 		height : "100%",
 		physics :  {
+			hierarchicalRepulsion: {
+				nodeDistance: 300
+			},
 			enabled : false
 		},
 		layout : {
-			randomSeed:1,
+			improvedLayout : true,
 			hierarchical: {
+				enabled: true,
+				levelSeparation: 100,
 				direction: "UD",
 				sortMethod: "directed"
 			}
