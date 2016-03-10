@@ -22,7 +22,6 @@ class RegisterForm(Form):
 		# Regexp("(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$",
 		# 	message="Password is too weak, make sure it meets all of the required conditions")
 	])
-	test = TextField("test")
 	confirm = PasswordField('Repeat Password')
 	email = StringField('Email Address', validators=[
 		Length(min=6, max=64,
