@@ -91,6 +91,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     * An area to add your code into.
   * <b>Usage: </b>
     1. Look at the left side of the screen after logging in.
+
 <a name="f2"></a>
 2. Syntax Analysis
   * <b>Description: </b>
@@ -98,6 +99,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
   * <b>Usage: </b>
     1. Type your PML into the editor.
     2. Click the <b>Analyze</b> button below the editor.
+
 <a name="f3"></a>
 3. Authentication 3rd party (Facebook and Google)
   * <b>Description: </b>
@@ -106,6 +108,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     1. Go to main menu.
     2. Click on either the <b>Facebook Login</b> or <b>Google Login</b>
       * If no account is associated with your Facebook/Google accounts it will be created and you will be logged in. If an account is already associated with that email address you will be logged in.
+
 <a name="f4"></a>
 4. Authentication (without SSL)
   * <b>Description: </b>
@@ -115,6 +118,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     2. Click <b>Register</b>.
     3. Enter your details.
     4. Click <b>Register</b>.
+
 <a name="f5"></a>
 5. Syntax highlights
   * <b>Description: </b>
@@ -122,6 +126,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
   * <b>Usage: </b>
     1. Enter some PML code into the editor.
     2. Observe the beautiful highlighting of keywords (process, requires, provides etc.)
+
 <a name="f6"></a>
 6. Code keyword completion
   * <b>Description: </b>
@@ -130,6 +135,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
   * <b>Usage: </b>
     1. Type in the first letter of any keyword (e.g. p for process)
     2. Click <b>CTRL + Space</b> to display a menu in which you will be able select one of the possible keywords.
+
 <a name="f7"></a>
 7. Resource name completion
   * <b>Description: </b>
@@ -138,6 +144,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
   * <b>Usage: </b>
     1. Type in the first letter of any resource that has already been defined
     2. Click <b>CTRL + Space</b> to display a menu in which you will be able select one of the possible resource names.
+
 <a name="f8"></a>
 8. Key-bind emulation (vim,emcas)
   * <b>Description: </b>
@@ -146,6 +153,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     1. Login
     2. Click on <b>Settings</b> drop-down menu in the navigation bar.
     3. Select the key-binds you prefer.
+
 <a name="f9"></a>
 9. Persistent storage of user preferences (Key binds, font size etc.)
   * <b>Description: </b>
@@ -155,6 +163,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     2. Change key-binds/font size
     3. Logout and Log back in
     4. Observe that settings still remain.
+
 <a name="f10"></a>
 10. File saving and deletion
   * <b>Description: </b>
@@ -168,6 +177,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     1. Login
     2. Click <b>File</b> -> <b>Delete Project</b>
     3. Select a file to delete
+
 <a name="f11"></a>
 11. File uploading
   * <b>Description: </b>
@@ -177,6 +187,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     2. Click <b>File</b> -> <b>Open File</b>
     3. Select your local file
     4. It is now added as a new project
+
 <a name="f12"></a>
 12. Resource Flow
   * <b>Description: </b>
@@ -186,6 +197,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     2. Enter some PML into the editor
     3. Click <b>Visualize</b> in the navigation bar
     4. Click <b>Standard Flow Graph</b>
+
 <a name="f13"></a>
 13. Flow graphs
   * <b>Description: </b>
@@ -195,6 +207,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     2. Enter some PML into the editor
     3. Click <b>Visualize</b> in the navigation bar
     4. Click <b>Standard Flow Graph</b>
+
 <a name="f14"></a>
 14. Analysis Coloured Actions
   * <b>Description: </b>
