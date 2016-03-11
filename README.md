@@ -26,6 +26,7 @@
 	14. [Analysis Coloured Actions](#f14)
 9. [Members](#members)
 
+
 <a name="about"></a>
 ## About
 ### Web-based IDE for PML.
@@ -79,7 +80,9 @@ To reset the project to what it was like after cloning (Basically to undo what i
 
 * [PEOS](https://github.com/jnoll/peos) (PML syntax checker and converter to DOT)
 * [vis.js](https://github.com/almende/vis/) (DOT parser and graph visualizer)
+
 <a name="features"></a>
+
 ## Features
 
 <a name="f1"></a>
@@ -217,6 +220,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
 		5. Look at the legend
 
 <a name="members"></a>
+
 ## Members
  * Julius Mereckas
  * Ben Clear
