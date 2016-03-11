@@ -64,42 +64,42 @@ def dot():
 # Run a full pmlcheck on the code sent in
 @main.route("/pml/full",methods=["POST"])
 def pml_full_check():
-	return pmlchecker(request.get_data(),None)
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),None)})
 
 # provides resource never required
 @main.route("/pml/resource/pnr",methods=["POST"])
 def resource_provides_never_required():
-	return pmlchecker(request.get_data(),["-p"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-p"])})
 
 # requires resource that is never provided
 @main.route("/pml/resource/rnp",methods=["POST"])
 def resource_requires_never_provided():
-	return pmlchecker(request.get_data(),["-r"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-r"])})
 
 # action neither requires nor provides resources
 @main.route("/pml/action/empty",methods=["POST"])
 def action_empty():
-	return pmlchecker(request.get_data(),["-e"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-e"])})
 
 #  action provides but does not require resources
 @main.route("/pml/action/miracle",methods=["POST"])
 def action_miracle():
-	return pmlchecker(request.get_data(),["-m"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-m"])})
 
 # action requires but does not provide resources
 @main.route("/pml/action/blackhole",methods=["POST"])
 def action_blackhole():
-	return pmlchecker(request.get_data(),["-b"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-b"])})
 
 # action provides different resources than required
 @main.route("/pml/action/transformation",methods=["POST"])
 def action_transformation():
-	return pmlchecker(request.get_data(),["-t"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-t"])})
 
 # expression check
 @main.route("/pml/expression/check",methods=["POST"])
 def expression_check():
-	return pmlchecker(request.get_data(),["-x"])
+	return jsonify({ "data" : pmlchecker(request.get_data().decode('utf-8'),["-x"])})
 
 # Url to go to if you want to log in through facebook, it basically
 # calls the facebook url for loging in, on return it will redirect to

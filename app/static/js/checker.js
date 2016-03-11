@@ -9,7 +9,7 @@ function convertPmlToDot(data,convertSuccess,convertFailure){
 	Put some data to the server, use callbacks so that user never sees any
     delay. Callback is where the result will be gotten from too.
 */
-function sendDataToServer(method,path,dataToSend,success,failure){
+function sendDataToServer(method,path,dataToSend,success,failure,async){
 	$.ajax({
 		type: method,
 		url: path,

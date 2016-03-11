@@ -1,4 +1,4 @@
-import subprocess, hashlib, os
+import subprocess, hashlib, os, time
 def pmlchecker(code,options):
 	# Create a somewhat unique name for the temp file
 	filename = storeInFile(code)
@@ -30,8 +30,11 @@ def storeInFile(code):
 	storeInNamedFile(code,filehash)
 	return "tmp/" + filehash
 
+# Get hash of the content of the file + current unix time stamp to get a random
+# filename that wont colide
 def getFileName(code):
-	return hashlib.md5(code.encode('utf-8')).hexdigest()
+	return hashlib.md5(code.encode('utf-8')
+		+str(time.time()).encode("utf-8")).hexdigest()
 
 def storeInNamedFile(code,filename):
 

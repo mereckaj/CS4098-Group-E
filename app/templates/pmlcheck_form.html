@@ -7,8 +7,18 @@
 	<link href="{{url_for('static', filename='css/editor.css')}}" rel="stylesheet">
 	<script src="{{url_for('static', filename='js/editor.js')}}"></script>
 	<script src="{{url_for('static', filename='js/checker.js')}}"></script>
+
 	<script src="{{url_for('static', filename='js/vis.js')}}"></script>
 	<link href="{{url_for('static', filename='css/vis.css')}}" rel="stylesheet">
+
+	<!-- <script src="{{url_for('static', filename='js/graphlib-dot.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/dagre-d3.min.js')}}"></script>
+	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+	<script src="http://cpettitt.github.io/project/graphlib-dot/v0.4.10/graphlib-dot.min.js"></script>
+	<script src="http://cpettitt.github.io/project/dagre-d3/v0.1.5/dagre-d3.min.js"></script> -->
+	<!-- <link href="{{url_for('static', filename='css/svg.css')}}" rel="stylesheet"> -->
+
 	<script src="{{url_for('static', filename='src-noconflict/ace.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{url_for('static', filename='src-noconflict/ext-language_tools.js')}}"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -52,14 +62,6 @@
 					<h1 class ="panel-title">Visualization</h1>
 				</div>
 				<div id="panel-body">
-					<!-- <div class="alert alert-info" role="alert">
-						<ul>
-							<li>You can use your mouse to navigate the graph</li>
-							<li>Mouse wheel up/down to zoom in/out</li>
-							<li>Click + drag to move graph around</li>
-							<li>Click on a node + drag to move nodes around</li>
-						</ul>
-					</div> -->
 					<div id="visualization" class="graphics"></div>
 				</div>
 			</div>

@@ -1,4 +1,8 @@
 "use strict"; // Prevent javascript from doing stupid shit.
+var network;
+var container;
+var graphData;
+var options;
 /*
 	Tell the program what to do when the page loads which is
 	basically initialization
@@ -314,6 +318,7 @@ function processDot(data){
 		nodes: parsedData.nodes,
 		edges: parsedData.edges
 	}
+
 	data.nodes = removeFileName(data.nodes,filename);
 	data.edges = fixEdges(data.edges);
 	/*
@@ -360,9 +365,12 @@ function processDot(data){
 	}
 
 	data = changeColourOfProvidesAndRequires(data);
-	data = removeRequiresProvidesFromLabels(data);
+
 	// create a network and display it
-	var network = new vis.Network(container, data, options);
+	// var network = new vis.Network(container, data, options);
+	setGraphOptions(container,data,options);
+	createGraph();
+	analysisColouredActions();
 }
 /*
 	Rename taillabel to label as it seems vis can't deal with
@@ -371,7 +379,24 @@ function processDot(data){
 function fixEdges(edges) {
 	for(var i = 0; i < edges.length;i++){
 		if("taillabel" in edges[i]){
-			edges[i].renameProperty("taillabel","label");
+			if("label" in edges[i]){
+				edges[i].label = edges[i].taillabel + "\n" +
+					edges[i].label;
+			}else{
+				edges[i].renameProperty("taillabel","label");
+			}
+		}
+	}
+	for(var i = 0; i < edges.length;i++){
+		if("label" in edges[i]){
+			if(contains(edges[i].label,"requires:[]")){
+				edges[i].label = edges[i].label.replace("requires:[]","");
+				console.log("renamed req");
+			}
+			if(contains(edges[i].label,"provides:[]")){
+				edges[i].label = edges[i].label.replace("provides:[]","");
+				console.log("renamed prov");
+			}
 		}
 	}
 	return edges;
@@ -401,7 +426,11 @@ function changeColourOfProvidesAndRequires(data) {
 	for(var i = 0; i < edges.length; i++){
 		if("label" in edges[i]){
 			if(contains(edges[i].label,"requires")){
-				edges[i].font.color = "#E0683D";
+				if(contains(edges[i].label,"provides")){
+					edges[i].font.color = "black";
+				}else{
+					edges[i].font.color = "#E0683D";
+				}
 			}else if(contains(edges[i].label,"provides")){
 				edges[i].font.color = "#64E03D";
 			}
@@ -417,28 +446,6 @@ function changeColourOfProvidesAndRequires(data) {
 */
 function contains(string,value) {
 	return string.indexOf(value)>-1;
-}
-/*
-	Remove require and provides from the graph
-*/
-function removeRequiresProvidesFromLabels(data) {
-	var nodes = data.nodes;
-	var edges = data.edges;
-	var prov;
-	for(var i = 0; i < edges.length; i++){
-		if("label" in edges[i]){
-			if(contains(edges[i].label,"provides") ||
-				contains(edges[i].label,"requires")){
-				// Set the label to whatever it was after :
-				edges[i].label = edges[i].label.substring(
-					edges[i].label.indexOf(":")+1);
-			}
-		}
-	}
-	return {
-		nodes : nodes,
-		edges : edges
-	}
 }
 /*
 	Rename any property of an object to some different one but keep the value
@@ -467,3 +474,97 @@ Object.defineProperty(
 		}
 	}
 );
+/*
+	Get data about miracles/blackholes and 	transformers and colour them
+	in different colours
+*/
+function analysisColouredActions(){
+	sendDataToServer(
+		"POST",
+		"/pml/action/transformation",
+		editor.session.doc.getValue(),
+		transformationHighlightSuccess,
+		highlightFail
+	);
+	sendDataToServer(
+		"POST",
+		"/pml/action/miracle",
+		editor.session.doc.getValue()
+		,miracleHighlightSuccess,
+		highlightFail
+	);
+	sendDataToServer(
+		"POST",
+		"/pml/action/blackhole",
+		editor.session.doc.getValue(),
+		blackholeHighlightSuccess,
+		highlightFail
+	);
+}
+function miracleHighlightSuccess(data) {
+	highlightNodes(data,"MIRACLE");
+}
+function blackholeHighlightSuccess(data) {
+	highlightNodes(data,"BLACKHOLE");
+}
+function transformationHighlightSuccess(data) {
+	highlightNodes(data,"TRANSFORM");
+}
+function highlightNodes(data,type){
+	// createGraph(args[0],args[1],args[2]);
+	var array = data.data;
+	switch (type) {
+		case "MIRACLE":
+			for (var line in array){
+				if(array[line]!=""){
+					var actionName = getActionName(array[line]);
+					highlightNode(actionName,"#A11CED");
+				}
+			}
+			break;
+		case "BLACKHOLE":
+			for (var line in array){
+				if(array[line]!=""){
+					var actionName = getActionName(array[line]);
+					highlightNode(actionName,"#ED391C");
+				}
+			}
+			break;
+		case "TRANSFORM":
+			for (var line in array){
+				if(array[line]!=""){
+					var actionName = getActionName(array[line]);
+					highlightNode(actionName,"#1CD0ED");
+				}
+			}
+			break;
+	}
+	// Redraw the graph with new settings
+	createGraph();
+}
+function highlightFail(data) {
+	alert("Error when performing highlights");
+	console.log(data);
+}
+function getActionName(str) {
+	return str.split("action")[1].split("'")[1];
+}
+function createGraph() {
+	var network = new vis.Network(container,graphData,options);
+}
+function highlightNode(nodeName,nodeColour) {
+	for(var nodes in graphData.nodes){
+		if(equal(graphData.nodes[nodes].label,nodeName)){
+			var obj = graphData.nodes[nodes];
+			graphData.nodes[nodes].color = nodeColour;
+		}
+	}
+}
+function equal(str1,str2){
+	return str1===str2;
+}
+function setGraphOptions(cont,data,opts) {
+	container = cont;
+	graphData = data;
+	options = opts;
+}
