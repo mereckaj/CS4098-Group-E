@@ -87,140 +87,126 @@ To reset the project to what it was like after cloning (Basically to undo what i
 
 <a name="f1"></a>
 1. Editor
-	* <b>Description: </b>
-		* An area to add your code into.
-	* <b>Usage: </b>
-		1. Look at the left side of the screen after logging in.
-
+  * <b>Description: </b>
+    * An area to add your code into.
+  * <b>Usage: </b>
+    1. Look at the left side of the screen after logging in.
 <a name="f2"></a>
 2. Syntax Analysis
-	* <b>Description: </b>
-		* On click ofa button the PML syntax is evaluated and any warnings/errors are shown.
-	* <b>Usage: </b>
-		1. Type your PML into the editor.
-		2. Click the <b>Analyze</b> button below the editor.
-
+  * <b>Description: </b>
+    * On click ofa button the PML syntax is evaluated and any warnings/errors are shown.
+  * <b>Usage: </b>
+    1. Type your PML into the editor.
+    2. Click the <b>Analyze</b> button below the editor.
 <a name="f3"></a>
 3. Authentication 3rd party (Facebook and Google)
-	* <b>Description: </b>
-		* Allow users to register using Facebook and Google accounts.
-	* <b>Usage: </b>
-		1. Go to main menu.
-		2. Click on either the <b>Facebook Login</b> or <b>Google Login</b>
-			* If no account is associated with your Facebook/Google accounts it will be created and you will be logged in. If an account is already associated with that email address you will be logged in.
-
+  * <b>Description: </b>
+    * Allow users to register using Facebook and Google accounts.
+  * <b>Usage: </b>
+    1. Go to main menu.
+    2. Click on either the <b>Facebook Login</b> or <b>Google Login</b>
+      * If no account is associated with your Facebook/Google accounts it will be created and you will be logged in. If an account is already associated with that email address you will be logged in.
 <a name="f4"></a>
 4. Authentication (without SSL)
-	* <b>Description: </b>
-		* Allow users to register their own accounts and login using email + password combinations.
-	* <b>Usage:</b>
-		1. Go to main menu
-		2. Click <b>Register</b>.
-		3. Enter your details.
-		4. Click <b>Register</b>.
-
+  * <b>Description: </b>
+    * Allow users to register their own accounts and login using email + password combinations.
+  * <b>Usage:</b>
+    1. Go to main menu
+    2. Click <b>Register</b>.
+    3. Enter your details.
+    4. Click <b>Register</b>.
 <a name="f5"></a>
 5. Syntax highlights
-	* <b>Description: </b>
-		* PML keywords are highlighted in the editor.
-	* <b>Usage: </b>
-		1. Enter some PML code into the editor.
-		2. Observe the beautiful highlighting of keywords (process, requires, provides etc.)
-
+  * <b>Description: </b>
+    * PML keywords are highlighted in the editor.
+  * <b>Usage: </b>
+    1. Enter some PML code into the editor.
+    2. Observe the beautiful highlighting of keywords (process, requires, provides etc.)
 <a name="f6"></a>
 6. Code keyword completion
-	* <b>Description: </b>
-		* When using <b>default</b> key-binds keywords can be auto-completed using <b>CTRL + Space</b>
-		* [There are some known issues with this feature](#issues)
-	* <b>Usage: </b>
-		1. Type in the first letter of any keyword (e.g. p for process)
-		2. Click <b>CTRL + Space</b> to display a menu in which you will be able select one of the possible keywords.
-
+  * <b>Description: </b>
+    * When using <b>default</b> key-binds keywords can be auto-completed using <b>CTRL + Space</b>
+    * [There are some known issues with this feature](#issues)
+  * <b>Usage: </b>
+    1. Type in the first letter of any keyword (e.g. p for process)
+    2. Click <b>CTRL + Space</b> to display a menu in which you will be able select one of the possible keywords.
 <a name="f7"></a>
 7. Resource name completion
-	* <b>Description: </b>
-		* When using <b>default</b> key-binds resource names can be auto-completed using <b>CTRL + Space</b>
-		* [There are some known issues with this feature](#issues)
-	* <b>Usage: </b>
-		1. Type in the first letter of any resource that has already been defined
-		2. Click <b>CTRL + Space</b> to display a menu in which you will be able select one of the possible resource names.
-
+  * <b>Description: </b>
+    * When using <b>default</b> key-binds resource names can be auto-completed using <b>CTRL + Space</b>
+    * [There are some known issues with this feature](#issues)
+  * <b>Usage: </b>
+    1. Type in the first letter of any resource that has already been defined
+    2. Click <b>CTRL + Space</b> to display a menu in which you will be able select one of the possible resource names.
 <a name="f8"></a>
 8. Key-bind emulation (vim,emcas)
-	* <b>Description: </b>
-		* Allows changing between Vim, Emacs and default ACE key-binds.
-	* <b>Usage: </b>
-		1. Login
-		2. Click on <b>Settings</b> drop-down menu in the navigation bar.
-		3. Select the key-binds you prefer.
-
+  * <b>Description: </b>
+    * Allows changing between Vim, Emacs and default ACE key-binds.
+  * <b>Usage: </b>
+    1. Login
+    2. Click on <b>Settings</b> drop-down menu in the navigation bar.
+    3. Select the key-binds you prefer.
 <a name="f9"></a>
 9. Persistent storage of user preferences (Key binds, font size etc.)
-	* <b>Description: </b>
-		* Users choice of key-binds and font size are stored persistently
-	* <b>Usage: </b>
-		1. Login
-		2. Change key-binds/font size
-		3. Logout and Log back in
-		4. Observe that settings still remain.
-
+  * <b>Description: </b>
+    * Users choice of key-binds and font size are stored persistently
+  * <b>Usage: </b>
+    1. Login
+    2. Change key-binds/font size
+    3. Logout and Log back in
+    4. Observe that settings still remain.
 <a name="f10"></a>
 10. File saving and deletion
-	* <b>Description: </b>
-		* Allows users to save files remotely.
-		* Allows users to delete remote files.
-	* <b>Usage: Saving</b>
-		1. Login
-		2. Click <b>File</b> -> <b>Open File</b>
-		3. Alternatively, <b>File</b> -> <b>New File</b> -> <b>Save</b>
-	* <b>Usage: Deleting</b>
-		1. Login
-		2. Click <b>File</b> -> <b>Delete Project</b>
-		3. Select a file to delete
-
+  * <b>Description: </b>
+    * Allows users to save files remotely.
+    * Allows users to delete remote files.
+  * <b>Usage: Saving</b>
+    1. Login
+    2. Click <b>File</b> -> <b>Open File</b>
+    3. Alternatively, <b>File</b> -> <b>New File</b> -> <b>Save</b>
+  * <b>Usage: Deleting</b>
+    1. Login
+    2. Click <b>File</b> -> <b>Delete Project</b>
+    3. Select a file to delete
 <a name="f11"></a>
 11. File uploading
-	* <b>Description: </b>
-		* Allows a user to upload local files to be saved and worked on remotely.
-	* <b>Usage: </b>
-		1. Login
-		2. Click <b>File</b> -> <b>Open File</b>
-		3. Select your local file
-		4. It is now added as a new project
-
+  * <b>Description: </b>
+    * Allows a user to upload local files to be saved and worked on remotely.
+  * <b>Usage: </b>
+    1. Login
+    2. Click <b>File</b> -> <b>Open File</b>
+    3. Select your local file
+    4. It is now added as a new project
 <a name="f12"></a>
 12. Resource Flow
-	* <b>Description: </b>
-		* A flow diagram of the PML code annotated with coloured resource names.
-	* <b>Usage: </b>
-		1. Login
-		2. Enter some PML into the editor
-		3. Click <b>Visualize</b> in the navigation bar
-		4. Click <b>Standard Flow Graph</b>
-
+  * <b>Description: </b>
+    * A flow diagram of the PML code annotated with coloured resource names.
+  * <b>Usage: </b>
+    1. Login
+    2. Enter some PML into the editor
+    3. Click <b>Visualize</b> in the navigation bar
+    4. Click <b>Standard Flow Graph</b>
 <a name="f13"></a>
 13. Flow graphs
-	* <b>Description: </b>
-		* A flow diagram of the PML code
-	* <b>Usage: </b>
-		1. Login
-		2. Enter some PML into the editor
-		3. Click <b>Visualize</b> in the navigation bar
-		4. Click <b>Standard Flow Graph</b>
-
+  * <b>Description: </b>
+    * A flow diagram of the PML code
+  * <b>Usage: </b>
+    1. Login
+    2. Enter some PML into the editor
+    3. Click <b>Visualize</b> in the navigation bar
+    4. Click <b>Standard Flow Graph</b>
 <a name="f14"></a>
 14. Analysis Coloured Actions
-	* <b>Description: </b>
-		*  "Miracle" "Black hole" and "Transformer" actions are coloured differently.
-	* <b>Usage: </b>
-		1. Login
-		2. Enter some PML into the editor
-		3. Click <b>Visualize</b> in the navigation bar
-		4. Click <b>Standard Flow Graph</b>
-		5. Look at the legend
+  * <b>Description: </b>
+    *  "Miracle" "Black hole" and "Transformer" actions are coloured differently.
+  * <b>Usage: </b>
+    1. Login
+    2. Enter some PML into the editor
+    3. Click <b>Visualize</b> in the navigation bar
+    4. Click <b>Standard Flow Graph</b>
+    5. Look at the legend
 
 <a name="members"></a>
-
 ## Members
  * Julius Mereckas
  * Ben Clear
