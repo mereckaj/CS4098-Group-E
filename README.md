@@ -64,10 +64,10 @@ To test all of the server side components run the following command in your term
 
 ### Client Side
 To run all of the client side tests:
-1. Start the application
-2. Navigate to [localhost:8000](localhost:8000) using your browser
-3. Open up your browsers developer console (<b>F12</b> on Firefox/Chrome)
-4. In the navigation bar click on <b>Settings</b> -> <b>Run tests</b>
+  1. Start the application
+  2. Navigate to [localhost:8000](localhost:8000) using your browser
+  3. Open up your browsers developer console (<b>F12</b> on Firefox/Chrome)
+  4. In the navigation bar click on <b>Settings</b> -> <b>Run tests</b>
 
 <a name="clean"></a>
 ## Clean
