@@ -163,6 +163,7 @@ def displayFile(filename):
 # Remove file that is selected
 @main.route('/delete_item/<filename>', methods=['POST'])
 def delete_item(filename):
+	print('deleting')
 	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + str(filename)
 	os.remove(UPLOAD_FOLDER)
 	listFilename()

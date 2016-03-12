@@ -32,8 +32,8 @@ window.onload =function() {
 		var filename = $(this).text();
 		var path = /delete_item/ + filename;
 		jQuery.post(path);
-		loadNextFile(filename);
 		refresh();
+		loadNextFile(filename);
 	});
 
 	// Get file names and display in both dropdown menus
