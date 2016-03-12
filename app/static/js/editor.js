@@ -29,11 +29,13 @@ window.onload =function() {
 
 	// When click project delete the project and file
 	$('.del').on('click', 'li', function (){
-		var filename = $(this).text();
-		var path = /delete_item/ + filename;
-		jQuery.post(path);
-		refresh();
-		loadNextFile(filename);
+		if(!noFiles){
+			var filename = $(this).text();
+			var path = /delete_item/ + filename;
+			jQuery.post(path);
+			refresh();
+			loadNextFile(filename);
+		}
 	});
 
 	// Get file names and display in both dropdown menus
