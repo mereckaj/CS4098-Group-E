@@ -3,6 +3,7 @@
 	Tell the program what to do when the page loads which is
 	basically initialization
 */
+var noFiles;	//true when there is no opened files
 window.onload =function() {
 	$('#fontsize').bind('input', function() {
 		var val = document.getElementById('fontsize').value
@@ -12,24 +13,26 @@ window.onload =function() {
 	setupUpload();
 	loadUserSettings();
 
-	// When select project load it into the editor
+	// Select file and load it into the editor
 	$('.proj').on('click', 'li', function (){
-		var strUser = $(this).text();
-		var number = strUser.replace( /^\D+/g, ''); // get project number
-		var path = /uploads/ + number;
-    		document.getElementById('title').innerHTML = "Project " + number;
-		jQuery.get(path, function(data) {
-			editor.session.doc.setValue(data);
-		});
-
+		if(!noFiles){
+			var filename = $(this).text();
+			noFiles =false;
+			var path = /uploads/ + filename;
+			document.getElementById('title').innerHTML = filename;
+			jQuery.get(path, function(data) {
+				editor.session.doc.setValue(data);
+				navbar_file_save();
+			});
+		}
 	});
 
 	// When click project delete the project and file
 	$('.del').on('click', 'li', function (){
-		var strUser = $(this).text();
-		var number = strUser.replace( /^\D+/g, '');	// get project number
-		var path = /delete_item/ + number;
+		var filename = $(this).text();
+		var path = /delete_item/ + filename;
 		jQuery.post(path);
+		loadNextFile(filename);
 		refresh();
 	});
 
@@ -46,22 +49,81 @@ function setupUpload(){
 		var file = fileInput.files[0];
 		var reader = new FileReader();
 		var extension = file.name.split('.').pop();
+		var name = file.name.substr(0, file.name.lastIndexOf('.'));
 		if (!file) {
 			alert("Failed to load file");
 		} else if (extension != "pml") {
 			alert(file.name + " is not a valid pml file");
+		} else if (fileExist(name)){
+			alert(name + " has already been uploaded");
 		} else {
 			reader.onload = function(e) {
 				$.ajax({
 					type: "POST",
+					data: { filename: name},
 					url: "/newFile"
 				});
 				editor.session.doc.setValue(reader.result);
+				noFiles=false;
+				document.getElementById('title').innerHTML = name;
 				navbar_file_save();
 			}
 			reader.readAsText(file);
+			refresh();
 		}
 	});
+}
+/*
+	check if the file exist
+*/
+function fileExist(name){
+	var list_of_names = document.getElementById('fileNames').value;
+	list_of_names = list_of_names.split(',');
+	for(var i = 0; i < list_of_names.length; i++) {
+		if(list_of_names[i] !== '[]'){
+			noFiles =false;
+			list_of_names[i] = list_of_names[i].match(/'([^']+)'/)[1];
+			if(name==list_of_names[i]){
+				return true;
+			}
+		}
+
+	}
+	return false;
+}
+/*
+	This will load the last saved file into editor after delete
+*/
+function loadNextFile(filename){
+	var list_of_names = document.getElementById('fileNames').value;
+	var currentFile = document.getElementById('title').innerHTML;
+	list_of_names = list_of_names.split(',');
+	if(list_of_names[0] !== '[]'|| filename == currentFile){
+		list_of_names[0] = list_of_names[0].match(/'([^']+)'/)[1];
+		noFiles =false;
+		if(list_of_names[0] == filename){
+			if(list_of_names[1]!=undefined){
+				list_of_names[1] = list_of_names[1].match(/'([^']+)'/)[1];
+				var path = /uploads/ + list_of_names[1];
+				document.getElementById('title').innerHTML = list_of_names[1];
+				jQuery.get(path, function(data) {
+					editor.session.doc.setValue(data);
+					navbar_file_save();
+				});
+			}
+		}
+		else{
+			var path = /uploads/ + list_of_names[0];
+			document.getElementById('title').innerHTML = list_of_names[0];
+			jQuery.get(path, function(data) {
+				editor.session.doc.setValue(data);
+				navbar_file_save();
+			});
+		}
+	}
+	else{
+		document.getElementById('title').innerHTML = "PML Code Checker";
+	}
 }
 
 /*
@@ -226,12 +288,26 @@ function getSetting(key,success,failure){
 /*
 	Tell the program what to do when user clicks menu buttons
 */
-function navbar_file_new_file(path){
-	$.ajax({
-		type: "POST",
-		url: "/newFile"
-	});
-	refresh();
+function navbar_file_new_file(){
+	var input = prompt("Please enter filename","Untitled file");
+	input = $.trim(input);
+	var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/); //unacceptable chars
+	if (pattern.test(input)) {
+        	alert("Please only use standard alphanumerics");
+		navbar_file_new_file();
+	}
+	if (input != ''&& input != null) {
+		$.ajax({
+			type: "POST",	
+			data: { filename: input},
+			url: "/newFile"
+		});
+		editor.session.doc.setValue("");
+		refresh();
+	}
+	else{
+		alert("Filename not entered, please try again");
+	}
 }
 
 function navbar_file_open_file(){
@@ -239,11 +315,38 @@ function navbar_file_open_file(){
 }
 
 function navbar_file_save(){
-	document.forms["send"].submit();
+	var input = document.getElementById('title').innerHTML;
+	if (noFiles==true){
+		var input = prompt("Please enter filename","Untitled file");
+		input = $.trim(input);
+		var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/); //unacceptable chars
+		if (pattern.test(input)) {
+        		alert("Please only use standard alphanumerics");
+			navbar_file_save();
+		}
+	}
+
+	if (input != ''&& input != null) {
+		var data = editor.getSession().getValue();
+		$.ajax({
+			type: "POST",	
+			data: { filename: input, code: data},
+			url: "/upload"
+		});
+	}
+	else{
+		alert("Filename not entered, please try again");
+	}
+	if (noFiles==true){
+		refresh();
+		noFiles =false;
+	}	
 }
 
 function navbar_file_close_file(){
+	document.getElementById('title').innerHTML = "PML Code Checker";
 	editor.session.doc.setValue("");
+	noFiles=true;
 }
 function changeFontSize(val){
 	editor.setOption("fontSize",val+"px");
@@ -255,22 +358,31 @@ function changeFontSize(val){
 function refresh(){
 	document.forms["refreshed"].submit();
 }
-
-// Gets a list of names and displays in dropdown
+/*
+	Gets a list of names and displays in dropdown
+*/
 function getNames(dropdown){
 	var select_elem = document.getElementById(dropdown);
 	var list_of_names = document.getElementById('fileNames').value;
 	list_of_names = list_of_names.split(',');
-	list_of_names[0] = list_of_names[0].replace('[', '');
-	list_of_names[list_of_names.length-1] = list_of_names[list_of_names
-		.length-1].replace(']', '');
 	if(select_elem){
 		for(var i = 0; i < list_of_names.length; i++) {
-			list_of_names[i] = list_of_names[i].replace( /'/g, '');
-			var option = document.createElement('li');
-			option.innerHTML = '<a>' + list_of_names[i] + '</a>';
-			option.value = list_of_names[i];
-			select_elem.appendChild(option);
+			if(list_of_names[i] !== '[]'){
+				noFiles =false;
+				list_of_names[i] = list_of_names[i].match(/'([^']+)'/)[1];
+				var option = document.createElement('li');
+				option.innerHTML = '<a>' + list_of_names[i] + '</a>';
+				option.value = list_of_names[i];
+				select_elem.appendChild(option);
+			}
+			else{
+				document.getElementById('title').innerHTML = "PML Code Checker";
+				noFiles = true;
+				var option = document.createElement('li');
+				option.innerHTML = '<a>' + 'There is no saved files' + '</a>';
+				option.value = 'There is no saved files';
+				select_elem.appendChild(option);
+			}
 		}
 	}
 }
