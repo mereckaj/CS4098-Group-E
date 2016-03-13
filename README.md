@@ -171,11 +171,11 @@ To reset the project to what it was like after cloning (Basically to undo what i
     * Allows users to delete remote files.
   * <b>Usage: Saving</b>
     1. Login
-    2. Click <b>File</b> -> <b>Open File</b>
-    3. Alternatively, <b>File</b> -> <b>New File</b> -> <b>Save</b>
+    2. Click <b>File</b> -> <b>New</b> -> <b>Upload File</b>
+    3. Alternatively, <b>File</b> -> <b>New</b>-> <b>Blank File</b> -> <b>Save</b>
   * <b>Usage: Deleting</b>
     1. Login
-    2. Click <b>File</b> -> <b>Delete Project</b>
+    2. Click <b>File</b> -> <b>Delete</b>
     3. Select a file to delete
 
 <a name="f11"></a>
@@ -184,7 +184,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
     * Allows a user to upload local files to be saved and worked on remotely.
   * <b>Usage: </b>
     1. Login
-    2. Click <b>File</b> -> <b>Open File</b>
+    2. Click <b>File</b> -> <b>New</b> -> <b>Upload File</b>
     3. Select your local file
     4. It is now added as a new project
 
