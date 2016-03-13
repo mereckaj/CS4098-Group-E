@@ -545,11 +545,9 @@ function fixEdges(edges) {
 		if("label" in edges[i]){
 			if(contains(edges[i].label,"requires:[]")){
 				edges[i].label = edges[i].label.replace("requires:[]","");
-				console.log("renamed req");
 			}
 			if(contains(edges[i].label,"provides:[]")){
 				edges[i].label = edges[i].label.replace("provides:[]","");
-				console.log("renamed prov");
 			}
 		}
 	}
