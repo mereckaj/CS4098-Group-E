@@ -3,7 +3,8 @@
 	Tell the program what to do when the page loads which is
 	basically initialization
 */
-var noFiles;	//true when there is no opened files
+var noFiles;	//true when there is no files
+var closeFile;	//True when file is closed
 window.onload =function() {
 	$('#fontsize').bind('input', function() {
 		var val = document.getElementById('fontsize').value
@@ -18,6 +19,7 @@ window.onload =function() {
 		if(!noFiles){
 			var filename = $(this).text();
 			noFiles =false;
+			closeFile = false; //file is open
 			var path = /uploads/ + filename;
 			document.getElementById('title').innerHTML = filename;
 			jQuery.get(path, function(data) {
@@ -67,6 +69,7 @@ function setupUpload(){
 				});
 				editor.session.doc.setValue(reader.result);
 				noFiles=false;
+				closeFile = false; //file is open
 				document.getElementById('title').innerHTML = name;
 				navbar_file_save();
 			}
@@ -108,6 +111,7 @@ function loadNextFile(filename){
 				list_of_names[1] = list_of_names[1].match(/'([^']+)'/)[1];
 				var path = /uploads/ + list_of_names[1];
 				document.getElementById('title').innerHTML = list_of_names[1];
+				closeFile = false; //file is open
 				jQuery.get(path, function(data) {
 					editor.session.doc.setValue(data);
 					navbar_file_save();
@@ -117,6 +121,7 @@ function loadNextFile(filename){
 		else{
 			var path = /uploads/ + list_of_names[0];
 			document.getElementById('title').innerHTML = list_of_names[0];
+			closeFile = false; //file is open
 			jQuery.get(path, function(data) {
 				editor.session.doc.setValue(data);
 				navbar_file_save();
@@ -296,6 +301,11 @@ function navbar_file_new_file(){
 	var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/); //unacceptable chars
 	if (pattern.test(input)) {
         	alert("Please only use standard alphanumerics");
+		input = '';
+		navbar_file_new_file();
+	}else if (fileExist(input)){
+		alert(input + " has already been used. Please use another file name");
+		input = '';
 		navbar_file_new_file();
 	}
 	if (input != ''&& input != null) {
@@ -305,6 +315,10 @@ function navbar_file_new_file(){
 			url: "/newFile"
 		});
 		editor.session.doc.setValue("");
+		//var newName =changeName(input,input,1);
+		document.getElementById('title').innerHTML = input;
+		closeFile =false;
+		navbar_file_save();
 		refresh();
 	}
 	else{
@@ -318,13 +332,18 @@ function navbar_file_open_file(){
 
 function navbar_file_save(){
 	var input = document.getElementById('title').innerHTML;
-	if (noFiles==true){
+	if (closeFile==true){
 		var input = prompt("Please enter filename","Untitled file");
 		input = $.trim(input);
 		var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/); //unacceptable chars
 		if (pattern.test(input)) {
         		alert("Please only use standard alphanumerics");
+			input = '';
 			navbar_file_save();
+		}else if (fileExist(input)){
+			alert(input + " has already been used. Please use another file name");
+			input = '';
+			navbar_file_new_file();
 		}
 	}
 
@@ -339,17 +358,35 @@ function navbar_file_save(){
 	else{
 		alert("Filename not entered, please try again");
 	}
-	if (noFiles==true){
+	if (closeFile){
 		refresh();
-		noFiles =false;
+		closeFile =false;
 	}	
 }
 
 function navbar_file_close_file(){
 	document.getElementById('title').innerHTML = "PML Code Checker";
 	editor.session.doc.setValue("");
-	noFiles=true;
+	closeFile = true; //file is closed
 }
+
+//If the name exist return new name
+function changeName(name, newName,count){
+	var list_of_names = document.getElementById('fileNames').value;
+	list_of_names = list_of_names.split(',');
+	for(var i = 0; i < list_of_names.length; i++) {
+		if(list_of_names[i] !== '[]'){
+			noFiles =false;
+			list_of_names[i] = list_of_names[i].match(/'([^']+)'/)[1];
+			if(name==list_of_names[i]){
+				newName = name + ' ' + count;
+				return changeName(name,newName, count++ );
+			}
+		}
+	}
+	return name;
+}
+
 function changeFontSize(val){
 	editor.setOption("fontSize",val+"px");
 	setCookie("fontsize",val,1024);
@@ -371,6 +408,7 @@ function getNames(dropdown){
 		for(var i = 0; i < list_of_names.length; i++) {
 			if(list_of_names[i] !== '[]'){
 				noFiles =false;
+				closeFile =false;
 				list_of_names[i] = list_of_names[i].match(/'([^']+)'/)[1];
 				var option = document.createElement('li');
 				option.innerHTML = '<a>' + list_of_names[i] + '</a>';
@@ -380,6 +418,7 @@ function getNames(dropdown){
 			else{
 				document.getElementById('title').innerHTML = "PML Code Checker";
 				noFiles = true;
+				closeFile =true;
 				var option = document.createElement('li');
 				option.innerHTML = '<a>' + 'There is no saved files' + '</a>';
 				option.value = 'There is no saved files';

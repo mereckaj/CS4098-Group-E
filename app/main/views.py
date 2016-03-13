@@ -143,7 +143,7 @@ def upload():
 def newFile():
 	filename = request.form["filename"]
 	session['currentFile'] = filename
-	fileExist(filename)
+	#fileExist(filename) #couldnt get same file working
 	session['lst'].append(session['currentFile'])
 	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
 	file = open(os.path.join(UPLOAD_FOLDER,str(session['currentFile'])),'w')
