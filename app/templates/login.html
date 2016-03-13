@@ -18,7 +18,7 @@
 					{% if error %}
 						{% for line in error %}
 							<div class="alert alert-danger" role="alert">{{ line }}</div>
-						{% endfor %}						
+						{% endfor %}
 						<button type="submit" class="btn" id="back"
 							onclick="window.location.href='{{url_for('main.index')}}'">Back
 						</button>
@@ -30,11 +30,11 @@
 							{{ wtf.quick_form(form,id=id) }}
 						</div>
 						<br>
-						<div class="row">
-							<button class="btn btn-info" id="fbLogin" 
+						<div id="signinbuttons" class="row">
+							<button class="btn btn-info" id="reg"
 							onclick="window.location.href='{{url_for('main.register')}}'">Register
 							</button>
-							<button class="btn btn-primary" id="fbLogin" 
+							<button class="btn btn-primary" id="fbLogin"
 							onclick="window.location.href='{{url_for('main.facebook_login')}}'">Facebook Login
 							</button>
 							<button type="submit" class="btn btn-danger" id="gLogin"
