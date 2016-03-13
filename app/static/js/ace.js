@@ -6,9 +6,8 @@ ace.require("ace/ext/language_tools");
 var editor = ace.edit("editor");
 editor.$blockScrolling = Infinity
 editor.setTheme("static/ace-master/lib/ace/theme//chrome");
-editor.session.setMode("ace/mode/c_cpp");
+editor.session.setMode("ace/mode/c_cpp");  // CHECK THAT THIS FILE IS LOADED, DONT GET 404
 editor.getSession().setValue(textarea3.val());
-editor.$blockScrolling = Infinity;
 // Update text editor when there is a change
 editor.getSession().on('change', function () {
 	textarea.val(editor.getSession().getValue());

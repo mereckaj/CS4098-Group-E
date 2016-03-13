@@ -10,14 +10,15 @@ var options;
 var noFiles;	//true when there is no files
 var closeFile;	//True when file is closed
 window.onload =function() {
+	window.setInterval(submitData(),1000);
 	$('#fontsize').bind('input', function() {
 		var val = document.getElementById('fontsize').value
 		sendSetting("fontsize",val);
 		changeFontSize(val);
-	});
-	// setupUpload();
-	loadUserSettings();
 
+	});
+	setupUpload();
+	loadUserSettings();
 	// Select file and load it into the editor
 	$('.proj').on('click', 'li', function (){
 		if(!noFiles){
@@ -47,6 +48,7 @@ window.onload =function() {
 	// Get file names and display in both dropdown menus
 	getNames('projects');
 	getNames('deleting');
+
 }
 /*
 	When user tries to upload a file put it into the text editor
@@ -140,12 +142,12 @@ function loadNextFile(filename){
 /*
 	Used to send PML code to the editor
 */
-function submitData(path){
+function submitData(){
 	var data = editor.getSession().getValue();
 	$.ajax({
 		type: "POST",
-		url: path,
-		data: { code: data},
+		url: "/pml/full",
+		data: data,
 		success: function(d){
 			/*
 				Code to show the errors and warnings inside the editor
@@ -159,16 +161,41 @@ function submitData(path){
 				var errorMessage = colonSplit[2].toString();
 				errorMessages.push(errorMessage);
 			}
-			var annotations = []
-			for(var i = 0; i < errorRows.length;i++){
-				annotations.push({
-					row: errorRows[i],
-					column: 2,
-					text: errorMessages[i],
-					type: "error"
-				});
+			var annotations = [];
+			var errorCheck = 0;
+			if(errorMessages[0] != undefined){
+				var n = errorMessages[0].indexOf("syntax");
+				for(var i = 0; i < errorMessages.length;i++){
+						var check = errorMessages[i].indexOf("syntax");
+						if( check != -1){
+							errorCheck++;
+						}
+					}
+
+				if(errorMessages > 1 || errorCheck == 0){
+					for(var i = 0; i < errorMessages.length;i++){
+						annotations.push({
+							row: errorRows[i],
+							column: 2,
+							text: errorMessages[i],
+							type: "warning"
+						});
+					}
+				}
+				else
+				{
+					for(var i = 0; i < errorRows.length;i++){
+						annotations.push({
+							row: errorRows[i],
+							column: 2,
+							text: errorMessages[i],
+							type: "error"
+						});
+					}
+				}
+
+				editor.session.setAnnotations(annotations);
 			}
-			editor.session.setAnnotations(annotations);
 		}
 	});
 }
