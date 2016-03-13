@@ -15,7 +15,7 @@ window.onload =function() {
 		sendSetting("fontsize",val);
 		changeFontSize(val);
 	});
-	setupUpload();
+	// setupUpload();
 	loadUserSettings();
 
 	// Select file and load it into the editor
@@ -652,39 +652,6 @@ function analysisColouredActions(){
 		blackholeHighlightSuccess,
 		highlightFail
 	);
-	addLegend();
-}
-function addLegend() {
-	var x = network.clientWidth / 2 + 50;
-	var y = network.clientHeight / 2 + 50;
-	var step = 100;
-	graphData.nodes.push({
-		x:x,
-		y:y + 0 * step,
-		label : "Miracle",
-		value : 1,
-		fixed : true,
-		shape : "square",
-		color : "#A11CED"
-	});
-	graphData.nodes.push({
-		x:x,
-		y:y + 1 * step,
-		label : "Blackhole",
-		value : 1,
-		fixed : true,
-		shape : "square",
-		color : "#ED391C"
-	});
-	graphData.nodes.push({
-		x:x,
-		y:y + 2 * step,
-		label : "transformer",
-		value : 1,
-		fixed : true,
-		shape : "square",
-		color : "#1CD0ED"
-	});
 }
 function miracleHighlightSuccess(data) {
 	highlightNodes(data,"MIRACLE");

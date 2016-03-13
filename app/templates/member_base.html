@@ -6,26 +6,48 @@
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown"
 				role="button" aria-haspopup="true" aria-expanded="false">
-				File <span class="caret"></span>
+				<span class="glyphicon glyphicon-menu-hamburger"> </span>
+				File
 			</a>
 			<ul class="dropdown-menu">
 				<li class="dropdown-submenu">
-					<a>New</a>
+					<a>
+						<span class="glyphicon glyphicon-plus"></span>
+						New
+					</a>
 					<ul class="dropdown-menu new">
-						<li><a onclick="navbar_file_new_file()">Blank File</a></li>
-						<li><a onclick="navbar_file_open_file()">Upload File</a></li>
+						<li><a onclick="navbar_file_new_file()">
+							<span class="glyphicon glyphicon-file"></span>
+							Blank File
+						</a></li>
+						<li><a onclick="navbar_file_open_file()">
+							<span class="glyphicon glyphicon-cloud-upload"></span>
+							Upload File
+						</a></li>
 					</ul>
 				</li>
 				<li class="dropdown-submenu">
-					<a>Open</a>
+					<a>
+						<span class="glyphicon glyphicon-folder-open"> </span>
+						Open
+					</a>
 					<ul class="dropdown-menu proj" id = 'projects'>
 					</ul>
 				</li>
-				<li><a onclick="navbar_file_save()">Save</a></li>
-				<li><a onclick="navbar_file_close_file()">Close File</a></li>
+				<li><a onclick="navbar_file_save()">
+					<span class="glyphicon glyphicon-floppy-disk"> </span>
+					Save
+				</a></li>
+				<li><a onclick="navbar_file_close_file()">
+					<span class="glyphicon glyphicon-remove"> </span>
+					Close File
+				</a></li>
 				<li class="divider"></li>
 				<li class="dropdown-submenu">
-					<a>Delete</a>
+					<a>
+						<span class="glyphicon glyphicon-trash"> </span>
+						Delete
+					</a>
 					<ul class="dropdown-menu del" id = 'deleting'>
 					</ul>
 				</li>
@@ -35,7 +57,8 @@
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown"
 				role="button" aria-haspopup="true" aria-expanded="false" >
-				Visualize <span class="caret"></span>
+				<span class="glyphicon glyphicon-eye-open"></span>
+				Visualize
 			</a>
 			<ul class="dropdown-menu vis" id = 'visualize'>
 				<li><a onclick="simpleGraph()">Standard Flow Graph</a></li>
@@ -45,27 +68,52 @@
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown"
 				role="button" aria-haspopup="true" aria-expanded="false">
-				Settings <span class="caret"></span>
+				<span class="glyphicon glyphicon-cog"></span>
+				Settings
 			</a>
 			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				<li class="dropdown-header">Key binds</li>
-				<li><a onclick='setEditor("VIM")'>Vim</a></li>
-				<li><a onclick='setEditor("EMACS")'>Emacs</a></li>
-				<li><a onclick='setEditor("NONE")'>Default</a></li>
+				<li class="dropdown-header">
+					Key binds
+				</li>
+				<li><a onclick='setEditor("VIM")'>
+					<span class="glyphicon glyphicon-chevron-right"></span>
+					Vim
+				</a></li>
+				<li><a onclick='setEditor("EMACS")'>
+					<span class="glyphicon glyphicon-chevron-right"></span>
+					Emacs
+				</a></li>
+				<li><a onclick='setEditor("NONE")'>
+					<span class="glyphicon glyphicon-chevron-right"></span>
+					Default
+				</a></li>
 				<li class="divider"></li>
-				<li><a>Font size</a></li>
+				<li>
+					<a>
+					<span class="glyphicon glyphicon-text-size"></span>
+					Font size
+					</a>
+				</li>
 				<li>
 					<input id="fontsize" type="text" class="form-control" placeholder="12" aria-describedby="basic-addon1">
 				</li>
 				<li class="divider"></li>
-				<li><a onclick='runAllTests()'>Run tests</a></li>
+				<li><a onclick='runAllTests()'>
+					<span class="glyphicon glyphicon-fire"></span>
+					Run tests
+				</a></li>
 			</ul>
 		</li>
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
 		<li>
 			<p class="navbar-btn">
-				<a href="logout" class="btn btn-primary">Logout</a>
+				<a href="logout">
+					<button class="btn btn-primary">
+						<span class="glyphicon glyphicon-off" aria-hidden="true"> </span>
+						Logout
+					</button>
+				</a>
 			</p>
 		</li>
 	</ul>

@@ -22,49 +22,86 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h1 class ="panel-title" id = "title">{{session['currentFile']}}</h1>
-					<!--{% if session.changed %}
-						<h1 class ="panel-title" id = "title">'{{session['currentFile']}}'</h1>
-					{% else %}
-						<h1 class ="panel-title" id = "title" value="PML Code Checker"></h1>
-					{% endif %}-->
 				</div>
-				<div id="panel-body" class="fullheight">
-					<!-- Editor -->
+				<div class="panel-body">
+					<div>
 					<div id="editor"></div>
-						<div class="pull-right">
-							<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">Analyze</button>
-							<form action="upload" method="post" enctype="multipart/form-data" id="send">
-							<button type="submit" class="btn btn-primary" style="display: none;"></button>
-								<input type="file" name="file" id ="file" style="display: none;">
-								<input type="hidden" name="fileCode" id="fileCode" style="display: none;">
-								{% if session.changed %}
-									<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
-								{% else %}
-									<input type="hidden" name="update" style="display: none;" value ="" id="update">
-								{% endif %}
-							</form>
-							<form action="refresh" method="post" id="refreshed">
-
-							</form>
-						</div>
+				</div>
+				</div>
+				<div class="panel-body">
+					<button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">
+						<span class="glyphicon glyphicon-repeat"></span>
+						Analyze
+					</button>
+					<form action="upload" method="post" enctype="multipart/form-data" id="send">
+						<button type="submit" class="btn btn-primary" style="display: none;"></button>
+						<input type="file" name="file" id ="file" style="display: none;">
+						<input type="hidden" name="fileCode" id="fileCode" style="display: none;">
+						{% if session.changed %}
+							<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
+						{% else %}
+							<input type="hidden" name="update" style="display: none;" value ="" id="update">
+						{% endif %}
+					</form>
+					<form action="refresh" method="post" id="refreshed">
+					</form>
 				</div>
 				<input name="fileNames[]" id = "fileNames" type="hidden" value = "{{session['lst']}}"/>
-				<!-- Leave this here, editor has to be loaded before the script is. -->
 				<script src="{{url_for('static', filename='js/ace.js')}}"></script>
 			</div>
 		</div>
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h1 class ="panel-title">Visualization</h1>
+					Visualization
+						<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										Legend
+										<button type="button" class="close" data-dismiss="modal">
+											<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+										</button>
+									</div>
+								<div class="modal-body">
+									<div class="table-responsive">
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Colour</th>
+													<th>Description</th>
+												</tr>
+											</thead>
+											<tbody>
+											<tr>
+												<td><button class="btn btn-primary" style="background-color:#A11CED">Miracle</button></td>
+												<td>Miracles are actions which provide but do not require a resource</td>
+											</tr>
+											<tr>
+												<td><button class="btn btn-primary" style="background-color:#ED391C">Blackhole</button></td>
+												<td>Black holes require but do not provide a resource</td>
+											</tr>
+											<tr>
+												<td><button class="btn btn-primary" style="background-color:#1CD0ED">Transformer</button></td>
+												<td>Transformations provide a different resource to the one required</td>
+											</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div class="panel-body">
 					<div id="visualization" class="graphics"></div>
 				</div>
-				<div class="panel-body-overlay-down">
-					<p> testasdas </p>
+				<div class="panel-body">
+					<button type="button" class="btn btn-primary btn-" data-toggle="modal" data-target="#myModal">
+						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+						Visualization Legend
+					</button>
 				</div>
 			</div>
 		</div>
-	</div>
 {% endblock %}
