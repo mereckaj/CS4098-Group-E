@@ -10,7 +10,7 @@ var options;
 var noFiles;	//true when there is no files
 var closeFile;	//True when file is closed
 window.onload =function() {
-	window.setInterval(submitData(),1000);
+	setInterval(function() { submitData()},1000);
 	$('#fontsize').bind('input', function() {
 		var val = document.getElementById('fontsize').value
 		sendSetting("fontsize",val);
