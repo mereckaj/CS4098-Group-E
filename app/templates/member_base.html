@@ -9,31 +9,35 @@
 				File <span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a onclick="navbar_file_new_file()">New File</a></li>
-				<li><a onclick="navbar_file_open_file()">Open File</a></li>
+				<li class="dropdown-submenu">
+					<a>New</a>
+					<ul class="dropdown-menu new">
+						<li><a onclick="navbar_file_new_file()">Blank File</a></li>
+						<li><a onclick="navbar_file_open_file()">Upload File</a></li>
+					</ul>
+				</li>
+				<li class="dropdown-submenu">
+					<a>Open</a>
+					<ul class="dropdown-menu proj" id = 'projects'>
+					</ul>
+				</li>
 				<li><a onclick="navbar_file_save()">Save</a></li>
 				<li><a onclick="navbar_file_close_file()">Close File</a></li>
 				<li class="divider"></li>
 				<li class="dropdown-submenu">
-					<a>Delete Project</a>
+					<a>Delete</a>
 					<ul class="dropdown-menu del" id = 'deleting'>
 					</ul>
 				</li>
 			</ul>
 		</li>
-		<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown"
-				role="button" aria-haspopup="true" aria-expanded="false" >
-				Projects <span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu proj" id = 'projects'></ul>
-		</li>
+
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown"
 				role="button" aria-haspopup="true" aria-expanded="false" >
 				Visualize <span class="caret"></span>
 			</a>
-			<ul class="dropdown-menu proj" id = 'visualize'>
+			<ul class="dropdown-menu vis" id = 'visualize'>
 				<li><a onclick="simpleGraph()">Standard Flow Graph</a></li>
 			</ul>
 		</li>

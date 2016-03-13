@@ -118,58 +118,61 @@ def google_login():
 	return google.authorize(callback=callback)
 
 # Get code from the editor
-# Create filename with counter
 # Write the code to the file and save
 @main.route("/upload", methods=["POST"])
 def upload():
 	createFolders()
+	filename = request.form["filename"]
 	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
 	# Request the code
-	code = request.form["fileCode"]
-	session["update"] = request.form["fileCode"]
+	code = request.form["code"]
+	session["update"] = request.form["code"]
 	session["changed"] = True
-	filename = 'Project %s'%(str(session['counter']))
-	# Move the file to the upload folder we setup
-	inFile = open(UPLOAD_FOLDER + filename,'w')
-	inFile.write(code)
+	session['currentFile'] = filename
+	# Save the file to the upload folder we setup
+	inFile = open(UPLOAD_FOLDER + str(session['currentFile']),'w')
+	inFile.write("%s" % code)
 	inFile.close()
-	displayFile(session["counter"])
-	fileExist()
+	displayFile(filename)
+	listFilename()
 	return redirect(url_for("main.index"))
 
-# increment counter and add filename to list
+# Add filename to list
+# Check if filename exist
 # Create new pml file with filename
 @main.route("/newFile", methods =["POST"])
 def newFile():
-	fileExist()
-	filename = 'Project %s'%(str(session['counter']))
-	session['lst'].append(filename)
-	session['lst'].sort()
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
-	file = open(UPLOAD_FOLDER,'w')
+	filename = request.form["filename"]
+	session['currentFile'] = filename
+	#fileExist(filename) #couldnt get same file working
+	session['lst'].append(session['currentFile'])
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
+	file = open(os.path.join(UPLOAD_FOLDER,str(session['currentFile'])),'w')
 	file.close()
+	listFilename()
 	return redirect(url_for("main.index"))
 
-# Get contents of file that is selected
-@main.route("/uploads/<fileNum>", methods =["GET"])
-def displayFile(fileNum):
-	filename = 'Project %s'%(str(fileNum))
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
-	session['counter'] = fileNum
+# Return contents of file that is selected
+@main.route("/uploads/<filename>", methods =["GET"])
+def displayFile(filename):
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + str(filename)
+	session['currentFile'] = filename
+	listFilename()
 	resp = make_response(open(UPLOAD_FOLDER).read())
 	return resp
 
-@main.route('/delete_item/<fileNum>', methods=['POST'])
-def delete_item(fileNum):
-	filename = 'Project %s'%(str(fileNum))
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + filename
+# Remove file that is selected
+@main.route('/delete_item/<filename>', methods=['POST'])
+def delete_item(filename):
+	print('deleting')
+	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + str(filename)
 	os.remove(UPLOAD_FOLDER)
-	fileExist()
-
+	listFilename()
 	return redirect(url_for("main.index"))
 
 @main.route("/refresh", methods=["POST"])
 def refresh():
+	listFilename()
 	session["changed"] = False
 	return redirect(url_for("main.index"))
 
@@ -332,7 +335,7 @@ def login():
 @login_required
 def logout():
 	logout_user_remove_session_data()
-	session['counter'] = 1
+	session['currentFile'] = "PML Code Checker"
 	session["changed"] = False
 	session['lst'].clear() # Declares an empty list named
 	return redirect(url_for("main.index"))
@@ -362,7 +365,7 @@ def get_access_token():
 def createFolders():
 	if not os.path.exists("tmp/" + str(session["uid"])):
 		session['lst'].clear() # Declares an empty list named lst
-		session['counter'] = 1
+		session['currentFile'] = "PML Code Checker"
 		os.makedirs("tmp/" + str(session["uid"]))
 
 # Login the user and set up their session information
@@ -373,7 +376,7 @@ def login_and_load_user(user):
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
-	fileExist()
+	listFilename()
 
 # Logout the user and remove their session information
 def logout_user_remove_session_data():
@@ -382,23 +385,26 @@ def logout_user_remove_session_data():
 	session.pop("email",None)
 	session.pop("username",None)
 
+# If Filename exist add a counter to it
+def fileExist(filename):
+	i =1
+	path= "tmp/" + str(session["uid"]) + '/'
+	while os.path.isfile(path + session['currentFile']):
+		session['currentFile'] = filename + ' ' + str(i)
+		print(session['currentFile'])
+		i += 1
+
 # Gets all files that exist under the user and adds it to the drop down menu
 # Sets the counter to the next valid file number
-def fileExist():
+def listFilename():
 	i =1
+	path= "tmp/" + str(session["uid"]) + '/'
 	session['lst'] = [] # Declares an empty list named lst
 	session['lst'].clear() # Declares an empty list named lst
 	if not os.path.exists("tmp/" + str(session["uid"])):
 		createFolders()
-	names = os.listdir("tmp/" + str(session["uid"]) + '/')
-	names.sort()
-	for file in names:
-		session['lst'].append(file)
-	while os.path.isfile("tmp/" + str(session["uid"]) + '/' + 'Project ' + str(i)):
-		#increment counter
-		try:
-			session['counter'] = i
-			i += 1
-		except KeyError:
-			session['counter'] = 1
-	session['counter'] = i
+	names = os.listdir(path)
+	files = sorted(names, key=lambda x: os.path.getctime(os.path.join(path, x)))
+	files.reverse()
+	session['lst'] =files		
+

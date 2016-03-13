@@ -20,7 +20,12 @@
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h1 class ="panel-title">PML Code Checker</h1>
+					<h1 class ="panel-title" id = "title">{{session['currentFile']}}</h1>
+					<!--{% if session.changed %}
+						<h1 class ="panel-title" id = "title">'{{session['currentFile']}}'</h1>
+					{% else %}
+						<h1 class ="panel-title" id = "title" value="PML Code Checker"></h1>
+					{% endif %}-->
 				</div>
 				<div id="panel-body" class="fullheight">
 					<!-- Editor -->
@@ -30,7 +35,7 @@
 							<form action="upload" method="post" enctype="multipart/form-data" id="send">
 							<button type="submit" class="btn btn-primary" style="display: none;"></button>
 								<input type="file" name="file" id ="file" style="display: none;">
-								<input type="hidden" name="fileCode" style="display: none;">
+								<input type="hidden" name="fileCode" id="fileCode" style="display: none;">
 								{% if session.changed %}
 									<input type="hidden" name="update" style="display: none;"value ="{{session['update']}}" id="update">
 								{% else %}
