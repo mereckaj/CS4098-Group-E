@@ -1,31 +1,25 @@
 "use strict"
 function runAllTests(){
-	test_editor_exists()
-
 	// test_sample();
-
+	test_editor_exists()
 	test_editor();
-	test_save(); 	
-	test_upload();	
-
+	test_save();
+	test_upload();
 }
 
 
 function test_editor_exists(){
-
 	console.log("Testing: Editor has been loaded")
-
 	if(typeof editor != "undefined"){
 		console.log("Result: PASS");
 	}
 	else {
 		console.log("Result: FAIL");
 	}
-
 }
 
 /*
-	Test file upload: Creates a file, put the file contents into the editor and 
+	Test file upload: Creates a file, put the file contents into the editor and
 	then checks if the editor and file contents are equal.
 */
 function test_upload(){
@@ -78,7 +72,7 @@ function test_editor(){
 }
 
 /*
-	Test file save: Create filename and code, save it. 
+	Test file save: Create filename and code, save it.
 	Get data from server and check if code is the same.
 	Then delete the file and test if the file still exist.
 */
@@ -88,8 +82,8 @@ function test_save(){
 action b { requires { foo } provides { bar } } }";
 
 	//save file
-	$.ajax({				
-		type: "POST",	
+	$.ajax({
+		type: "POST",
 		data: { filename: name, code: testCode},
 		url: "/upload"
 	});
@@ -97,20 +91,20 @@ action b { requires { foo } provides { bar } } }";
 	//get file contents and compare
 	var path = /uploads/ + name;
 	jQuery.get(path, function(data) {
-		console.log("Testing: File Save");	
+		console.log("Testing: File Save");
 		if(data==testCode){
 			console.log("Result: PASS");
 		} else {
 			console.log("Result: FAIL");
-		}	
+		}
 	});
 
 	// delete file
 	path = /delete_item/ + name;
-	jQuery.post(path);		
+	jQuery.post(path);
 
 	console.log("Testing: File Delete");
-	if(!fileExist(name)){			
+	if(!fileExist(name)){
 		console.log("Result: PASS");
 	} else {
 		console.log("Result: FAIL");
