@@ -314,7 +314,7 @@ function navbar_file_new_file(){
 	}
 	if (input != ''&& input != null) {
 		$.ajax({
-			type: "POST",	
+			type: "POST",
 			data: { filename: input},
 			url: "/newFile"
 		});
@@ -354,7 +354,7 @@ function navbar_file_save(){
 	if (input != ''&& input != null) {
 		var data = editor.getSession().getValue();
 		$.ajax({
-			type: "POST",	
+			type: "POST",
 			data: { filename: input, code: data},
 			url: "/upload"
 		});
@@ -365,7 +365,7 @@ function navbar_file_save(){
 	if (closeFile){
 		refresh();
 		closeFile =false;
-	}	
+	}
 }
 
 function navbar_file_close_file(){
@@ -424,7 +424,7 @@ function getNames(dropdown){
 				noFiles = true;
 				closeFile =true;
 				var option = document.createElement('li');
-				option.innerHTML = '<a>' + 'There is no saved files' + '</a>';
+				option.innerHTML = '<a>' + 'There are no saved files' + '</a>';
 				option.value = 'There is no saved files';
 				select_elem.appendChild(option);
 			}
@@ -450,7 +450,7 @@ function processDot(data){
 	var filename = data.filename;
 	var success = data.success;
 	if (success != true){
-		alert("An error occured when creating the visualization, please check" +
+		alert("An error occured when creating the visualization, please check " +
 			"that there are no syntax mistakes.");
 	}
 	data = data.data;
@@ -652,6 +652,39 @@ function analysisColouredActions(){
 		blackholeHighlightSuccess,
 		highlightFail
 	);
+	addLegend();
+}
+function addLegend() {
+	var x = network.clientWidth / 2 + 50;
+	var y = network.clientHeight / 2 + 50;
+	var step = 100;
+	graphData.nodes.push({
+		x:x,
+		y:y + 0 * step,
+		label : "Miracle",
+		value : 1,
+		fixed : true,
+		shape : "square",
+		color : "#A11CED"
+	});
+	graphData.nodes.push({
+		x:x,
+		y:y + 1 * step,
+		label : "Blackhole",
+		value : 1,
+		fixed : true,
+		shape : "square",
+		color : "#ED391C"
+	});
+	graphData.nodes.push({
+		x:x,
+		y:y + 2 * step,
+		label : "transformer",
+		value : 1,
+		fixed : true,
+		shape : "square",
+		color : "#1CD0ED"
+	});
 }
 function miracleHighlightSuccess(data) {
 	highlightNodes(data,"MIRACLE");
@@ -702,7 +735,7 @@ function getActionName(str) {
 	return str.split("action")[1].split("'")[1];
 }
 function createGraph() {
-	var network = new vis.Network(container,graphData,options);
+	network = new vis.Network(container,graphData,options);
 }
 function highlightNode(nodeName,nodeColour) {
 	for(var nodes in graphData.nodes){

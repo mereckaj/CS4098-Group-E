@@ -13,6 +13,7 @@
 	<script src="{{url_for('static', filename='src-noconflict/ext-language_tools.js')}}"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<script src="{{url_for('static', filename='js/tests.js')}}"></script>
+	<link href="{{url_for('static', filename='css/overlay-bootstrap.css')}}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -57,8 +58,11 @@
 				<div class="panel-heading">
 					<h1 class ="panel-title">Visualization</h1>
 				</div>
-				<div id="panel-body">
+				<div class="panel-body">
 					<div id="visualization" class="graphics"></div>
+				</div>
+				<div class="panel-body-overlay-down">
+					<p> testasdas </p>
 				</div>
 			</div>
 		</div>
