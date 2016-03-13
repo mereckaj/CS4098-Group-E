@@ -14,10 +14,11 @@ window.onload =function() {
 		var val = document.getElementById('fontsize').value
 		sendSetting("fontsize",val);
 		changeFontSize(val);
+
 	});
 	setupUpload();
 	loadUserSettings();
-
+	submitData("");
 	// Select file and load it into the editor
 	$('.proj').on('click', 'li', function (){
 		if(!noFiles){
@@ -144,8 +145,8 @@ function submitData(path){
 	var data = editor.getSession().getValue();
 	$.ajax({
 		type: "POST",
-		url: path,
-		data: { code: data},
+		url: "/pml/full",
+		data: data,
 		success: function(d){
 			/*
 				Code to show the errors and warnings inside the editor
@@ -159,16 +160,42 @@ function submitData(path){
 				var errorMessage = colonSplit[2].toString();
 				errorMessages.push(errorMessage);
 			}
-			var annotations = []
-			for(var i = 0; i < errorRows.length;i++){
-				annotations.push({
-					row: errorRows[i],
-					column: 2,
-					text: errorMessages[i],
-					type: "error"
-				});
-			}
-			editor.session.setAnnotations(annotations);
+			var annotations = [];
+			var errorCheck = 0;
+			if(errorMessages[0] != undefined){
+				var n = errorMessages[0].indexOf("syntax");
+				for(var i = 0; i < errorMessages.length;i++){
+						var check = errorMessages[i].indexOf("syntax");
+						if( check != -1){
+							errorCheck++;
+						}
+					}
+
+				if(errorMessages > 1 || errorCheck == 0){
+					for(var i = 0; i < errorMessages.length;i++){
+						annotations.push({
+							row: errorRows[i],
+							column: 2,
+							text: errorMessages[i],
+							type: "warning"
+						});
+					}
+				}
+				else
+				{
+					for(var i = 0; i < errorRows.length;i++){
+						annotations.push({
+							row: errorRows[i],
+							column: 2,
+							text: errorMessages[i],
+							type: "error"
+						});
+					}
+				}
+			
+				editor.session.setAnnotations(annotations);
+		}
+			setInterval(submitData(path),1000000);
 		}
 	});
 }
