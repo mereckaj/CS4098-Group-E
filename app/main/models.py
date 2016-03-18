@@ -66,3 +66,6 @@ class User(db.Model):
 
 	def set_fontsize(self, fs):
 		self.fontsize = fs
+
+	def is_email_confirmed(self):
+		return self.confirmed

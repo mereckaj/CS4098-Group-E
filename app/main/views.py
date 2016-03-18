@@ -1,11 +1,14 @@
-from flask import render_template, url_for, request, session, redirect, jsonify, make_response
+from flask import render_template, url_for, request, session, redirect, jsonify, make_response,current_app
 from . import main
 from .runCode import pmlchecker, pml_to_dot
 from .forms import LoginForm, RegisterForm,PasswordResetForm
-from .. import db, login_manager, oauth
+from .. import db, login_manager, oauth, mail
 from flask_login import login_required,login_user,logout_user
 from .models import User
 import json, os
+from itsdangerous import URLSafeTimedSerializer
+from flask.ext.mail import Message
+
 
 FACEBOOK_APP_ID = "486691024846349"
 FACEBOOK_APP_SECRET = "5654dfce0e6167725cf31272545a914e"
@@ -123,14 +126,14 @@ def google_login():
 def upload():
 	createFolders()
 	filename = request.form["filename"]
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
+	upload_folder = "tmp/" + str(session["uid"]) + "/"
 	# Request the code
 	code = request.form["code"]
 	session["update"] = request.form["code"]
 	session["changed"] = True
 	session['currentFile'] = filename
 	# Save the file to the upload folder we setup
-	inFile = open(UPLOAD_FOLDER + str(session['currentFile']),'w')
+	inFile = open(upload_folder + str(session['currentFile']),'w')
 	inFile.write("%s" % code)
 	inFile.close()
 	displayFile(filename)
@@ -146,8 +149,8 @@ def newFile():
 	session['currentFile'] = filename
 	#fileExist(filename) #couldnt get same file working
 	session['lst'].append(session['currentFile'])
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/"
-	file = open(os.path.join(UPLOAD_FOLDER,str(session['currentFile'])),'w')
+	upload_folder = "tmp/" + str(session["uid"]) + "/"
+	file = open(os.path.join(upload_folder,str(session['currentFile'])),'w')
 	file.close()
 	listFilename()
 	return redirect(url_for("main.index"))
@@ -155,18 +158,18 @@ def newFile():
 # Return contents of file that is selected
 @main.route("/uploads/<filename>", methods =["GET"])
 def displayFile(filename):
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + str(filename)
+	upload_folder = "tmp/" + str(session["uid"]) + "/" + str(filename)
 	session['currentFile'] = filename
 	listFilename()
-	resp = make_response(open(UPLOAD_FOLDER).read())
+	resp = make_response(open(upload_folder).read())
 	return resp
 
 # Remove file that is selected
 @main.route('/delete_item/<filename>', methods=['POST'])
 def delete_item(filename):
 	print('deleting')
-	UPLOAD_FOLDER = "tmp/" + str(session["uid"]) + "/" + str(filename)
-	os.remove(UPLOAD_FOLDER)
+	upload_folder = "tmp/" + str(session["uid"]) + "/" + str(filename)
+	os.remove(upload_folder)
 	listFilename()
 	return redirect(url_for("main.index"))
 
@@ -269,9 +272,7 @@ def authAndRedirectOrError(user_data,provider,next_url):
 
 	# Try to log the user in, or register a new user
 	if user is None:
-		user = User(email=email, first_name=first_name, last_name=last_name)
-		db.session.add(user)
-		db.session.commit()
+		user = create_user(email, first_name, last_name)
 
 	login_and_load_user(user)
 	return redirect(next_url)
@@ -293,10 +294,7 @@ def register():
 			password = form.password.data
 			user = User.query.filter(User.email == email).first()
 			if user is None:
-				new_user = User(email=email, first_name=first_name,
-					last_name=last_name,password=password,confirmed=False)
-				db.session.add(new_user)
-				db.session.commit()
+				new_user = create_user(email,first_name,last_name,password)
 				login_and_load_user(new_user)
 				return redirect(url_for("main.index"))
 			else:
@@ -353,6 +351,25 @@ def reset_password():
 		else:
 			return render_template("password_reset.html",form=form)
 
+@main.route("/confirm/<token>")
+# @login_required
+def confirm_email(token):
+	try:
+		email = confirm_token(token)
+	except:
+		return "exception"
+	user = User.query.filter_by(email=email).first_or_404()
+	if user.confirmed:
+		return "Already confirmed"
+	else:
+		user.confirmed = True
+		db.session.add(user)
+		db.session.commit()
+		# Remove the alert from session
+		remove_alert_from_session("Email not confirmed")
+	return redirect(url_for('main.index'))
+
+
 # Any unauthorized requests will be redirected to the login page.
 @login_manager.unauthorized_handler
 def unauthorized_handler():
@@ -389,6 +406,7 @@ def login_and_load_user(user):
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
+	add_alert_to_session("Email not confirmed")
 	listFilename()
 
 # Logout the user and remove their session information
@@ -420,3 +438,62 @@ def listFilename():
 	files = sorted(names, key=lambda x: os.path.getctime(os.path.join(path, x)))
 	files.reverse()
 	session['lst'] =files
+
+# Create a user and send the confirmation email.
+# If confirmation sending fails the user wont be registered (hopefully)
+def create_user(email, first_name, last_name,password=None):
+	user = User(email=email, first_name=first_name, last_name=last_name,
+		password=password)
+	token = generate_confirmation_token(user.email)
+	send_confirmation_email(user,token)
+	db.session.add(user)
+	db.session.commit()
+	return user
+
+def send_confirmation_email(user,token):
+	confirm_url = url_for('main.confirm_email', token=token, _external=True)
+	html = render_template('email_confirmation.html', confirm_url=confirm_url)
+	subject = "Email confirmation from PML IDE"
+	send_email(user.email,subject,html)
+
+# generate a token to send to the user
+def generate_confirmation_token(email):
+	serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+	return serializer.dumps(email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+
+# Given a token see if it can be confirmed
+def confirm_token(token, expiration=3600):
+	serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+	try:
+		email = serializer.loads(
+			token,
+			salt=current_app.config['SECURITY_PASSWORD_SALT'],
+			max_age=expiration
+		)
+	except:
+		return False
+	return email
+
+# Send an email to the user
+def send_email(to, subject, template):
+	msg = Message(
+		subject,
+		recipients=[to],
+		html=template,
+		sender=current_app.config['MAIL_DEFAULT_SENDER']
+	)
+	mail.send(msg)
+
+# Remote an allert that will apear in the logout dropdown list
+def remove_alert_from_session(alert):
+	if "alerts" in session:
+		if alert in session["alerts"]:
+			session["alerts"].remove(alert)
+
+# Add an alert to the logout dropdown list
+def add_alert_to_session(alert):
+	if "alerts" in session:
+		session["alerts"].append(alert)
+	else:
+		session["alerts"] = []
+		session["alerts"].append(alert)
