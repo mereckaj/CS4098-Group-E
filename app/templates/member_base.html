@@ -120,13 +120,9 @@
 				{% else %}
 					{{ session.email }}
 				{% endif %}
-				<span class="badge">
-					{% if session.alerts %}
-						{{ session.alerts|length }}
-					{% else %}
-						0
-					{% endif %}
-				</span>
+				{% if session.alerts %}
+					<span class="badge">{{ session.alerts|length }}</span>
+				{% endif %}
 			</a>
 			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 				{% if session.alerts %}
@@ -136,6 +132,13 @@
 								{{alert}}
 						</a></li>
 					{% endfor %}
+					<li class="divider"></li>
+				{% endif %}
+				{% if session.email_not_confirmed %}
+					<li><a href='resend'>
+						<span class="glyphicon glyphicon-repeat" aria-hidden="true"> </span>
+						Resend email confirmation
+					</a></li>
 					<li class="divider"></li>
 				{% endif %}
 				<li><a href='logout'>

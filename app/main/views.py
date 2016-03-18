@@ -1,7 +1,8 @@
-from flask import render_template, url_for, request, session, redirect, jsonify, make_response,current_app
+from flask import render_template, url_for, request, session, redirect, jsonify,\
+	make_response,current_app
 from . import main
 from .runCode import pmlchecker, pml_to_dot
-from .forms import LoginForm, RegisterForm,PasswordResetForm
+from .forms import LoginForm, RegisterForm,PasswordResetForm,PasswordChangeForm
 from .. import db, login_manager, oauth, mail
 from flask_login import login_required,login_user,logout_user
 from .models import User
@@ -272,7 +273,7 @@ def authAndRedirectOrError(user_data,provider,next_url):
 
 	# Try to log the user in, or register a new user
 	if user is None:
-		user = create_user(email, first_name, last_name)
+		user = create_user(email, first_name, last_name,confirmed=True)
 
 	login_and_load_user(user)
 	return redirect(next_url)
@@ -346,13 +347,38 @@ def reset_password():
 	elif request.method == "POST":
 		if form.validate_on_submit():
 			email = form.email.data.lower()
-			# HERE GOES PASSWORD RESET
+			user = User.query.filter_by(email=email).first()
+			if user is not None:
+				token = generate_email_token(email)
+				reset_url = url_for("main.reset",token=token,_external=True)
+				html = render_template("email_password_reset.html", reset_url=reset_url)
+				subject = "Password reset request"
+				send_email(email,subject,html)
 			return render_template("password_reset_complete.html",email=email)
 		else:
 			return render_template("password_reset.html",form=form)
 
-@main.route("/confirm/<token>")
+@main.route("/reset/<token>",methods=["GET","POST"])
 # @login_required
+def reset(token):
+	form = PasswordChangeForm();
+	if request.method == "GET":
+		return render_template("password_reset.html",form=form);
+	elif request.method == "POST":
+		if form.validate_on_submit():
+			password = form.password.data
+			email = confirm_token(token)
+			user = User.query.filter_by(email=email).first_or_404()
+			user.set_password(password);
+			db.session.add(user)
+			db.session.commit()
+			login_and_load_user(user)
+			return redirect(url_for("main.index"))
+		return render_template("password_reset.html",form=form);
+
+
+@main.route("/confirm/<token>")
+@login_required
 def confirm_email(token):
 	try:
 		email = confirm_token(token)
@@ -365,8 +391,20 @@ def confirm_email(token):
 		user.confirmed = True
 		db.session.add(user)
 		db.session.commit()
-		# Remove the alert from session
 		remove_alert_from_session("Email not confirmed")
+		session["email_not_confirmed"] = False
+	return redirect(url_for('main.index'))
+
+@main.route('/resend')
+@login_required
+def resend_confirmation():
+	current_user = User.query.filter_by(email=session["email"]).first()
+	if not current_user.is_email_confirmed():
+		token = generate_email_token(current_user.email)
+		confirm_url = url_for('main.confirm_email', token=token, _external=True)
+		html = render_template('email_confirmation.html', confirm_url=confirm_url)
+		subject = "Email confirmation from PML IDE"
+		send_email(current_user.email, subject, html)
 	return redirect(url_for('main.index'))
 
 
@@ -406,7 +444,9 @@ def login_and_load_user(user):
 	if user.get_first_name() is not None:
 		session["username"] = user.get_first_name()
 	session["email"] = str(user.get_email())
-	add_alert_to_session("Email not confirmed")
+	if not user.is_email_confirmed():
+		session["email_not_confirmed"] = True
+		add_alert_to_session("Email not confirmed")
 	listFilename()
 
 # Logout the user and remove their session information
@@ -441,10 +481,10 @@ def listFilename():
 
 # Create a user and send the confirmation email.
 # If confirmation sending fails the user wont be registered (hopefully)
-def create_user(email, first_name, last_name,password=None):
+def create_user(email, first_name, last_name,password=None,confirmed=False):
 	user = User(email=email, first_name=first_name, last_name=last_name,
-		password=password)
-	token = generate_confirmation_token(user.email)
+		password=password,confirmed=confirmed)
+	token = generate_email_token(user.email)
 	send_confirmation_email(user,token)
 	db.session.add(user)
 	db.session.commit()
@@ -457,7 +497,7 @@ def send_confirmation_email(user,token):
 	send_email(user.email,subject,html)
 
 # generate a token to send to the user
-def generate_confirmation_token(email):
+def generate_email_token(email):
 	serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
 	return serializer.dumps(email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
 

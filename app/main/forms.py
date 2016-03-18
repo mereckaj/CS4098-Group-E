@@ -45,3 +45,15 @@ class PasswordResetForm(Form):
 			message="Invalid email address. It must be *@*.* or similar.")
 	])
 	submit = SubmitField("Reset password")
+
+class PasswordChangeForm(Form):
+	password = PasswordField('New Password', validators=[
+		Required(),
+		EqualTo("confirm", message="Passwords must match"),
+		Length(min=8,max=64,
+			message="Password must be between 8 and 64 characters long")
+		# Regexp("(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$",
+		# 	message="Password is too weak, make sure it meets all of the required conditions")
+	])
+	confirm = PasswordField('Repeat Password')
+	submit = SubmitField("Change password")
