@@ -8,16 +8,16 @@ class Config:
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	SESSION_TYPE = "sqlalchemy"
-	SECURITY_PASSWORD_SALT = "salty_like_ppd"
+	SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT")
 
 	MAIL_SERVER = 'smtp.googlemail.com'
 	MAIL_PORT = 465
 	MAIL_USE_TLS = False
 	MAIL_USE_SSL = True
 
-	MAIL_USERNAME = "pmlidege"
-	MAIL_PASSWORD = "SuperPassword1"
-	MAIL_DEFAULT_SENDER = "pmlidege@gmail.com "
+	MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+	MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+	MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
 
 	@staticmethod
 	def init_app(app):
