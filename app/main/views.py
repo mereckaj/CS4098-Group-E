@@ -1,7 +1,7 @@
 from flask import render_template, url_for, request, session, redirect, jsonify, make_response
 from . import main
 from .runCode import pmlchecker, pml_to_dot
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm,PasswordResetForm
 from .. import db, login_manager, oauth
 from flask_login import login_required,login_user,logout_user
 from .models import User
@@ -294,7 +294,7 @@ def register():
 			user = User.query.filter(User.email == email).first()
 			if user is None:
 				new_user = User(email=email, first_name=first_name,
-					last_name=last_name,password=password)
+					last_name=last_name,password=password,confirmed=False)
 				db.session.add(new_user)
 				db.session.commit()
 				login_and_load_user(new_user)
@@ -339,6 +339,19 @@ def logout():
 	session["changed"] = False
 	session['lst'].clear() # Declares an empty list named
 	return redirect(url_for("main.index"))
+
+@main.route("/reset_password",methods=["GET","POST"])
+def reset_password():
+	form = PasswordResetForm();
+	if request.method == "GET":
+		return render_template("password_reset.html",form=form);
+	elif request.method == "POST":
+		if form.validate_on_submit():
+			email = form.email.data.lower()
+			# HERE GOES PASSWORD RESET
+			return render_template("password_reset_complete.html",email=email)
+		else:
+			return render_template("password_reset.html",form=form)
 
 # Any unauthorized requests will be redirected to the login page.
 @login_manager.unauthorized_handler
@@ -406,5 +419,4 @@ def listFilename():
 	names = os.listdir(path)
 	files = sorted(names, key=lambda x: os.path.getctime(os.path.join(path, x)))
 	files.reverse()
-	session['lst'] =files		
-
+	session['lst'] =files

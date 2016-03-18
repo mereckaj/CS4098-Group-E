@@ -36,3 +36,12 @@ class LoginForm(Form):
 	])
 	password = PasswordField('Password', validators=[Required()])
 	submit = SubmitField("Login")
+
+class PasswordResetForm(Form):
+	email = StringField('Email Address', validators=[
+		Length(min=6, max=64,
+			message="Email must be between 6 and 64 characters long"),
+		Regexp("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
+			message="Invalid email address. It must be *@*.* or similar.")
+	])
+	submit = SubmitField("Reset password")

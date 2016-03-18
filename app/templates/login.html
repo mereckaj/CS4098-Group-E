@@ -28,6 +28,7 @@
 					{% if form %}
 						<div class="row">
 							{{ wtf.quick_form(form,id=id) }}
+							<a href="{{url_for('main.reset_password')}}">Forgot Password</a>
 						</div>
 						<br>
 						<div id="signinbuttons" class="row">
