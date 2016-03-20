@@ -3,6 +3,7 @@ var network;
 var container;
 var graphData;
 var options;
+var colourScheme;
 /*
 	Tell the program what to do when the page loads which is
 	basically initialization
@@ -19,6 +20,7 @@ window.onload =function() {
 	});
 	setupUpload();
 	loadUserSettings();
+	colourScheme = "Scheme 1";
 	// Select file and load it into the editor
 	$('.proj').on('click', 'li', function (){
 		if(!noFiles){
@@ -620,6 +622,27 @@ function changeColourOfProvidesAndRequires(data) {
 		edges : edges
 	}
 }
+
+jQuery(function ($) {
+    $('#setScheme').click(function () {
+        if((document.getElementById('Scheme 1').checked)) {
+        	colourScheme = "Scheme 1";
+        }
+        else if((document.getElementById('Scheme 2').checked)) {
+        	colourScheme = "Scheme 2";
+        }
+        else if((document.getElementById('Scheme 3').checked)) {
+        	colourScheme = "Scheme 3";
+        }
+         else if((document.getElementById('Scheme 4').checked)) {
+        	colourScheme = "Scheme 4";
+        }
+        simpleGraph();
+    })
+});
+
+
+
 /*
 	Function for cehcking if a string contains a substring
 */
@@ -697,7 +720,19 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					highlightNode(actionName,"#A11CED");
+					if(colourScheme == "Scheme 1"){
+						highlightNode(actionName,"#86B71E");
+					}
+					else if(colourScheme == "Scheme 2"){
+						highlightNode(actionName,"#2AAE52");
+					}
+					else if(colourScheme == "Scheme 3"){
+						highlightNode(actionName,"#C45320");
+					}
+					else if(colourScheme == "Scheme 4"){
+						highlightNode(actionName,"#EB5E39");
+					} 
+
 				}
 			}
 			break;
@@ -705,7 +740,19 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					highlightNode(actionName,"#ED391C");
+					if(colourScheme == "Scheme 1"){
+						highlightNode(actionName,"#37948D");
+					}
+					else if(colourScheme == "Scheme 2"){
+						highlightNode(actionName,"#277A92");
+					}
+					else if(colourScheme == "Scheme 3"){
+						highlightNode(actionName,"#C49D20");
+					}
+					else if(colourScheme == "Scheme 4"){
+						highlightNode(actionName,"#8AD533");
+					}
+					//highlightNode(actionName,"#ED391C");
 				}
 			}
 			break;
@@ -713,7 +760,18 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					highlightNode(actionName,"#1CD0ED");
+					if(colourScheme == "Scheme 1"){
+						highlightNode(actionName,"#C1232B");
+					}
+					else if(colourScheme == "Scheme 2"){
+						highlightNode(actionName,"#EB5139");
+					}
+					else if(colourScheme == "Scheme 3"){
+						highlightNode(actionName,"#1A923E");
+					}
+					else if(colourScheme == "Scheme 4"){
+						highlightNode(actionName,"#CB316D");
+					}
 				}
 			}
 			break;
