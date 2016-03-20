@@ -13,3 +13,6 @@ http://www.cyberciti.biz/faq/unix-linux-test-existence-of-file-in-bash/
 http://www.w3schools.com/js/js_cookies.asp
 # clean.sh
 https://gist.github.com/peter-stratton/c127d6df835290261027
+
+#Email confirmation
+https://realpython.com/blog/python/handling-email-confirmation-in-flask/
