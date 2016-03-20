@@ -3,6 +3,8 @@ var network;
 var container;
 var graphData;
 var options;
+var containerName;
+
 /*
 	Tell the program what to do when the page loads which is
 	basically initialization
@@ -459,14 +461,16 @@ function getNames(dropdown){
 	}
 }
 
-function simpleGraph(){
+function simpleGraph(container){
 	/*
 		call the function that will conver PML to DOT, passing "" will make
 		the function get data straight from the ace editor
 		processDot is a cllback function that will be called on success
 		on failure an error message will be printed to console
 	*/
-	convertPmlToDot("",processDot);
+	console.log(container);
+	containerName = container;
+	convertPmlToDot("", processDot);
 }
 function processDot(data){
 	/*
@@ -506,7 +510,10 @@ function processDot(data){
 		Get the container to which the graph will be added and set options
 		for this current network
 	*/
-	var container = document.getElementById('visualization');
+	
+	var container = document.getElementById(containerName);
+
+
 	var options = parsedData.options;
 
 	options = {
