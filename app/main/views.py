@@ -174,12 +174,6 @@ def delete_item(filename):
 	listFilename()
 	return redirect(url_for("main.index"))
 
-@main.route("/refresh", methods=["POST"])
-def refresh():
-	listFilename()
-	session["changed"] = False
-	return redirect(url_for("main.index"))
-
 # Either get or set some settings that the user decided to change
 @main.route("/settings/<string:key>/<string:value>",methods=["POST"])
 @main.route("/settings/<string:key>",methods=["GET"])
