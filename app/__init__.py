@@ -5,12 +5,14 @@ from flask.ext.session import Session
 from flask_oauthlib.client import OAuth
 from flask_login import LoginManager
 from config import config
+from flask_mail import Mail
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 session = Session()
 oauth = OAuth()
 login_manager = LoginManager()
+mail = Mail()
 
 def create_app(config_name):
 	app = Flask(__name__)
@@ -21,7 +23,8 @@ def create_app(config_name):
 	bootstrap.init_app(app) # Bootstrap (make this look good)
 	db.init_app(app) # SQLAlchemy (Object Relational Mapper) (Work with objects not SQL)
 	session.init_app(app) # Session lets you keep data about users (Cookies)
-	
+	mail.init_app(app)
+
 	login_manager.init_app(app)
 	login_manager.login_view = "main.login"
 	login_manager.login_message = u"You need to log in to view this page"
@@ -29,7 +32,7 @@ def create_app(config_name):
 	# Tell the app where to look for the routeszz
 	from .main import main as main_blueprint
 	app.register_blueprint(main_blueprint)
-	
+
 	with app.app_context():
 		db.create_all()
 

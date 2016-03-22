@@ -4,7 +4,7 @@ var container;
 var graphData;
 var options;
 var containerName;
-
+var colourScheme;
 /*
 	Tell the program what to do when the page loads which is
 	basically initialization
@@ -21,6 +21,7 @@ window.onload =function() {
 	});
 	setupUpload();
 	loadUserSettings();
+	colourScheme = "Scheme 1";
 	// Select file and load it into the editor
 	$('.proj').on('click', 'li', function (){
 		if(!noFiles){
@@ -37,13 +38,17 @@ window.onload =function() {
 	});
 
 	// When click project delete the project and file
+	// if there is file's to delete
 	$('.del').on('click', 'li', function (){
-		if(!noFiles){
+		if(!noFiles){	
 			var filename = $(this).text();
 			var path = /delete_item/ + filename;
 			jQuery.post(path);
-			refresh();
-			loadNextFile(filename);
+			removeElement(filename,'projects','.proj li');
+			removeElement(filename,'deleting','.del li');
+			loadNextFile(filename,'projects','.proj li');
+			loadNextFile(filename,'deleting','.del li');
+
 		}
 	});
 
@@ -62,12 +67,15 @@ function setupUpload(){
 		var reader = new FileReader();
 		var extension = file.name.split('.').pop();
 		var name = file.name.substr(0, file.name.lastIndexOf('.'));
+		name = updateName(name,name, 1);
+		if(noFiles){	//if no files delete text in dropdown
+			removeElement('There are no saved files','projects','.proj li');
+			removeElement('There are no saved files','deleting','.del li');
+		}
 		if (!file) {
 			alert("Failed to load file");
 		} else if (extension != "pml") {
 			alert(file.name + " is not a valid pml file");
-		} else if (fileExist(name)){
-			alert(name + " has already been uploaded");
 		} else {
 			reader.onload = function(e) {
 				$.ajax({
@@ -79,13 +87,37 @@ function setupUpload(){
 				noFiles=false;
 				closeFile = false; //file is open
 				document.getElementById('title').innerHTML = name;
+				addElement(name,'projects');
+				addElement(name,'deleting');
 				navbar_file_save();
 			}
 			reader.readAsText(file);
-			refresh();
 		}
 	});
 }
+
+function addElement(name, dropdown){
+	var select_elem = document.getElementById(dropdown);
+	noFiles =false;
+	closeFile =false;
+	var option = document.createElement('li');
+	option.innerHTML = '<a>' + name + '</a>';
+	option.value = name;
+	select_elem.appendChild(option);
+}
+
+function removeElement(name, dropdown, opt){
+	var nameExist = false;
+	var select_elem = document.getElementById(dropdown);
+	$(opt).each(function (){
+		var option = $(this).text();
+		if(option == name){
+			select_elem.removeChild(this);
+			nameExist = true;
+		}
+	});	
+}
+
 /*
 	check if the file exist
 */
@@ -104,41 +136,51 @@ function fileExist(name){
 	}
 	return false;
 }
+
+
+function updateName(name, newName,count){
+	
+	$('.proj li').each(function (){
+		if(!noFiles){
+			var filename = $(this).text();
+			if(filename == newName){
+				newName = name + ' ' + count;
+				count = count + 1 ;
+				return updateName(name,newName, count );
+			}
+		}
+	});
+	return newName;
+}
 /*
 	This will load the last saved file into editor after delete
 */
-function loadNextFile(filename){
-	var list_of_names = document.getElementById('fileNames').value;
+function loadNextFile(deleteFile, dropdown,opt){
 	var currentFile = document.getElementById('title').innerHTML;
-	list_of_names = list_of_names.split(',');
-	if(list_of_names[0] !== '[]'|| filename == currentFile){
-		list_of_names[0] = list_of_names[0].match(/'([^']+)'/)[1];
-		noFiles =false;
-		if(list_of_names[0] == filename){
-			if(list_of_names[1]!=undefined){
-				list_of_names[1] = list_of_names[1].match(/'([^']+)'/)[1];
-				var path = /uploads/ + list_of_names[1];
-				document.getElementById('title').innerHTML = list_of_names[1];
-				closeFile = false; //file is open
-				jQuery.get(path, function(data) {
-					editor.session.doc.setValue(data);
-					navbar_file_save();
-				});
-			}
-		}
-		else{
-			var path = /uploads/ + list_of_names[0];
-			document.getElementById('title').innerHTML = list_of_names[0];
+	var select_elem = document.getElementById(dropdown);
+	var found = false;
+	if($(opt).length != 0){
+		if(deleteFile == currentFile){		
+			var filename = $('.proj li:last').text();
+			var path = /uploads/ + filename;
+			document.getElementById('title').innerHTML = filename;
 			closeFile = false; //file is open
 			jQuery.get(path, function(data) {
 				editor.session.doc.setValue(data);
 				navbar_file_save();
 			});
 		}
-	}
-	else{
+	}else{
 		document.getElementById('title').innerHTML = "PML Code Checker";
+		editor.session.doc.setValue('');
+		noFiles= true;
+		closeFile =true;
+		var option = document.createElement('li');
+		option.innerHTML = '<a>' + 'There are no saved files' + '</a>';
+		option.value = 'There is no saved files';
+		select_elem.appendChild(option);
 	}
+
 }
 
 /*
@@ -336,23 +378,25 @@ function navbar_file_new_file(){
         	alert("Please only use standard alphanumerics");
 		input = '';
 		navbar_file_new_file();
-	}else if (fileExist(input)){
-		alert(input + " has already been used. Please use another file name");
-		input = '';
-		navbar_file_new_file();
 	}
+
 	if (input != ''&& input != null) {
+		if(noFiles){	//if no files delete text in dropdown
+			removeElement('There are no saved files','projects','.proj li');
+			removeElement('There are no saved files','deleting','.del li');
+		}
+		input = updateName(input,input, 1);
 		$.ajax({
 			type: "POST",
 			data: { filename: input},
 			url: "/newFile"
 		});
 		editor.session.doc.setValue("");
-		//var newName =changeName(input,input,1);
 		document.getElementById('title').innerHTML = input;
 		closeFile =false;
 		navbar_file_save();
-		refresh();
+		addElement(input,'projects');
+		addElement(input,'deleting');
 	}
 	else{
 		alert("Filename not entered, please try again");
@@ -373,14 +417,16 @@ function navbar_file_save(){
         		alert("Please only use standard alphanumerics");
 			input = '';
 			navbar_file_save();
-		}else if (fileExist(input)){
-			alert(input + " has already been used. Please use another file name");
-			input = '';
-			navbar_file_new_file();
 		}
+		input = updateName(input,input, 1);
 	}
 
 	if (input != ''&& input != null) {
+		if(noFiles){	//if no files delete text in dropdown
+			removeElement('There are no saved files','projects','.proj li');
+			removeElement('There are no saved files','deleting','.del li');
+		}
+		document.getElementById('title').innerHTML = input;
 		var data = editor.getSession().getValue();
 		$.ajax({
 			type: "POST",
@@ -392,7 +438,8 @@ function navbar_file_save(){
 		alert("Filename not entered, please try again");
 	}
 	if (closeFile){
-		refresh();
+		addElement(input,'projects');
+		addElement(input,'deleting');
 		closeFile =false;
 	}
 }
@@ -426,10 +473,6 @@ function changeFontSize(val){
 	$("#fontsize").attr("placeholder", val);
 }
 
-// refresh so the contents in drop down menu is updated
-function refresh(){
-	document.forms["refreshed"].submit();
-}
 /*
 	Gets a list of names and displays in dropdown
 */
@@ -627,6 +670,27 @@ function changeColourOfProvidesAndRequires(data) {
 		edges : edges
 	}
 }
+
+jQuery(function ($) {
+    $('#setScheme').click(function () {
+        if((document.getElementById('Scheme 1').checked)) {
+        	colourScheme = "Scheme 1";
+        }
+        else if((document.getElementById('Scheme 2').checked)) {
+        	colourScheme = "Scheme 2";
+        }
+        else if((document.getElementById('Scheme 3').checked)) {
+        	colourScheme = "Scheme 3";
+        }
+         else if((document.getElementById('Scheme 4').checked)) {
+        	colourScheme = "Scheme 4";
+        }
+        simpleGraph();
+    })
+});
+
+
+
 /*
 	Function for cehcking if a string contains a substring
 */
@@ -704,7 +768,19 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					highlightNode(actionName,"#A11CED");
+					if(colourScheme == "Scheme 1"){
+						highlightNode(actionName,"#86B71E");
+					}
+					else if(colourScheme == "Scheme 2"){
+						highlightNode(actionName,"#2AAE52");
+					}
+					else if(colourScheme == "Scheme 3"){
+						highlightNode(actionName,"#C45320");
+					}
+					else if(colourScheme == "Scheme 4"){
+						highlightNode(actionName,"#EB5E39");
+					} 
+
 				}
 			}
 			break;
@@ -712,7 +788,19 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					highlightNode(actionName,"#ED391C");
+					if(colourScheme == "Scheme 1"){
+						highlightNode(actionName,"#37948D");
+					}
+					else if(colourScheme == "Scheme 2"){
+						highlightNode(actionName,"#277A92");
+					}
+					else if(colourScheme == "Scheme 3"){
+						highlightNode(actionName,"#C49D20");
+					}
+					else if(colourScheme == "Scheme 4"){
+						highlightNode(actionName,"#8AD533");
+					}
+					//highlightNode(actionName,"#ED391C");
 				}
 			}
 			break;
@@ -720,7 +808,18 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					highlightNode(actionName,"#1CD0ED");
+					if(colourScheme == "Scheme 1"){
+						highlightNode(actionName,"#C1232B");
+					}
+					else if(colourScheme == "Scheme 2"){
+						highlightNode(actionName,"#EB5139");
+					}
+					else if(colourScheme == "Scheme 3"){
+						highlightNode(actionName,"#1A923E");
+					}
+					else if(colourScheme == "Scheme 4"){
+						highlightNode(actionName,"#CB316D");
+					}
 				}
 			}
 			break;
