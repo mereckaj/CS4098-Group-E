@@ -774,26 +774,6 @@ function changeColourOfProvidesAndRequires(data) {
 	}
 }
 
-jQuery(function ($) {
-	$('#setScheme').click(function () {
-		if((document.getElementById('Scheme 1').checked)) {
-			colourScheme = "Scheme 1";
-		}
-		else if((document.getElementById('Scheme 2').checked)) {
-			colourScheme = "Scheme 2";
-		}
-		else if((document.getElementById('Scheme 3').checked)) {
-			colourScheme = "Scheme 3";
-		}
-		 else if((document.getElementById('Scheme 4').checked)) {
-			colourScheme = "Scheme 4";
-		}
-		simpleGraph();
-	})
-});
-
-
-
 /*
 	Function for cehcking if a string contains a substring
 */
