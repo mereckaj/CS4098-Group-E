@@ -62,9 +62,15 @@
 			</a>
 			<ul class="dropdown-menu vis" id = 'visualize'>
 				<li>
-					<a onclick="simpleGraph()">
+					<a onclick="simpleGraph('visualization')">
 						<span class="glyphicon glyphicon-menu-right"></span>
 						Standard Flow Graph
+					</a>
+				</li>
+				<li>
+					<a data-toggle="modal" data-target="#fullscreenModal" onclick="simpleGraph('visualization_fullscreen')">
+						<span class="glyphicon glyphicon-menu-right"></span>
+						Full Screen Flow Graph
 					</a>
 				</li>
 			</ul>
