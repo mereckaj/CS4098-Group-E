@@ -20,6 +20,7 @@ window.onload =function() {
 
 	});
 	setupUpload();
+	setupFileDragAndDrop();
 	loadUserSettings();
 	colourScheme = "Scheme 1";
 	// Select file and load it into the editor
@@ -94,6 +95,52 @@ function setupUpload(){
 			reader.readAsText(file);
 		}
 	});
+}
+
+/*
+	Rig up the ACE editors so that the user can populate them
+	by dragging and dropping a file that contains PML.
+*/
+function setupFileDragAndDrop() {
+    	var inputXml;
+    	inputXml = document.getElementById('editor');
+    	addFileDragAndDropEventListeners(inputXml, editor);
+
+     	function addFileDragAndDropEventListeners(aceInputDiv, aceObject) {
+       		aceInputDiv.addEventListener('dragover', function (e) {
+                    stopEvent(e);
+                });
+
+                aceInputDiv.addEventListener('drop', function (e) {
+                    putFileContentsInAceEditor(e.dataTransfer.files[0], aceObject);
+                    stopEvent(e);
+                });
+
+                function stopEvent(e) {
+                    e.stopPropagation();
+                 e.preventDefault();
+           	}
+     	} // end addFileDragAndDropEventListeners
+} // end setupFileDragAndDrop 
+
+/* 
+	A small function that takes a file and an ACE editor object.
+	The function reads the file and copies its contents into the ACE editor.
+*/
+function putFileContentsInAceEditor(file, aceEditor) {
+    	var reader, text;
+       	reader = new FileReader();
+       	reader.onload = (function (file) {
+         	text = file.target.result;
+                aceEditor.getSession().setValue(text);
+        });
+        reader.readAsText(file);
+	noFiles=false;
+	closeFile = false; //file is open
+	document.getElementById('title').innerHTML = file.name;
+	addElement(file.name,'projects');
+	addElement(file.name,'deleting');
+	navbar_file_save();
 }
 
 function addElement(name, dropdown){
