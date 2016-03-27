@@ -5,6 +5,12 @@ function convertPmlToDot(data,convertSuccess,convertFailure){
 	}
 	sendDataToServer("POST","/dot",data,convertSuccess);
 }
+function convertPmlToJSON(data,convertSuccess,convertFailure){
+	if(data===""){
+		var data = editor.session.doc.getValue();
+	}
+	sendDataToServer("POST","/pml/json",data,convertSuccess);
+}
 /*
 	Put some data to the server, use callbacks so that user never sees any
 	delay. Callback is where the result will be gotten from too.

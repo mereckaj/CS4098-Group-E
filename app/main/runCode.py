@@ -72,3 +72,28 @@ def pml_to_dot(code):
 
 	# Return the filename and output as a tupple
 	return (filename, output,success)
+
+#Take a byte array of pml code and convert it to json
+def pml_to_json(code):
+	# Create a somewhat unique name for the temp
+	# graphlibDot will not be able to work unless name of the file starts with a character
+	filename = "a" + getFileName(code.decode("utf-8"))
+	storeInNamedFile(code.decode("utf-8"),filename)
+	filename = "tmp/" + filename
+
+	try:
+		# Run the code through the checker and get the output
+		output = subprocess.check_output(["./traverse_json","-j",filename],stderr=subprocess.STDOUT)
+		success = True
+	except subprocess.CalledProcessError as e:
+		output = e.output
+		success = False
+
+	#convert output into a string
+	output = output.decode("utf-8")
+
+	# Remove the file (If left there's a change it will cause collisions)
+	os.remove(filename)
+
+	# Return the filename and output as a tupple
+	return (filename, output,success)

@@ -628,7 +628,9 @@ function processDot(data){
 	var success = data.success;
 	if (success != true){
 		alert("An error occured when creating the visualization, please check " +
-			"that there are no syntax mistakes.");
+			"that there are no syntax mistakes. Here is what the server returned" +
+			data.data
+		);
 	}
 	data = data.data;
 	/*
@@ -962,4 +964,76 @@ function createTableEntry(scheme, radioNumber) {
 	col2.appendChild(miracleButton);
 	col2.appendChild(blackHoleButton);
 	col2.appendChild(transformerButton);
+}
+/*
+	Post the current editors data to the server and get the reply
+*/
+function pmlToJson(){
+	convertPmlToJSON("",processJSON);
+}
+/*
+	Call back function to deal with pmlToJson
+*/
+function processJSON(data) {
+	// Check to make sure there were no failures on the server side
+	var success = data.success;
+	if (success != true){
+		alert("An error occured when trying to parse PML. Please make sure that " +
+		"Please make sure that the syntax of the PML is correct. Here is what " +
+		"the server returned: " + data.data);
+		return;
+	}
+	// The server returns raw json (Not jsonified) so parse it
+	var parsed_json = JSON.parse(data.data);
+	var nodes = [];
+	var relations = [];
+	/*
+		Loop over all the data, remove the start and end nodes and any relations
+		that go to them. They were added by traverse for DOT and we don't need
+		them here.
+	*/
+	for (var i in parsed_json){
+		if( "type" in parsed_json[i]){
+			if(parsed_json[i].type==="node"){
+				if(isSuitableNode(parsed_json[i])){
+					nodes.push(parsed_json[i]);
+				}
+			}else if(parsed_json[i].type==="relation"){
+				if(isSuitableRelation(parsed_json[i])){
+					relations.push(parsed_json[i]);
+				}
+			}
+		}
+	}
+	/*
+		CODE GOES HERE
+	*/
+}
+/*
+	Check that the relation does not come from/go to a node we don't care about
+*/
+function isSuitableRelation(relation){
+	if(	relation.data.from.data.name!=="start" &&
+		relation.data.from.data.name!=="end" &&
+		relation.data.to.data.name!=="start" &&
+		relation.data.to.data.name!=="end"){
+			return true;
+	}
+	console.log(relation);
+	return false;
+}
+/*
+	Check that start and end nodes don't get included after parsing
+*/
+function isSuitableNode(node){
+	if("name" in node.data){
+		/*
+			Unsuitable (these nodes were added in by traverse and dont
+			come from actual PML)
+		*/
+		if(node.data.name!=="start" && node.data.name!=="end"){
+			return true;
+		}
+	}
+	return false;
 }

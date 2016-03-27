@@ -1,7 +1,7 @@
 from flask import render_template, url_for, request, session, redirect, jsonify,\
 	make_response,current_app
 from . import main
-from .runCode import pmlchecker, pml_to_dot
+from .runCode import pmlchecker, pml_to_dot, pml_to_json
 from .forms import LoginForm, RegisterForm,PasswordResetForm,PasswordChangeForm
 from .. import db, login_manager, oauth, mail
 from flask_login import login_required,login_user,logout_user
@@ -59,6 +59,17 @@ def index():
 def dot():
 	code = request.get_data()
 	filename,result,success = pml_to_dot(code)
+	return jsonify({
+		"success" : success,
+		"data":result,
+		"filename":filename
+	})
+
+#Convert PML to JSON
+@main.route("/pml/json",methods=["POST"])
+def pml_json():
+	code = request.get_data()
+	filename,result,success = pml_to_json(code)
 	return jsonify({
 		"success" : success,
 		"data":result,
