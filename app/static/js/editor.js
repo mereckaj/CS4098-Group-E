@@ -11,6 +11,32 @@ var colourScheme;
 */
 var noFiles;	//true when there is no files
 var closeFile;	//True when file is closed
+var coloursSchemes = {
+	flowGraph : [
+		{
+			miracle : "#86B71E",
+			blackhole : "#37948D",
+			transformer : "#C1232B"
+		},
+		{
+			miracle : "#3517DD",
+			blackhole : "#7D0CDA",
+			transformer : "#FFF500"
+		},
+		{
+			miracle : "#20EC00",
+			blackhole : "#FC0012",
+			transformer : "#FF6C00"
+		},
+		{
+			miracle : "#86D69A",
+			blackhole : "#747C91",
+			transformer : "#644164"
+		}
+	]
+}
+var colourSchemeInUse = coloursSchemes.flowGraph[0];
+var lastText = "";
 window.onload =function() {
 	setInterval(function() { submitData()},1000);
 	$('#fontsize').bind('input', function() {
@@ -22,7 +48,6 @@ window.onload =function() {
 	setupUpload();
 	setupFileDragAndDrop();
 	loadUserSettings();
-	colourScheme = "Scheme 1";
 	// Select file and load it into the editor
 	$('.proj').on('click', 'li', function (){
 		if(!noFiles){
@@ -41,7 +66,7 @@ window.onload =function() {
 	// When click project delete the project and file
 	// if there is file's to delete
 	$('.del').on('click', 'li', function (){
-		if(!noFiles){	
+		if(!noFiles){
 			var filename = $(this).text();
 			var path = /delete_item/ + filename;
 			jQuery.post(path);
@@ -49,7 +74,7 @@ window.onload =function() {
 			removeElement(filename,'deleting','.del li');
 			loadNextFile(filename,'projects','.proj li');
 			loadNextFile(filename,'deleting','.del li');
-		} 
+		}
 		if(noFiles) {
 			$.ajax({
 				type: "POST",
@@ -62,6 +87,7 @@ window.onload =function() {
 	getNames('projects');
 	getNames('deleting');
 
+	loadColourSchemes();
 }
 /*
 	When user tries to upload a file put it into the text editor
@@ -127,9 +153,9 @@ function setupFileDragAndDrop() {
                  e.preventDefault();
            	}
      	} // end addFileDragAndDropEventListeners
-} // end setupFileDragAndDrop 
+} // end setupFileDragAndDrop
 
-/* 
+/*
 	A small function that takes a file and an ACE editor object.
 	The function reads the file and copies its contents into the ACE editor.
 */
@@ -152,14 +178,14 @@ function putFileContentsInAceEditor(file, aceEditor) {
 	} else if (extension != "pml") {
 		alert(file.name + " is not a valid pml file");
 	}
-	name = file.name; 
+	name = file.name;
 	name = updateName(name,name, 1);
 	noFiles=false;
 	closeFile = false; //file is open
 	document.getElementById('title').innerHTML = name;
 	addElement(name,'projects');
 	addElement(name,'deleting');
-	
+
 }
 
 function addElement(name, dropdown){
@@ -181,7 +207,7 @@ function removeElement(name, dropdown, opt){
 			select_elem.removeChild(this);
 			nameExist = true;
 		}
-	});	
+	});
 }
 
 /*
@@ -205,7 +231,7 @@ function fileExist(name){
 
 
 function updateName(name, newName,count){
-	
+
 	$('.proj li').each(function (){
 		if(!noFiles){
 			var filename = $(this).text();
@@ -226,7 +252,7 @@ function loadNextFile(deleteFile, dropdown,opt){
 	var select_elem = document.getElementById(dropdown);
 	var found = false;
 	if($(opt).length != 0){
-		if(deleteFile == currentFile){		
+		if(deleteFile == currentFile){
 			var filename = $('.proj li:last').text();
 			var path = /uploads/ + filename;
 			document.getElementById('title').innerHTML = filename;
@@ -254,6 +280,14 @@ function loadNextFile(deleteFile, dropdown,opt){
 */
 function submitData(){
 	var data = editor.getSession().getValue();
+	/*
+		Prevent the program from sending repeated messages to the server with
+		same data. Only send it if it has changed.
+	*/
+	if(lastText===data){
+		return;
+	}
+	lastText = data;
 	$.ajax({
 		type: "POST",
 		url: "/pml/full",
@@ -581,7 +615,6 @@ function simpleGraph(container){
 		processDot is a cllback function that will be called on success
 		on failure an error message will be printed to console
 	*/
-	console.log(container);
 	containerName = container;
 	convertPmlToDot("", processDot);
 }
@@ -623,7 +656,7 @@ function processDot(data){
 		Get the container to which the graph will be added and set options
 		for this current network
 	*/
-	
+
 	var container = document.getElementById(containerName);
 
 
@@ -742,21 +775,21 @@ function changeColourOfProvidesAndRequires(data) {
 }
 
 jQuery(function ($) {
-    $('#setScheme').click(function () {
-        if((document.getElementById('Scheme 1').checked)) {
-        	colourScheme = "Scheme 1";
-        }
-        else if((document.getElementById('Scheme 2').checked)) {
-        	colourScheme = "Scheme 2";
-        }
-        else if((document.getElementById('Scheme 3').checked)) {
-        	colourScheme = "Scheme 3";
-        }
-         else if((document.getElementById('Scheme 4').checked)) {
-        	colourScheme = "Scheme 4";
-        }
-        simpleGraph();
-    })
+	$('#setScheme').click(function () {
+		if((document.getElementById('Scheme 1').checked)) {
+			colourScheme = "Scheme 1";
+		}
+		else if((document.getElementById('Scheme 2').checked)) {
+			colourScheme = "Scheme 2";
+		}
+		else if((document.getElementById('Scheme 3').checked)) {
+			colourScheme = "Scheme 3";
+		}
+		 else if((document.getElementById('Scheme 4').checked)) {
+			colourScheme = "Scheme 4";
+		}
+		simpleGraph();
+	})
 });
 
 
@@ -838,19 +871,7 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					if(colourScheme == "Scheme 1"){
-						highlightNode(actionName,"#86B71E");
-					}
-					else if(colourScheme == "Scheme 2"){
-						highlightNode(actionName,"#2AAE52");
-					}
-					else if(colourScheme == "Scheme 3"){
-						highlightNode(actionName,"#C45320");
-					}
-					else if(colourScheme == "Scheme 4"){
-						highlightNode(actionName,"#EB5E39");
-					} 
-
+					highlightNode(actionName,colourSchemeInUse.miracle);
 				}
 			}
 			break;
@@ -858,19 +879,7 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					if(colourScheme == "Scheme 1"){
-						highlightNode(actionName,"#37948D");
-					}
-					else if(colourScheme == "Scheme 2"){
-						highlightNode(actionName,"#277A92");
-					}
-					else if(colourScheme == "Scheme 3"){
-						highlightNode(actionName,"#C49D20");
-					}
-					else if(colourScheme == "Scheme 4"){
-						highlightNode(actionName,"#8AD533");
-					}
-					//highlightNode(actionName,"#ED391C");
+					highlightNode(actionName,colourSchemeInUse.blackhole);
 				}
 			}
 			break;
@@ -878,18 +887,7 @@ function highlightNodes(data,type){
 			for (var line in array){
 				if(array[line]!=""){
 					var actionName = getActionName(array[line]);
-					if(colourScheme == "Scheme 1"){
-						highlightNode(actionName,"#C1232B");
-					}
-					else if(colourScheme == "Scheme 2"){
-						highlightNode(actionName,"#EB5139");
-					}
-					else if(colourScheme == "Scheme 3"){
-						highlightNode(actionName,"#1A923E");
-					}
-					else if(colourScheme == "Scheme 4"){
-						highlightNode(actionName,"#CB316D");
-					}
+					highlightNode(actionName,colourSchemeInUse.transformer);
 				}
 			}
 			break;
@@ -922,4 +920,66 @@ function setGraphOptions(cont,data,opts) {
 	container = cont;
 	graphData = data;
 	options = opts;
+}
+function changeColoursScheme(scheme,containter){
+	colourSchemeInUse = coloursSchemes.flowGraph[scheme];
+	simpleGraph(containter);
+}
+function loadColourSchemes(){
+	for ( var i in coloursSchemes.flowGraph){
+		createTableEntry(coloursSchemes.flowGraph[i], i);
+	}
+}
+function createTableEntry(scheme, radioNumber) {
+	var table = document.getElementById("colourSchemeTable");
+	var newRow = table.insertRow();
+	var col1 = newRow.insertCell(0);
+	var col2 = newRow.insertCell(1);
+	var radioDiv = document.createElement("div");
+	radioDiv.className = "radio";
+
+	var radioLabel = document.createElement("label");
+	radioLabel.className = "active";
+	radioLabel.value = "Scheme : " + radioNumber;
+	radioLabel.id = "Scheme " + radioNumber;
+
+	var radioLabelInput = document.createElement("input");
+	radioLabelInput.type = "radio";
+	radioLabelInput.name = "optradio";
+	radioLabelInput.value = "Scheme " + radioNumber;
+	radioLabelInput.id = radioNumber.toString();
+	if(radioNumber==="0"){
+		radioLabelInput.checked = true;
+	}
+	radioLabelInput.addEventListener(
+		"click",
+		function(){
+			changeColoursScheme(radioNumber,'visualization');
+		},
+		false
+	);
+
+	radioLabel.appendChild(radioLabelInput);
+	// radioLabel.innerHTML = radioLabel.innerHTML + "Scheme " + radioNumber;
+	radioDiv.appendChild(radioLabel);
+	col1.appendChild(radioDiv);
+
+	var miracleButton = document.createElement("button");
+	miracleButton.className = "btn btn-primary";
+	miracleButton.style = "background-color:" + scheme.miracle;
+	miracleButton.innerHTML = "Miracle";
+
+	var blackHoleButton = document.createElement("button");
+	blackHoleButton.className = "btn btn-primary";
+	blackHoleButton.style = "background-color:" + scheme.blackhole;
+	blackHoleButton.innerHTML = "Blackhole";
+
+	var transformerButton = document.createElement("button");
+	transformerButton.className = "btn btn-primary";
+	transformerButton.style = "background-color:" + scheme.transformer;
+	transformerButton.innerHTML = "Transformer";
+
+	col2.appendChild(miracleButton);
+	col2.appendChild(blackHoleButton);
+	col2.appendChild(transformerButton);
 }

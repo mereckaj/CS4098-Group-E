@@ -63,57 +63,6 @@
 											<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 										</button>
 									</div>
-								<div class="container">
-  <h2>Colour Scheme control:</h2>
-  <p>Select the colour scheme you would like to use:</p>
-  <form role="form">
-    <div class="radio">
-      <label class = "active"><input type="radio" name="optradio" value = "Scheme 1" id = "Scheme 1" checked="" onClick = "changeExampleColours()">Scheme 1</label>
-    </div>
-    <div class="radio">
-      <label><input type="radio" name="optradio" value = "Scheme 2" id = "Scheme 2" onClick = "changeExampleColours()">Scheme 2</label>
-    </div>
-    <div class="radio">
-      <label><input type="radio" name="optradio" value = "Scheme 3" id = "Scheme 3" onClick = "changeExampleColours()">Scheme 3</label>
-    </div>
-    <div class="radio">
-      <label><input type="radio" name="optradio" value = "Scheme 4" id = "Scheme 4" onClick = "changeExampleColours()">Scheme 4</label>
-    </div>
-  </form>
-  <button class="btn btn-primary" id = "setScheme" onClick = "changeExampleColours()" >Change Scheme</button>
-</div>	
-<script>
-function changeExampleColours(){
- if((document.getElementById('Scheme 1').checked)) {
-        	document.getElementById("blackHole").style = "background-color:#37948D";
-        	document.getElementById("transformer").style = "background-color:#C1232B";
-        	document.getElementById("miracle").style = "background-color:#86B71E";
-        }
- if((document.getElementById('Scheme 2').checked)) {
-        	document.getElementById("blackHole").style = "background-color:#277A92";
-        	document.getElementById("transformer").style = "background-color:#EB5139";
-        	document.getElementById("miracle").style = "background-color:#2AAE52";
-        }
- if((document.getElementById('Scheme 3').checked)) {
-        	document.getElementById("blackHole").style = "background-color:#C49D20";
-        	document.getElementById("transformer").style = "background-color:#1A923E";
-        	document.getElementById("miracle").style = "background-color:#C45320";
-        }        
- if((document.getElementById('Scheme 4').checked)) {
-        	document.getElementById("blackHole").style = "background-color:#8AD533";
-        	document.getElementById("transformer").style = "background-color:#CB316D";
-        	document.getElementById("miracle").style = "background-color:#EB5E39";
-        }
-
-	
-}
-
-
-
-
-
-
-</script>
 								<div class="modal-body">
 									<div class="table-responsive">
 										<table class="table">
@@ -125,15 +74,15 @@ function changeExampleColours(){
 											</thead>
 											<tbody>
 											<tr>
-												<td><button id = "miracle"class="btn btn-primary" style="background-color:#86B71E">Miracle</button></td>
+												<td>Miracle</td>
 												<td>Miracles are actions which provide but do not require a resource</td>
 											</tr>
 											<tr>
-												<td><button id = "blackHole"class="btn btn-primary" style="background-color:#37948D">Blackhole</button></td>
+												<td>Blackhole</td>
 												<td>Black holes require but do not provide a resource</td>
 											</tr>
 											<tr>
-												<td><button class="btn btn-primary" id = "transformer" style="background-color:#C1232B">Transformer</button></td>
+												<td>Transformer</td>
 												<td>Transformations provide a different resource to the one required</td>
 											</tr>
 											</tbody>
@@ -169,14 +118,33 @@ function changeExampleColours(){
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Visualize
 					</button>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-						Visualization Legend
-					</button>
 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" onclick="simpleGraph('visualization_fullscreen')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Visualization fullscreen
 					</button>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+						Visualization Legend
+					</button>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Diagram legend
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table" id="colourSchemeTable">
+							<thead>
+								<tr>
+									<th>Scheme</th>
+									<th>Colours</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
