@@ -3,6 +3,7 @@
 # Required programs
 PML=pmlcheck
 TRAVERSE=traverse
+TRAVERSE_JSON=traverse_json
 
 # Required python
 VIEWS=app/main/views.py
@@ -23,6 +24,7 @@ VIS_JS=app/static/js/vis.js
 
 # Check if $TRAVERSE exists
 [ -f $TRAVERSE ] && echo -e "\t $TRAVERSE [OK]" || { echo -e "\t $TRAVERSE [FAIL]"; exit 1;}
+[ -f $TRAVERSE_JSON ] && echo -e "\t $TRAVERSE_JSON [OK]" || { echo -e "\t $TRAVERSE_JSON [FAIL]"; exit 1;}
 
 # Main app files
 [ -f $VIEWS ] && echo -e "\t $VIEWS [OK]" || { echo -e "\t $VIEWS [FAIL]"; exit 1;}

@@ -3,6 +3,7 @@
 ORIGIN=$(pwd)
 PML=pmlcheck
 TRAVERSE=traverse
+TRAVERSE_JSON=traverse_json
 DB=*.sqlite
 echo "Install"
 
@@ -61,8 +62,8 @@ source venv/bin/activate &&  pip install -r requirements.txt >> install.log
 echo "[Done]"
 
 [ -f $PML ] && echo "[Found $PML, skipping recompile]" || { echo "[Compiling peos]"; cd $ORIGIN && bash peos.sh;}
-
 [ -f $TRAVERSE ] && echo "[Found $TRAVERSE, skipping recompile]" || { echo "[Compiling peos]"; cd $ORIGIN && bash peos.sh;}
+[ -f $TRAVERSE_JSON ] && echo "[Found $TRAVERSE_JSON, skipping recompile]" || { echo "[Compiling peos_json]"; cd $ORIGIN && bash peos_json.sh;}
 # Post install checks
 echo "[Running post install checks]"
 bash install_check.sh
