@@ -174,6 +174,13 @@ def delete_item(filename):
 	listFilename()
 	return redirect(url_for("main.index"))
 
+# Clear Editor
+@main.route('/clearEditor', methods=['POST'])
+def clear_editor():
+	session["update"] = ''
+	session['currentFile'] = "PML Code Checker"
+	return redirect(url_for("main.index"))
+
 # Either get or set some settings that the user decided to change
 @main.route("/settings/<string:key>/<string:value>",methods=["POST"])
 @main.route("/settings/<string:key>",methods=["GET"])

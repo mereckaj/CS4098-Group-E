@@ -49,7 +49,12 @@ window.onload =function() {
 			removeElement(filename,'deleting','.del li');
 			loadNextFile(filename,'projects','.proj li');
 			loadNextFile(filename,'deleting','.del li');
-
+		} 
+		if(noFiles) {
+			$.ajax({
+				type: "POST",
+				url: "/clearEditor"
+			});
 		}
 	});
 
@@ -108,6 +113,7 @@ function setupFileDragAndDrop() {
 
      	function addFileDragAndDropEventListeners(aceInputDiv, aceObject) {
        		aceInputDiv.addEventListener('dragover', function (e) {
+		    aceInputDiv.preventDefault(e);
                     stopEvent(e);
                 });
 
@@ -133,14 +139,27 @@ function putFileContentsInAceEditor(file, aceEditor) {
        	reader.onload = (function (file) {
          	text = file.target.result;
                 aceEditor.getSession().setValue(text);
+		navbar_file_save();
         });
         reader.readAsText(file);
+	var extension = file.name.split('.').pop();
+	if(noFiles){	//if no files delete text in dropdown
+		removeElement('There are no saved files','projects','.proj li');
+		removeElement('There are no saved files','deleting','.del li');
+	}
+	if (!file) {
+		alert("Failed to load file");
+	} else if (extension != "pml") {
+		alert(file.name + " is not a valid pml file");
+	}
+	name = file.name; 
+	name = updateName(name,name, 1);
 	noFiles=false;
 	closeFile = false; //file is open
-	document.getElementById('title').innerHTML = file.name;
-	addElement(file.name,'projects');
-	addElement(file.name,'deleting');
-	navbar_file_save();
+	document.getElementById('title').innerHTML = name;
+	addElement(name,'projects');
+	addElement(name,'deleting');
+	
 }
 
 function addElement(name, dropdown){
@@ -495,6 +514,10 @@ function navbar_file_close_file(){
 	document.getElementById('title').innerHTML = "PML Code Checker";
 	editor.session.doc.setValue("");
 	closeFile = true; //file is closed
+	$.ajax({
+		type: "POST",
+		url: "/clearEditor"
+	});
 }
 
 //If the name exist return new name

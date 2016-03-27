@@ -1,12 +1,15 @@
 "use strict"
 function runAllTests(){
-	// test_sample();
-	test_editor_exists()
-	test_editor();
-	test_save();
-	test_upload();
-	test_login_exists();
-	test_registration_exists();
+	   
+    	if (confirm("Testing will clear the editor, click okay to continue") == true) {
+        	test_editor_exists()
+		test_editor();
+		test_save();
+		test_upload();
+		test_login_exists();
+		test_registration_exists();
+    	}
+
 }
 
 
