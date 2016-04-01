@@ -468,7 +468,7 @@ function simpleGraph(container){
 		processDot is a cllback function that will be called on success
 		on failure an error message will be printed to console
 	*/
-	console.log(container);
+	nWin();
 	containerName = container;
 	convertPmlToDot("", processDot);
 }
@@ -753,4 +753,36 @@ function setGraphOptions(cont,data,opts) {
 	container = cont;
 	graphData = data;
 	options = opts;
+}
+
+function nWin() {
+  var w = window.open();
+  var html = $("#visualization").html();
+
+    $(w.document.body).html(html);
+}
+
+$(function() {
+    $("a#print").click(nWin);
+});
+
+function notes_modal() {
+    $.ajax({
+        type: "POST",
+        url: "../load_notes_modal",
+        success: function ( html ) { 
+            $("#selected_note").modal('show');
+        },
+        error: function() {
+            alert('ajax did not succeed');
+        }
+    });
+}
+
+function clickListener() {
+    $('.openModal').unbind();
+    $('.openModal').click(function (e) {
+        e.preventDefault();
+        notes_modal();
+    });
 }
