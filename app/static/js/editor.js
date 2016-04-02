@@ -133,26 +133,26 @@ function setupUpload(){
 	by dragging and dropping a file that contains PML.
 */
 function setupFileDragAndDrop() {
-    	var inputXml;
-    	inputXml = document.getElementById('editor');
-    	addFileDragAndDropEventListeners(inputXml, editor);
+		var inputXml;
+		inputXml = document.getElementById('editor');
+		addFileDragAndDropEventListeners(inputXml, editor);
 
-     	function addFileDragAndDropEventListeners(aceInputDiv, aceObject) {
-       		aceInputDiv.addEventListener('dragover', function (e) {
-		    aceInputDiv.preventDefault(e);
-                    stopEvent(e);
-                });
+		function addFileDragAndDropEventListeners(aceInputDiv, aceObject) {
+			aceInputDiv.addEventListener('dragover', function (e) {
+			aceInputDiv.preventDefault(e);
+					stopEvent(e);
+				});
 
-                aceInputDiv.addEventListener('drop', function (e) {
-                    putFileContentsInAceEditor(e.dataTransfer.files[0], aceObject);
-                    stopEvent(e);
-                });
+				aceInputDiv.addEventListener('drop', function (e) {
+					putFileContentsInAceEditor(e.dataTransfer.files[0], aceObject);
+					stopEvent(e);
+				});
 
-                function stopEvent(e) {
-                    e.stopPropagation();
-                 e.preventDefault();
-           	}
-     	} // end addFileDragAndDropEventListeners
+				function stopEvent(e) {
+					e.stopPropagation();
+				 e.preventDefault();
+			}
+		} // end addFileDragAndDropEventListeners
 } // end setupFileDragAndDrop
 
 /*
@@ -160,14 +160,14 @@ function setupFileDragAndDrop() {
 	The function reads the file and copies its contents into the ACE editor.
 */
 function putFileContentsInAceEditor(file, aceEditor) {
-    	var reader, text;
-       	reader = new FileReader();
-       	reader.onload = (function (file) {
-         	text = file.target.result;
-                aceEditor.getSession().setValue(text);
+	var reader, text;
+	reader = new FileReader();
+	reader.onload = (function (file) {
+		text = file.target.result;
+		aceEditor.getSession().setValue(text);
 		navbar_file_save();
-        });
-        reader.readAsText(file);
+	});
+	reader.readAsText(file);
 	var extension = file.name.split('.').pop();
 	if(noFiles){	//if no files delete text in dropdown
 		removeElement('There are no saved files','projects','.proj li');
@@ -475,7 +475,7 @@ function navbar_file_new_file(){
 	input = $.trim(input);
 	var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/); //unacceptable chars
 	if (pattern.test(input)) {
-        	alert("Please only use standard alphanumerics");
+			alert("Please only use standard alphanumerics");
 		input = '';
 		navbar_file_new_file();
 	}
@@ -514,7 +514,7 @@ function navbar_file_save(){
 		input = $.trim(input);
 		var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/); //unacceptable chars
 		if (pattern.test(input)) {
-        		alert("Please only use standard alphanumerics");
+				alert("Please only use standard alphanumerics");
 			input = '';
 			navbar_file_save();
 		}
@@ -890,7 +890,6 @@ function createGraph() {
 function highlightNode(nodeName,nodeColour) {
 	for(var nodes in graphData.nodes){
 		if(equal(graphData.nodes[nodes].label,nodeName)){
-			var obj = graphData.nodes[nodes];
 			graphData.nodes[nodes].color = nodeColour;
 		}
 	}
@@ -905,12 +904,14 @@ function setGraphOptions(cont,data,opts) {
 }
 function changeColoursScheme(scheme,containter){
 	colourSchemeInUse = coloursSchemes.flowGraph[scheme];
+	changeFlowGraphColourSchemeIndicators();
 	simpleGraph(containter);
 }
 function loadColourSchemes(){
 	for ( var i in coloursSchemes.flowGraph){
 		createTableEntry(coloursSchemes.flowGraph[i], i);
 	}
+	changeFlowGraphColourSchemeIndicators();
 }
 function createTableEntry(scheme, radioNumber) {
 	var table = document.getElementById("colourSchemeTable");
@@ -1008,6 +1009,45 @@ function processJSON(data) {
 	/*
 		CODE GOES HERE
 	*/
+	var containter = document.getElementById("swimlanes");
+	var agents = [];
+	for(var i in nodes){
+		var agent_array = nodes[i].data.agent;
+		for(var j in agent_array){
+			if(agent_array[j]!=="(null)"){
+				if($.inArray(agent_array[j],agents)==-1){
+					agents.push(agent_array[j]);
+				}
+			}
+		}
+	}
+
+	var nodes = new vis.DataSet([
+		{
+			id : 1,
+			label : "Test",
+			x : 50,
+			y : 50
+		},
+		{
+			id : 2,
+			label : "Test2",
+			x : 150,
+			y : 50
+		}
+	]);
+	var edges = new vis.DataSet([
+		{
+			from : 1, to : 2
+		}
+	]);
+
+	var data = {
+		nodes : nodes,
+		edges : edges
+	}
+	setGraphOptions(containter,data,{});
+	createGraph();
 }
 /*
 	Check that the relation does not come from/go to a node we don't care about
@@ -1019,7 +1059,6 @@ function isSuitableRelation(relation){
 		relation.data.to.data.name!=="end"){
 			return true;
 	}
-	console.log(relation);
 	return false;
 }
 /*
@@ -1036,4 +1075,13 @@ function isSuitableNode(node){
 		}
 	}
 	return false;
+}
+
+function changeFlowGraphColourSchemeIndicators() {
+	var mir = document.getElementById("miracle_button");
+	mir.style.backgroundColor = colourSchemeInUse.miracle;
+	var bh = document.getElementById("blackhole_button");
+	bh.style.backgroundColor = colourSchemeInUse.blackhole;
+	var tr = document.getElementById("transformer_button");
+	tr.style.backgroundColor = colourSchemeInUse.transformer;
 }
