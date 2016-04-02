@@ -1006,48 +1006,200 @@ function processJSON(data) {
 			}
 		}
 	}
+	var options = {
+		manipulation: false,
+		width : "100%",
+		height : "100%",
+		physics :  {
+			enabled : false
+		},
+		interaction : {
+			navigationButtons: true,
+			/*
+				Enable when graph is moved to it's own page. If on the same page
+				and this is enabled then editor's keys get take over by graph
+			*/
+			keyboard: false
+		},
+		nodes : {
+			shadow:true
+		},
+		edges : {
+			width: 2,
+			shadow:true
+		}
+	}
+
 	/*
-		CODE GOES HERE
+		CONSTANTS
 	*/
+	var INTER_AGENT_GAP = 200;
+	var INTER_LEVEL_GAP = 100;
+	var AGENT_START_LOC_X = 100;
+
 	var containter = document.getElementById("swimlanes");
 	var agents = [];
+
+	/*
+		Loop over all the nodes and find all of the unique agents
+	*/
 	for(var i in nodes){
 		var agent_array = nodes[i].data.agent;
 		for(var j in agent_array){
 			if(agent_array[j]!=="(null)"){
-				if($.inArray(agent_array[j],agents)==-1){
-					agents.push(agent_array[j]);
+				if(agentAlreadyFound(agents,"name",agent_array[j])!=true){
+					agents.push({ "name" : agent_array[j]});
 				}
 			}
 		}
 	}
 
-	var nodes = new vis.DataSet([
-		{
-			id : 1,
-			label : "Test",
-			x : 50,
-			y : 50
-		},
-		{
-			id : 2,
-			label : "Test2",
-			x : 150,
-			y : 50
+	/*
+		Add each agents nodes into their structure
+		Will make life easier for later.
+	*/
+	var currentAgentX = AGENT_START_LOC_X;
+	var currentLevel = 1;
+	var nextNodeId = 0;
+	for(var agent in agents){
+		agents[agent].node = {
+			id : nextNodeId,
+			label : agents[agent].name,
+			x : currentAgentX,
+			y : INTER_LEVEL_GAP * currentLevel,
+			shape : "text",
+			fixed : true
 		}
-	]);
-	var edges = new vis.DataSet([
+		currentAgentX += INTER_AGENT_GAP;
+		nextNodeId++;
+	}
+	// Agent for agent-less action
+	agents.push(
 		{
-			from : 1, to : 2
+			name : "Agent-less",
+			node : {
+				id : nextNodeId,
+				label : "Agent-less",
+				x : currentAgentX,
+				y : INTER_LEVEL_GAP * currentLevel,
+				shape : "text",
+				fixed : true
+			}
 		}
-	]);
+	);
+	currentAgentX += INTER_AGENT_GAP;
+	nextNodeId++;
+	currentLevel++;
 
+	/*
+		Setup the graph data.
+	*/
+	var nodesVis = new vis.DataSet();
+	var edges = new vis.DataSet();
+
+	/*
+		Draw all of the agents
+	*/
+	for(var agent in agents){
+		nodesVis.add([agents[agent].node]);
+	}
+
+	for(var node in nodes){
+		var data = nodes[node].data;
+		var agent;
+		nodes[node].nodeId = [];
+		if(data.agent.length == 1){
+			// if(data.agent[0]==="(null)"){
+			// 	agent = getAgentByName(agents,"Agent-less")
+			// }else{
+			// 	agent = getAgentByName(agents,data.agent[0]);
+			// }
+			// nodesVis.add([
+			// 	{
+			// 		id : nextNodeId,
+			// 		label : data.name,
+			// 		x : agent.node.x,
+			// 		y : INTER_LEVEL_GAP * currentLevel
+			// 	}
+			// ]);
+			// currentLevel++;
+			// nodes[node].nodeId.push(nextNodeId);
+			// nextNodeId++;
+		}else{
+			for(var agentId = 0; i < data.agent.length; agentId++){
+				cosole.log("agent " + agentId + " for action " + node);
+				// nodesVis.add([
+				// 	{
+				// 		id : nextNodeId,
+				// 		label : data.name,
+				// 		x : data.agent[agentId].node.x,
+				// 		y : INTER_LEVEL_GAP * currentLevel
+				// 	}
+				// ]);
+				// nodes[node].nodeId.push(nextNodeId);
+				// nextNodeId++;
+			}
+			// currentLevel++;
+		}
+	}
+	/*
+		Draw separators of agents
+	*/
+	var sep_x = AGENT_START_LOC_X + (INTER_AGENT_GAP/2);
+	for(var sep = 0; sep < agents.length-1;sep++){
+		//Start node
+		var startID = nextNodeId;
+		nodesVis.add([{
+			id : nextNodeId,
+			x : sep_x + (sep * INTER_AGENT_GAP),
+			y : INTER_LEVEL_GAP,
+			shape : "dot",
+			size : 0,
+			fixed : true
+		}]);
+		nextNodeId++;
+		var stopID = nextNodeId;
+		nodesVis.add([{
+			id : nextNodeId,
+			x : sep_x + (sep * INTER_AGENT_GAP),
+			y : INTER_LEVEL_GAP * currentLevel,
+			shape : "dot",
+			size : 0,
+			fixed : true
+		}]);
+		nextNodeId++;
+		edges.add([{
+			from : startID,
+			to: stopID,
+			color : "#000000"
+		}]);
+	}
+
+	/*
+		Draw the graph
+	*/
 	var data = {
-		nodes : nodes,
+		nodes : nodesVis,
 		edges : edges
 	}
-	setGraphOptions(containter,data,{});
+
+	setGraphOptions(containter,data,options);
 	createGraph();
+}
+function getAgentByName(agentObject,name){
+	for(var x in agentObject){
+		if(agentObject[x].name===name){
+			return agentObject[x];
+		}
+	}
+}
+function agentAlreadyFound(array,key,agent) {
+	for(var x in array){
+		if(array[x][key]===agent){
+			return true;
+		}
+	}
+	return false;
 }
 /*
 	Check that the relation does not come from/go to a node we don't care about
@@ -1078,10 +1230,16 @@ function isSuitableNode(node){
 }
 
 function changeFlowGraphColourSchemeIndicators() {
-	var mir = document.getElementById("miracle_button");
-	mir.style.backgroundColor = colourSchemeInUse.miracle;
-	var bh = document.getElementById("blackhole_button");
-	bh.style.backgroundColor = colourSchemeInUse.blackhole;
-	var tr = document.getElementById("transformer_button");
-	tr.style.backgroundColor = colourSchemeInUse.transformer;
+	document.getElementById("miracle_button").style.backgroundColor =
+		colourSchemeInUse.miracle;
+	document.getElementById("miracle_button_2").style.backgroundColor =
+		colourSchemeInUse.miracle;
+	document.getElementById("blackhole_button").style.backgroundColor =
+		colourSchemeInUse.blackhole;
+	document.getElementById("blackhole_button_2").style.backgroundColor =
+		colourSchemeInUse.blackhole;
+	document.getElementById("transformer_button").style.backgroundColor =
+		colourSchemeInUse.transformer;
+	document.getElementById("transformer_button_2").style.backgroundColor =
+		colourSchemeInUse.transformer;
 }
