@@ -963,3 +963,10 @@ function createTableEntry(scheme, radioNumber) {
 	col2.appendChild(blackHoleButton);
 	col2.appendChild(transformerButton);
 }
+function graphDownload() {
+	var canvas = document.getElementById("editor");
+	var img = canvas.toDataURL();
+
+	// window.open(img, "toDataURL() image", "width=600, height=200");
+	// document.write('<img src="'+img+'"/>');
+}
