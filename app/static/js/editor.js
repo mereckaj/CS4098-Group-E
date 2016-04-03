@@ -969,7 +969,8 @@ function createTableEntry(scheme, radioNumber) {
 /*
 	Post the current editors data to the server and get the reply
 */
-function pmlToJson(){
+function pmlToJson(container){
+	containerName = container;
 	convertPmlToJSON("",processJSON);
 }
 /*
@@ -1006,6 +1007,23 @@ function processJSON(data) {
 			}
 		}
 	}
+	/*
+		Remove duplicate nodes
+	*/
+	var tmp = [];
+	for(var i in nodes){
+		var found = false;
+		for(var j = 0; j < i; j++){
+			if(nodes[i].data.name===nodes[j].data.name){
+				found = true;
+			}
+		}
+		if(found==false){
+			tmp.push(nodes[i]);
+		}
+	}
+	nodes = tmp;
+
 	var options = {
 		manipulation: false,
 		width : "100%",
@@ -1036,9 +1054,12 @@ function processJSON(data) {
 	var INTER_AGENT_GAP = 200;
 	var INTER_LEVEL_GAP = 100;
 	var AGENT_START_LOC_X = 100;
+	var REGEX_BRANCH = /branch_*/;
+	var REGEX_REND = /rend_*/;
 
-	var containter = document.getElementById("swimlanes");
+	var containter = document.getElementById(containerName);
 	var agents = [];
+	var nodeNameToIdMapper = [];
 
 	/*
 		Loop over all the nodes and find all of the unique agents
@@ -1104,44 +1125,104 @@ function processJSON(data) {
 		nodesVis.add([agents[agent].node]);
 	}
 
+	/*
+		Draw all of the nodes
+	*/
 	for(var node in nodes){
 		var data = nodes[node].data;
 		var agent;
 		nodes[node].nodeId = [];
 		if(data.agent.length == 1){
-			// if(data.agent[0]==="(null)"){
-			// 	agent = getAgentByName(agents,"Agent-less")
-			// }else{
-			// 	agent = getAgentByName(agents,data.agent[0]);
-			// }
-			// nodesVis.add([
-			// 	{
-			// 		id : nextNodeId,
-			// 		label : data.name,
-			// 		x : agent.node.x,
-			// 		y : INTER_LEVEL_GAP * currentLevel
-			// 	}
-			// ]);
-			// currentLevel++;
-			// nodes[node].nodeId.push(nextNodeId);
-			// nextNodeId++;
-		}else{
-			for(var agentId = 0; i < data.agent.length; agentId++){
-				cosole.log("agent " + agentId + " for action " + node);
-				// nodesVis.add([
-				// 	{
-				// 		id : nextNodeId,
-				// 		label : data.name,
-				// 		x : data.agent[agentId].node.x,
-				// 		y : INTER_LEVEL_GAP * currentLevel
-				// 	}
-				// ]);
-				// nodes[node].nodeId.push(nextNodeId);
-				// nextNodeId++;
+			if(data.agent[0]==="(null)"){
+				agent = getAgentByName(agents,"Agent-less")
+			}else{
+				agent = getAgentByName(agents,data.agent[0]);
 			}
-			// currentLevel++;
+			if(REGEX_BRANCH.test(data.name)){
+				nodesVis.add([
+					{
+						id : nextNodeId,
+						label : "",
+						x : agent.node.x,
+						y : INTER_LEVEL_GAP * currentLevel,
+						shape : "diamond"
+					}
+				]);
+			}else if(REGEX_REND.test(data.name)){
+				nodesVis.add([
+					{
+						id : nextNodeId,
+						label : "",
+						x : agent.node.x,
+						y : INTER_LEVEL_GAP * currentLevel,
+						shape : "diamond"
+					}
+				]);
+			}else{
+				nodesVis.add([
+					{
+						id : nextNodeId,
+						label : data.name,
+						x : agent.node.x,
+						y : INTER_LEVEL_GAP * currentLevel
+					}
+				]);
+			}
+			currentLevel++;
+			nodeNameToIdMapper.push({
+				name : data.name,
+				id : nextNodeId
+			});
+			nextNodeId++;
+		}else{
+			var sharedNodeLink = [];
+			for(var x in data.agent){
+				nodesVis.add([
+					{
+						id : nextNodeId,
+						label : data.name,
+						x : getAgentByName(agents,data.agent[x]).node.x,
+						y : INTER_LEVEL_GAP * currentLevel
+					}
+				]);
+				nodeNameToIdMapper.push({
+					name : data.name,
+					id : nextNodeId
+				});
+				nodes[node].nodeId.push(nextNodeId);
+				sharedNodeLink.push(nextNodeId);
+				nextNodeId++;
+			}
+			currentLevel++;
+			for(var link =0;link < sharedNodeLink.length -1; link++){
+				edges.add([
+					{
+						from : sharedNodeLink[link],
+						to : sharedNodeLink[link] + 1,
+						dashes : true
+					}
+				])
+			}
 		}
 	}
+	/*
+		Draw relations
+	*/
+	for(var rel in relations){
+		var from = relations[rel].data.from.data.name;
+		var to = relations[rel].data.to.data.name;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByName(nodeNameToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+
 	/*
 		Draw separators of agents
 	*/
@@ -1185,6 +1266,13 @@ function processJSON(data) {
 
 	setGraphOptions(containter,data,options);
 	createGraph();
+}
+function getNodeIdByName(map, name) {
+	for(var x in map){
+		if(map[x].name===name){
+			return map[x].id
+		}
+	}
 }
 function getAgentByName(agentObject,name){
 	for(var x in agentObject){
@@ -1243,3 +1331,13 @@ function changeFlowGraphColourSchemeIndicators() {
 	document.getElementById("transformer_button_2").style.backgroundColor =
 		colourSchemeInUse.transformer;
 }
+String.prototype.escapeSpecialChars = function() {
+	return this.replace(/[\\]/g, '\\\\')
+			    .replace(/[\"]/g, '\\\"')
+			    .replace(/[\/]/g, '\\/')
+			    .replace(/[\b]/g, '\\b')
+			    .replace(/[\f]/g, '\\f')
+			    .replace(/[\n]/g, '\\n')
+			    .replace(/[\r]/g, '\\r')
+			    .replace(/[\t]/g, '\\t');
+};

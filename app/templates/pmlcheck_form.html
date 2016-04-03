@@ -35,15 +35,23 @@
 					</button> -->
 					<button type="button" class="btn btn-primary" onclick="simpleGraph('visualization')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-						Visualize
+						Flow Graph
 					</button>
 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" onclick="simpleGraph('visualization_fullscreen')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-						Fullscreen
+						Flow Graph Fullscreen
 					</button>
 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
 						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 						Legend
+					</button>
+					<button type="button" class="btn btn-primary" onclick="pmlToJson('visualization')">
+						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+						Swimlanes
+					</button>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal"  onclick="pmlToJson('visualization_fullscreen')">
+						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+						Swimlanes Fullscreen
 					</button>
 					<form action="upload" method="post" enctype="multipart/form-data" id="send">
 						<button type="submit" class="btn btn-primary" style="display: none;"></button>
@@ -164,7 +172,7 @@
 					</div>
 			</div>
 		</div>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+		<!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h1 class ="panel-title" id = "title">Swimlanes</h1>
@@ -179,5 +187,5 @@
 					</button>
 				</div>
 			</div>
-		</div>
+		</div> -->
 {% endblock %}
