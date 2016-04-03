@@ -1057,6 +1057,18 @@ function processJSON(data) {
 	var REGEX_BRANCH = /branch_*/;
 	var REGEX_REND = /rend_*/;
 
+	/*
+		Find the widest node label and set the gap between nodes to be the
+		closest multiple of 50
+	*/
+	for(var node in nodes){
+		var l = nodes[node].data.name.visualLength();
+		if(2*l > INTER_AGENT_GAP){
+			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+50;
+			console.log(INTER_AGENT_GAP);
+		}
+	}
+
 	var containter = document.getElementById(containerName);
 	var agents = [];
 	var nodeNameToIdMapper = [];
@@ -1086,6 +1098,9 @@ function processJSON(data) {
 		agents[agent].node = {
 			id : nextNodeId,
 			label : agents[agent].name,
+			font : {
+				size : 30
+			},
 			x : currentAgentX,
 			y : INTER_LEVEL_GAP * currentLevel,
 			shape : "text",
@@ -1101,6 +1116,9 @@ function processJSON(data) {
 			node : {
 				id : nextNodeId,
 				label : "Agent-less",
+				font : {
+					size : 30
+				},
 				x : currentAgentX,
 				y : INTER_LEVEL_GAP * currentLevel,
 				shape : "text",
@@ -1341,3 +1359,12 @@ String.prototype.escapeSpecialChars = function() {
 			    .replace(/[\r]/g, '\\r')
 			    .replace(/[\t]/g, '\\t');
 };
+String.prototype.visualLength = function(font) {
+	var f = font || '12px arial';
+	var o = $('<div>' + this + '</div>')
+		.css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+		.appendTo($('body'));
+	var w = o.width();
+	o.remove();
+	return w;
+}
