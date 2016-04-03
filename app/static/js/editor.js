@@ -1186,7 +1186,8 @@ function processJSON(data) {
 						id : nextNodeId,
 						label : data.name,
 						x : agent.node.x,
-						y : INTER_LEVEL_GAP * currentLevel
+						y : INTER_LEVEL_GAP * currentLevel,
+						shape : "box"
 					}
 				]);
 			}
