@@ -1040,7 +1040,11 @@ function processJSON(data) {
 			keyboard: false
 		},
 		nodes : {
-			shadow:true
+			shadow:true,
+			fixed: {
+				x:true,
+				y:true
+			}
 		},
 		edges : {
 			width: 2,
@@ -1173,7 +1177,7 @@ function processJSON(data) {
 						label : "",
 						x : agent.node.x,
 						y : INTER_LEVEL_GAP * currentLevel,
-						shape : "diamond"
+						shape : "dot"
 					}
 				]);
 			}else{
