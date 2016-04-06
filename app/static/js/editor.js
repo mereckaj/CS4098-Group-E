@@ -1098,7 +1098,30 @@ function processJSON(data) {
 	var currentAgentX = AGENT_START_LOC_X;
 	var currentLevel = 1;
 	var nextNodeId = 0;
+	var agentLessLocation = Math.round(agents.length/2);
 	for(var agent in agents){
+		// Put the agent-less lane in the middle of the graph
+		if(agent === agentLessLocation.toString()){
+			// Agent for agent-less action
+			agents.push(
+				{
+					name : "Agent-less",
+					node : {
+						id : nextNodeId,
+						label : "Agent-less",
+						font : {
+							size : 30
+						},
+						x : currentAgentX,
+						y : INTER_LEVEL_GAP * currentLevel,
+						shape : "text",
+						fixed : true
+					}
+				}
+			);
+			currentAgentX += INTER_AGENT_GAP;
+			nextNodeId++;
+		}
 		agents[agent].node = {
 			id : nextNodeId,
 			label : agents[agent].name,
@@ -1113,25 +1136,6 @@ function processJSON(data) {
 		currentAgentX += INTER_AGENT_GAP;
 		nextNodeId++;
 	}
-	// Agent for agent-less action
-	agents.push(
-		{
-			name : "Agent-less",
-			node : {
-				id : nextNodeId,
-				label : "Agent-less",
-				font : {
-					size : 30
-				},
-				x : currentAgentX,
-				y : INTER_LEVEL_GAP * currentLevel,
-				shape : "text",
-				fixed : true
-			}
-		}
-	);
-	currentAgentX += INTER_AGENT_GAP;
-	nextNodeId++;
 	currentLevel++;
 
 	/*
@@ -1194,23 +1198,42 @@ function processJSON(data) {
 			currentLevel++;
 			nodeNameToIdMapper.push({
 				name : data.name,
-				id : nextNodeId
+				id : nextNodeId,
+				y : INTER_LEVEL_GAP * currentLevel
 			});
 			nextNodeId++;
 		}else{
 			var sharedNodeLink = [];
 			for(var x in data.agent){
-				nodesVis.add([
-					{
-						id : nextNodeId,
-						label : data.name,
-						x : getAgentByName(agents,data.agent[x]).node.x,
-						y : INTER_LEVEL_GAP * currentLevel
-					}
-				]);
+				if(x==="0"){
+					nodesVis.add([
+						{
+							id : nextNodeId,
+							label : data.name,
+							x : getAgentByName(agents,data.agent[x]).node.x,
+							y : INTER_LEVEL_GAP * currentLevel
+						}
+					]);
+				}else{
+					nodesVis.add([
+						{
+							id : nextNodeId,
+							label : data.name,
+							x : getAgentByName(agents,data.agent[x]).node.x,
+							y : INTER_LEVEL_GAP * currentLevel,
+							shapeProperties:{
+								borderDashes:[5,5]
+							},
+							color : {
+								background : "#a7afbe"
+							}
+						}
+					]);
+				}
 				nodeNameToIdMapper.push({
 					name : data.name,
-					id : nextNodeId
+					id : nextNodeId,
+					y : INTER_LEVEL_GAP * currentLevel
 				});
 				nodes[node].nodeId.push(nextNodeId);
 				sharedNodeLink.push(nextNodeId);
@@ -1236,13 +1259,30 @@ function processJSON(data) {
 		var to = relations[rel].data.to.data.name;
 		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
 		var toId = getNodeIdByName(nodeNameToIdMapper,to);
-		edges.add([
-			{
-				from : fromId,
-				to : toId,
-				arrows : "to"
-			}
-		])
+		var fromy = getNodeYByName(nodeNameToIdMapper,from);
+		var toy = getNodeYByName(nodeNameToIdMapper,to);
+		if(toy < fromy){
+			edges.add([
+				{
+					from : fromId,
+					to : toId,
+					arrows : "to",
+					smooth: {
+						type : "curvedCCW",
+						forceDirection: "none",
+						roundness: 0.5
+					}
+				}
+			]);
+		}else{
+			edges.add([
+				{
+					from : fromId,
+					to : toId,
+					arrows : "to"
+				}
+			]);
+		}
 	}
 
 
@@ -1294,6 +1334,13 @@ function getNodeIdByName(map, name) {
 	for(var x in map){
 		if(map[x].name===name){
 			return map[x].id
+		}
+	}
+}
+function getNodeYByName(map, name) {
+	for(var x in map){
+		if(map[x].name===name){
+			return map[x].y
 		}
 	}
 }
@@ -1364,10 +1411,17 @@ String.prototype.escapeSpecialChars = function() {
 			    .replace(/[\r]/g, '\\r')
 			    .replace(/[\t]/g, '\\t');
 };
+// Get the width of the text at a given font
 String.prototype.visualLength = function(font) {
 	var f = font || '12px arial';
 	var o = $('<div>' + this + '</div>')
-		.css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+		.css({
+			'position': 'absolute',
+			'float': 'left',
+			'white-space': 'nowrap',
+			'visibility': 'hidden',
+			'font': f
+		})
 		.appendTo($('body'));
 	var w = o.width();
 	o.remove();
