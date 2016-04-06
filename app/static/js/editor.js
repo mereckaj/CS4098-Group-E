@@ -35,6 +35,7 @@ var coloursSchemes = {
 		}
 	]
 }
+
 var colourSchemeInUse = coloursSchemes.flowGraph[0];
 var lastText = "";
 window.onload =function() {
@@ -1373,3 +1374,11 @@ String.prototype.visualLength = function(font) {
 	o.remove();
 	return w;
 }
+// function graphDownload() {
+// 	var canvas =container.getElementsByTagName("canvas")[0];
+// 	var ctx = canvas.getContext("2d");
+// 	var img = canvas.toDataURL("svg", 1.0);
+// 	window.location.href = img;
+// 	// window.open(img, "toDataURL() image", "width=1920, height=1080");
+// 	// document.write('<img src="'+img+'"/>');
+// }

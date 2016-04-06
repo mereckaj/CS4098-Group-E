@@ -1,5 +1,4 @@
 blinker==1.4
-dominate==2.1.16
 Flask==0.10.1
 Flask-Bootstrap==3.3.5.7
 Flask-Login==0.3.2
@@ -13,21 +12,17 @@ Jinja2==2.8
 linecache2==1.0.0
 MarkupSafe==0.23
 SQLAlchemy==1.0.12
-WTForms==2.1
 Werkzeug==0.11.4
 argparse==1.4.0
 dominate==2.1.16
 graphviz==0.4.10
 itsdangerous==0.24
-linecache2==1.0.0
 oauthlib==1.0.3
 pyparsing==2.1.0
 requests==2.9.1
 requests-oauthlib==0.6.0
 six==1.10.0
-SQLAlchemy==1.0.12
 traceback2==1.4.0
 unittest2==1.1.0
 visitor==0.1.2
-Werkzeug==0.11.4
 WTForms==2.1
