@@ -846,7 +846,6 @@ function transformationHighlightSuccess(data) {
 	highlightNodes(data,"TRANSFORM");
 }
 function highlightNodes(data,type){
-	// createGraph(args[0],args[1],args[2]);
 	var array = data.data;
 	switch (type) {
 		case "MIRACLE":
@@ -1025,6 +1024,7 @@ function processJSON(data) {
 	nodes = tmp;
 
 	var options = {
+		autoResize: true,
 		manipulation: false,
 		width : "100%",
 		height : "100%",

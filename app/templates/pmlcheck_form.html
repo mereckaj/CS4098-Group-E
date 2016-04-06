@@ -42,7 +42,7 @@
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Fullscreen
 					</button>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#legendModal">
 						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 						Change Colour Scheme
 					</button>
@@ -68,7 +68,7 @@
 				<div class="panel-heading">
 					Visualization
 					<div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="legendModal" aria-hidden="true">
-						<div class="modal-dialog-fs">
+						<div class="modal-dialog">
 							<div class="modal-content">
 								<div class="modal-header">
 									Legend
@@ -123,16 +123,19 @@
 				</div>
 				<div class="modal fade" id="fullscreenModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog-fs">
-						<div class="modal-content">
+						<div class="modal-content-fs">
 							<div class="modal-header">
 								Visualization fullscreen
 								<button type="button" class="close" data-dismiss="modal">
-									<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+									<!-- <span aria-hidden="true">&times;</span><span class="sr-only">Close</span> -->
+									<span aria-hidden="true" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								</button>
 							</div>
-							<div class="modal-body" id="topkek">
-								<div class="panel-body">
-									<div id="visualization_fullscreen" class="graphics_fullscreen"></div>
+							<div class="modal-body row">
+								<div class="col-lg-12">
+									<div class="panel-body">
+										<div id="visualization_fullscreen" class="graphics_fullscreen"></div>
+									</div>
 								</div>
 							</div>
 							<div class="modal-footer">
