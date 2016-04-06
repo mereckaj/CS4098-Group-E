@@ -35,6 +35,7 @@ var coloursSchemes = {
 		}
 	]
 }
+
 var colourSchemeInUse = coloursSchemes.flowGraph[0];
 var lastText = "";
 window.onload =function() {
@@ -963,10 +964,11 @@ function createTableEntry(scheme, radioNumber) {
 	col2.appendChild(blackHoleButton);
 	col2.appendChild(transformerButton);
 }
-function graphDownload() {
-	var canvas = document.getElementById("editor");
-	var img = canvas.toDataURL();
-
-	// window.open(img, "toDataURL() image", "width=600, height=200");
-	// document.write('<img src="'+img+'"/>');
-}
+// function graphDownload() {
+// 	var canvas =container.getElementsByTagName("canvas")[0];
+// 	var ctx = canvas.getContext("2d");
+// 	var img = canvas.toDataURL("svg", 1.0);
+// 	window.location.href = img;
+// 	// window.open(img, "toDataURL() image", "width=1920, height=1080");
+// 	// document.write('<img src="'+img+'"/>');
+// }
