@@ -34,7 +34,7 @@
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Flow Graph
 					</button>
-					<button type="button" class="btn btn-primary" onclick="pmlToJson('visualization')">
+					<button id="swimlaneButton" type="button" class="btn btn-primary" onclick="pmlToJson('visualization')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Swimlanes
 					</button>
@@ -152,13 +152,13 @@
 									</button>
 								</div>
 								<diV class="pull-right">
+									<button type="button" class="btn btn-primary" onclick="simpleGraph('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Flow Graph
+									</button>
 									<button type="button" class="btn btn-primary" onclick="pmlToJson('visualization_fullscreen')">
 										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 										Swimlanes
-									</button>
-									<button type="button" class="btn btn-primary" onclick="simpleGraph('visualization_fullscreen')">
-										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-										Flow
 									</button>
 									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#legendModal" data-dismiss="modal">
 										<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
@@ -183,13 +183,13 @@
 									<p>
 										What type of a visualization would you like to see?
 									</p>
+									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="simpleGraph('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Flow Graph
+									</button>
 									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="pmlToJson('visualization_fullscreen')">
 										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 										Swimlanes
-									</button>
-									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="simpleGraph('visualization_fullscreen')">
-										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-										Flow
 									</button>
 								</div>
 							</div>

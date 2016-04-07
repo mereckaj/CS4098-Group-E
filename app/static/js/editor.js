@@ -1061,18 +1061,6 @@ function processJSON(data) {
 	var REGEX_BRANCH = /branch_*/;
 	var REGEX_REND = /rend_*/;
 
-	/*
-		Find the widest node label and set the gap between nodes to be the
-		closest multiple of 50
-	*/
-	for(var node in nodes){
-		var l = nodes[node].data.name.visualLength();
-		if(2*l > INTER_AGENT_GAP){
-			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+50;
-			console.log(INTER_AGENT_GAP);
-		}
-	}
-
 	var containter = document.getElementById(containerName);
 	var agents = [];
 	var nodeNameToIdMapper = [];
@@ -1092,51 +1080,91 @@ function processJSON(data) {
 	}
 
 	/*
+		Find the widest node label and set the gap between nodes to be the
+		closest multiple of 50
+	*/
+	for(var node in nodes){
+		var l = nodes[node].data.name.visualLength();
+		if(2*l > INTER_AGENT_GAP){
+			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+50;
+		}
+	}
+	for(var agent in agents){
+		var l = agents[agent].name.visualLength();
+		if(2*l > INTER_AGENT_GAP){
+			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+agents[agent].name.visualLength();
+		}
+	}
+
+	/*
 		Add each agents nodes into their structure
 		Will make life easier for later.
 	*/
 	var currentAgentX = AGENT_START_LOC_X;
 	var currentLevel = 1;
 	var nextNodeId = 0;
-	var agentLessLocation = Math.round(agents.length/2);
-	for(var agent in agents){
-		// Put the agent-less lane in the middle of the graph
-		if(agent === agentLessLocation.toString()){
-			// Agent for agent-less action
-			agents.push(
-				{
-					name : "Agent-less",
-					node : {
-						id : nextNodeId,
-						label : "Agent-less",
-						font : {
-							size : 30
-						},
-						x : currentAgentX,
-						y : INTER_LEVEL_GAP * currentLevel,
-						shape : "text",
-						fixed : true
-					}
+	var agentLessLocation = agents.length===1 ? 0 : Math.round(agents.length/2);
+	if(agents.length===0){
+		// Agent for agent-less action
+		agents.push(
+			{
+				name : "Agent-less",
+				node : {
+					id : nextNodeId,
+					label : "Agent-less",
+					font : {
+						size : 30
+					},
+					x : currentAgentX,
+					y : INTER_LEVEL_GAP * currentLevel,
+					shape : "text",
+					fixed : true
 				}
-			);
+			}
+		);
+		currentAgentX += INTER_AGENT_GAP;
+		nextNodeId++;
+	}else {
+		for(var agent in agents){
+			// Put the agent-less lane in the middle of the graph
+			if(agent === agentLessLocation.toString()){
+				// Agent for agent-less action
+				agents.push(
+					{
+						name : "Agent-less",
+						node : {
+							id : nextNodeId,
+							label : "Agent-less",
+							font : {
+								size : 30
+							},
+							x : currentAgentX,
+							y : INTER_LEVEL_GAP * currentLevel,
+							shape : "text",
+							fixed : true
+						}
+					}
+				);
+				currentAgentX += INTER_AGENT_GAP;
+				nextNodeId++;
+			}
+			agents[agent].node = {
+				id : nextNodeId,
+				label : agents[agent].name,
+				font : {
+					size : 30
+				},
+				x : currentAgentX,
+				y : INTER_LEVEL_GAP * currentLevel,
+				shape : "text",
+				fixed : true
+			}
 			currentAgentX += INTER_AGENT_GAP;
 			nextNodeId++;
 		}
-		agents[agent].node = {
-			id : nextNodeId,
-			label : agents[agent].name,
-			font : {
-				size : 30
-			},
-			x : currentAgentX,
-			y : INTER_LEVEL_GAP * currentLevel,
-			shape : "text",
-			fixed : true
-		}
-		currentAgentX += INTER_AGENT_GAP;
-		nextNodeId++;
 	}
 	currentLevel++;
+
 
 	/*
 		Setup the graph data.
