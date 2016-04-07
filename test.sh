@@ -1,8 +1,12 @@
 #! /bin/bash
 
-#Run all of the python tests
-source venv/bin/activate && python manage.py test
-deactivate
+
+source venv/bin/activate
+bash install_check.sh
+
+python -m unittest discover -s tests/selenium/ -p 'test_*.py'
 
 #Run all of the bash tests
 ./tests/test_all.sh
+
+deactivate
