@@ -965,6 +965,388 @@ function createTableEntry(scheme, radioNumber) {
 	col2.appendChild(blackHoleButton);
 	col2.appendChild(transformerButton);
 }
+
+/*
+	Post the current editors data to the server and get the reply
+*/
+function pmlToJsonNetwork(container){
+	containerName = container;
+	convertPmlToJSON("",processJSONetwork);
+}
+/*
+	Call back function to deal with pmlToJson
+*/
+function processJSONetwork(data){
+// Check to make sure there were no failures on the server side
+	var success = data.success;
+	if (success != true){
+		alert("An error occured when trying to parse PML. Please make sure that " +
+		"Please make sure that the syntax of the PML is correct. Here is what " +
+		"the server returned: " + data.data);
+		return;
+	}
+	// The server returns raw json (Not jsonified) so parse it
+	var parsed_json = JSON.parse(data.data);
+	//alert(data.data);
+	var nodes = [];
+	var relations = [];
+	/*
+		Loop over all the data, remove the start and end nodes and any relations
+		that go to them. They were added by traverse for DOT and we don't need
+		them here.
+	*/
+	for (var i in parsed_json){
+		if( "type" in parsed_json[i]){
+			if(parsed_json[i].type==="node"){
+				if(isSuitableNode(parsed_json[i])){
+					nodes.push(parsed_json[i]);
+				}
+			}else if(parsed_json[i].type==="relation"){
+				if(isSuitableRelation(parsed_json[i])){
+					relations.push(parsed_json[i]);
+				}
+			}
+		}
+	}
+	/*
+		Remove duplicate nodes
+	*/
+	var tmp = [];
+	for(var i in nodes){
+		var found = false;
+		for(var j = 0; j < i; j++){
+			if(nodes[i].data.name===nodes[j].data.name){
+				found = true;
+			}
+		}
+		if(found==false){
+			tmp.push(nodes[i]);
+		}
+	}
+	nodes = tmp;
+
+	var options = {
+		manipulation: false,
+		width : "100%",
+		height : "100%",
+		physics :  {
+		    "repulsion": {
+		      "centralGravity": 0,
+		      "nodeDistance": 100
+		    },
+		    "minVelocity": 0.75,
+		    "solver": "repulsion",
+			enabled : true
+		},
+		interaction : {
+			navigationButtons: true,
+			/*
+				Enable when graph is moved to it's own page. If on the same page
+				and this is enabled then editor's keys get take over by graph
+			*/
+			keyboard: false
+		},
+		nodes : {
+			shadow:true
+		},
+		edges : {
+
+		    "smooth": {
+		      "forceDirection": "none",
+		      "roundness": 0.8
+		    },
+			width: 2,
+			shadow:true
+		}
+	}
+
+	var containter = document.getElementById(containerName);
+	var agents = [];
+	var resources = [];
+	var tools = [];
+	var nodeNameToIdMapper = [];
+	var links = [];
+	var nodeResourceToIdMapper = [];
+	var nodeAgentToIdMapper = [];
+	var nodeToolToIdMapper = [];
+
+	/*
+		Loop over all the nodes and find all of the unique agents
+	*/
+	for(var i in nodes){
+		var agent_array = nodes[i].data.agent;
+		for(var j in agent_array){
+			if(agent_array[j]!=="(null)"){
+				if(agentAlreadyFound(agents,"name",agent_array[j])!=true){
+					agents.push({ "name" : agent_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Add each agents nodes into their structure
+	*/
+
+	var nextNodeId = 0;
+	for(var agent in agents){
+		agents[agent].node = {
+			id : nextNodeId,
+			label : agents[agent].name,
+			shape : "ellipse",
+			fixed : false
+		}
+		nodeToolToIdMapper.push({
+			name : agents[agent].name,
+			id : nextNodeId
+		});
+		nextNodeId++;
+	}
+
+
+	/*
+		Loop over all the nodes and find all of the unique resources
+	*/
+	for(var i in nodes){
+		var resource_array = nodes[i].data.requires;
+		for(var j in resource_array){
+			if(resource_array[j]!=="(null)"){
+				if(agentAlreadyFound(resources,"name",resource_array[j])!=true){
+					resources.push({ "name" : resource_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Add each resource node into their structure
+	*/
+
+	for(var agent in resources){
+		resources[agent].node = {
+			id : nextNodeId,
+			label : resources[agent].name,
+			shape : "ellipse",
+			fixed : false
+		}
+		nodeResourceToIdMapper.push({
+			name : resources[agent].name,
+			id : nextNodeId
+		});
+		nextNodeId++;
+	}
+
+	/*
+		Loop over all the nodes and find all of the unique tool
+	*/
+	for(var i in nodes){
+		var tool_array = nodes[i].data.tool;
+		for(var j in tool_array){
+			if(tool_array[j]!=="(null)"){
+				if(agentAlreadyFound(tools,"name",tool_array[j])!=true){
+					tools.push({ "name" : tool_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Add each tool node into their structure
+	
+	*/
+	for(var agent in tools){
+		tools[agent].node = {
+			id : nextNodeId,
+			label : tools[agent].name,
+			shape : "ellipse",
+			fixed : false
+		}
+		nodeToolToIdMapper.push({
+			name : tools[agent].name,
+			id : nextNodeId
+		});
+
+		nextNodeId++;
+	}
+
+	/*
+		Setup the graph data.
+	*/
+	var nodesVis = new vis.DataSet();
+	var edges = new vis.DataSet();
+	
+	/*
+		Draw all of the agents, resources and tools
+	*/
+	for(var agent in resources){
+		nodesVis.add([resources[agent].node]);
+	}
+	for(var agent in agents){
+		nodesVis.add([agents[agent].node]);
+	}/*
+	for(var agent in tools){
+		nodesVis.add([tools[agent].node]);
+	}*/
+	var REGEX_BRANCH = /branch_*/;
+	var REGEX_REND = /rend_*/;
+	
+	/*
+		Draw all of the nodes
+	*/
+
+	for(var node in nodes){
+		var data = nodes[node].data;
+		var agent;
+		nodes[node].nodeId = [];
+		if(data.agent.length == 1 && data.requires.length == 1){
+
+				nodesVis.add([
+					{
+						id : nextNodeId,
+						label : data.name,
+						shape : "box",
+						fixed : false
+					}
+				]);
+			
+			nodeNameToIdMapper.push({
+				name : data.name,
+				id : nextNodeId
+			});
+			links.push({
+				name : data.name,
+				agent : data.agent,
+				resource : data.requires,
+				id : nextNodeId
+			});
+			nextNodeId++;
+		}else{
+
+			nodesVis.add([
+				{
+					id : nextNodeId,
+					label : data.name,
+					fixed : false
+				}
+			]);
+			nodeNameToIdMapper.push({
+				name : data.name,
+				id : nextNodeId
+			});
+
+
+
+		}
+		 if (data.agent.length > 1){
+
+			for(var x in data.agent){
+				links.push({
+					name : data.name,
+					agent : data.agent[x],
+					resource : data.requires,
+					id : nextNodeId
+				});
+				nodes[node].nodeId.push(nextNodeId);
+			}
+
+		}  if(data.requires.length > 1){
+			for(var x in data.requires){
+				links.push({
+					name : data.name,
+					agent : data.agent,
+					resource : data.requires[x],
+					id : nextNodeId
+				});
+				nodes[node].nodeId.push(nextNodeId);
+			}
+
+		}
+		nextNodeId++;
+		
+	}
+	/*
+		Draw relations
+	*/
+
+
+	for(var rel in relations){
+		var from = relations[rel].data.from.data.name;
+		var to = relations[rel].data.to.data.name;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByName(nodeNameToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+	/*
+		resources
+	*/
+	for(var rel in links){
+		var from = links[rel].name;
+		var to = links[rel].resource;//getNodeResourceByName(links,from);
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+	/*
+		Agents
+	*/
+	for(var rel in links){
+		var from = links[rel].name;
+		var to = links[rel].agent;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeToolToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+	/*
+		Draw the graph
+	*/
+	var data = {
+		nodes : nodesVis,
+		edges : edges
+	}
+
+	setGraphOptions(containter,data,options);
+	createGraph();
+}
+
+function getNodeResourceByName(map, name) {
+	for(var x in map){
+		if(map[x].name===name){
+			return map[x].resource
+		}
+	}
+}
+
+function getNodeIdByResource(map, name) {
+	for(var x in map){
+		if(map[x].name==name){
+			return map[x].id
+		}
+	}
+}
+
+
+
+
 /*
 	Post the current editors data to the server and get the reply
 */
