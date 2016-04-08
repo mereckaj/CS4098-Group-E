@@ -1062,10 +1062,11 @@ function processJSONetwork(data){
 
 	var containter = document.getElementById(containerName);
 	var agents = [];
-	var resources = [];
+	var resource = [];
 	var tools = [];
 	var nodeNameToIdMapper = [];
 	var links = [];
+	var resourceLinks = [];
 	var nodeResourceToIdMapper = [];
 	var nodeAgentToIdMapper = [];
 	var nodeToolToIdMapper = [];
@@ -1096,7 +1097,7 @@ function processJSONetwork(data){
 			shape : "ellipse",
 			fixed : false
 		}
-		nodeToolToIdMapper.push({
+		nodeAgentToIdMapper.push({
 			name : agents[agent].name,
 			id : nextNodeId
 		});
@@ -1105,32 +1106,46 @@ function processJSONetwork(data){
 
 
 	/*
-		Loop over all the nodes and find all of the unique resources
+		Loop over all the nodes and find all of the unique requires
 	*/
 	for(var i in nodes){
 		var resource_array = nodes[i].data.requires;
 		for(var j in resource_array){
 			if(resource_array[j]!=="(null)"){
-				if(agentAlreadyFound(resources,"name",resource_array[j])!=true){
-					resources.push({ "name" : resource_array[j]});
+				if(agentAlreadyFound(resource,"name",resource_array[j])!=true){
+					resource.push({ "name" : resource_array[j]});
 				}
 			}
 		}
 	}
 
 	/*
-		Add each resource node into their structure
+		Loop over all the nodes and find all of the unique provides
+	*/
+	for(var i in nodes){
+		var resource_array = nodes[i].data.provides;
+		for(var j in resource_array){
+			if(resource_array[j]!=="(null)"){
+				if(agentAlreadyFound(resource,"name",resource_array[j])!=true){
+					resource.push({ "name" : resource_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Add each provides node into their structure
 	*/
 
-	for(var agent in resources){
-		resources[agent].node = {
+	for(var agent in resource){
+		resource[agent].node = {
 			id : nextNodeId,
-			label : resources[agent].name,
+			label : resource[agent].name,
 			shape : "ellipse",
 			fixed : false
 		}
 		nodeResourceToIdMapper.push({
-			name : resources[agent].name,
+			name : resource[agent].name,
 			id : nextNodeId
 		});
 		nextNodeId++;
@@ -1178,9 +1193,10 @@ function processJSONetwork(data){
 	/*
 		Draw all of the agents, resources and tools
 	*/
-	for(var agent in resources){
-		nodesVis.add([resources[agent].node]);
+	for(var agent in resource){
+		nodesVis.add([resource[agent].node]);
 	}
+
 	for(var agent in agents){
 		nodesVis.add([agents[agent].node]);
 	}/*
@@ -1197,8 +1213,9 @@ function processJSONetwork(data){
 	for(var node in nodes){
 		var data = nodes[node].data;
 		var agent;
+		var state = 0;
 		nodes[node].nodeId = [];
-		if(data.agent.length == 1 && data.requires.length == 1){
+		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1){
 
 				nodesVis.add([
 					{
@@ -1216,9 +1233,19 @@ function processJSONetwork(data){
 			links.push({
 				name : data.name,
 				agent : data.agent,
-				resource : data.requires,
+				requires : data.requires,
+				provides : data.provides,
 				id : nextNodeId
 			});
+
+			resourceLinks.push({
+				name : data.name,
+				agent : data.agent,
+				requires : data.requires,
+				provides : data.provides,
+				id : nextNodeId
+			});
+			state =1;
 			nextNodeId++;
 		}else{
 
@@ -1243,24 +1270,56 @@ function processJSONetwork(data){
 				links.push({
 					name : data.name,
 					agent : data.agent[x],
-					resource : data.requires,
+					requires : data.requires,
+					provides : data.provides,
 					id : nextNodeId
 				});
-				nodes[node].nodeId.push(nextNodeId);
 			}
 
-		}  if(data.requires.length > 1){
+		} else if(state ==0){
+			links.push({
+				name : data.name,
+				agent : data.agent,
+				id : nextNodeId
+			}); 
+
+		}if(data.requires.length > 1){
 			for(var x in data.requires){
-				links.push({
+				resourceLinks.push({
 					name : data.name,
 					agent : data.agent,
-					resource : data.requires[x],
+					requires : data.requires[x],
 					id : nextNodeId
 				});
-				nodes[node].nodeId.push(nextNodeId);
 			}
 
+		} else if(state ==0){
+			resourceLinks.push({
+				name : data.name,
+				agent : data.agent,
+				requires : data.requires,
+				id : nextNodeId
+			});
+		} if(data.provides.length > 1){
+			for(var x in data.provides){
+				resourceLinks.push({
+					name : data.name,
+					agent : data.agent,
+					provides : data.provides[x],
+					id : nextNodeId
+				});
+
+			}
+
+		}else if(state ==0){
+			resourceLinks.push({
+				name : data.name,
+				agent : data.agent,
+				provides : data.provides,
+				id : nextNodeId
+			});
 		}
+		nodes[node].nodeId.push(nextNodeId);
 		nextNodeId++;
 		
 	}
@@ -1285,18 +1344,34 @@ function processJSONetwork(data){
 	/*
 		resources
 	*/
-	for(var rel in links){
-		var from = links[rel].name;
-		var to = links[rel].resource;//getNodeResourceByName(links,from);
+	for(var rel in resourceLinks){
+		var from = resourceLinks[rel].name;
+		var to = resourceLinks[rel].requires;
 		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
 		var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
 		edges.add([
 			{
 				from : fromId,
 				to : toId,
-				arrows : "to"
+				arrows : "from"
 			}
 		])
+	}
+
+	for(var rel in resourceLinks){
+		//if(resourceLinks[rel].provides!=undefined){
+			var from = resourceLinks[rel].name;
+			var to = resourceLinks[rel].provides;
+			var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+			var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
+			edges.add([
+				{
+					from : fromId,
+					to : toId,
+					arrows : "to"
+				}
+			])
+		//}
 	}
 
 	/*
@@ -1306,7 +1381,7 @@ function processJSONetwork(data){
 		var from = links[rel].name;
 		var to = links[rel].agent;
 		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
-		var toId = getNodeIdByResource(nodeToolToIdMapper,to);
+		var toId = getNodeIdByResource(nodeAgentToIdMapper,to);
 		edges.add([
 			{
 				from : fromId,
@@ -1328,14 +1403,6 @@ function processJSONetwork(data){
 	createGraph();
 }
 
-function getNodeResourceByName(map, name) {
-	for(var x in map){
-		if(map[x].name===name){
-			return map[x].resource
-		}
-	}
-}
-
 function getNodeIdByResource(map, name) {
 	for(var x in map){
 		if(map[x].name==name){
@@ -1343,9 +1410,6 @@ function getNodeIdByResource(map, name) {
 		}
 	}
 }
-
-
-
 
 /*
 	Post the current editors data to the server and get the reply
