@@ -1,14 +1,14 @@
 "use strict"
 function runAllTests(){
-	   
-    	if (confirm("Testing will clear the editor, click okay to continue") == true) {
-        	test_editor_exists()
+
+	if (confirm("Testing will clear the editor, click okay to continue") == true) {
+		test_editor_exists()
 		test_editor();
 		test_save();
 		test_upload();
 		test_login_exists();
 		test_registration_exists();
-    	}
+	}
 
 }
 
@@ -63,7 +63,7 @@ action b { requires { foo } provides { bar } } }"], "test.pml");
 function test_editor(){
 	var script = '';
 	$('script').filter(function () {
-    		if ($(this).attr('src') == "/static/src-noconflict/ace.js"){
+		if ($(this).attr('src') == "/static/src-noconflict/ace.js"){
 			script= '/static/src-noconflict/ace.js';
 		}
 

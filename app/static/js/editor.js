@@ -134,9 +134,9 @@ function setupUpload(){
 	by dragging and dropping a file that contains PML.
 */
 function setupFileDragAndDrop() {
-		var inputXml;
-		inputXml = document.getElementById('editor');
-		addFileDragAndDropEventListeners(inputXml, editor);
+		var inputpml;
+		inputpml = document.getElementById('editor');
+		addFileDragAndDropEventListeners(inputpml, editor);
 
 		function addFileDragAndDropEventListeners(aceInputDiv, aceObject) {
 			aceInputDiv.addEventListener('dragover', function (e) {
@@ -847,7 +847,6 @@ function transformationHighlightSuccess(data) {
 	highlightNodes(data,"TRANSFORM");
 }
 function highlightNodes(data,type){
-	// createGraph(args[0],args[1],args[2]);
 	var array = data.data;
 	switch (type) {
 		case "MIRACLE":
@@ -951,22 +950,481 @@ function createTableEntry(scheme, radioNumber) {
 	var miracleButton = document.createElement("button");
 	miracleButton.className = "btn btn-primary";
 	miracleButton.style = "background-color:" + scheme.miracle;
+	miracleButton.id = "colourSchemeMiracle" + radioNumber
 	miracleButton.innerHTML = "Miracle";
 
 	var blackHoleButton = document.createElement("button");
 	blackHoleButton.className = "btn btn-primary";
 	blackHoleButton.style = "background-color:" + scheme.blackhole;
+	blackHoleButton.id = "colourSchemeBlackhole" + radioNumber
 	blackHoleButton.innerHTML = "Blackhole";
 
 	var transformerButton = document.createElement("button");
 	transformerButton.className = "btn btn-primary";
 	transformerButton.style = "background-color:" + scheme.transformer;
+	transformerButton.id = "colourSchemeTransformer" + radioNumber
 	transformerButton.innerHTML = "Transformer";
 
 	col2.appendChild(miracleButton);
 	col2.appendChild(blackHoleButton);
 	col2.appendChild(transformerButton);
 }
+
+/*
+	Post the current editors data to the server and get the reply
+*/
+function pmlToJsonNetwork(container){
+	containerName = container;
+	convertPmlToJSON("",processJSONetwork);
+}
+/*
+	Call back function to deal with pmlToJson
+*/
+function processJSONetwork(data){
+// Check to make sure there were no failures on the server side
+	var success = data.success;
+	if (success != true){
+		alert("An error occured when trying to parse PML. Please make sure that " +
+		"Please make sure that the syntax of the PML is correct. Here is what " +
+		"the server returned: " + data.data);
+		return;
+	}
+	// The server returns raw json (Not jsonified) so parse it
+	var parsed_json = JSON.parse(data.data);
+	var nodes = [];
+	var relations = [];
+	/*
+		Loop over all the data, remove the start and end nodes and any relations
+		that go to them. They were added by traverse for DOT and we don't need
+		them here.
+	*/
+	for (var i in parsed_json){
+		if( "type" in parsed_json[i]){
+			if(parsed_json[i].type==="node"){
+				if(isSuitableNode(parsed_json[i])){
+					nodes.push(parsed_json[i]);
+				}
+			}else if(parsed_json[i].type==="relation"){
+				if(isSuitableRelation(parsed_json[i])){
+					relations.push(parsed_json[i]);
+				}
+			}
+		}
+	}
+	/*
+		Remove duplicate nodes
+	*/
+	var tmp = [];
+	for(var i in nodes){
+		var found = false;
+		for(var j = 0; j < i; j++){
+			if(nodes[i].data.name===nodes[j].data.name){
+				found = true;
+			}
+		}
+		if(found==false){
+			tmp.push(nodes[i]);
+		}
+	}
+	nodes = tmp;
+
+	var options = {
+		manipulation: false,
+		width : "100%",
+		height : "100%",
+		physics :  {
+		    "repulsion": {
+		      "centralGravity": 0,
+		      "nodeDistance": 100
+		    },
+		    "minVelocity": 0.75,
+		    "solver": "repulsion",
+			enabled : true
+		},
+		interaction : {
+			navigationButtons: true,
+			/*
+				Enable when graph is moved to it's own page. If on the same page
+				and this is enabled then editor's keys get take over by graph
+			*/
+			keyboard: false
+		},
+		nodes : {
+			shadow:true
+		},
+		edges : {
+
+		    "smooth": {
+		      "forceDirection": "none",
+		      "roundness": 0.8
+		    },
+			width: 2,
+			shadow:true
+		}
+	}
+
+	var containter = document.getElementById(containerName);
+	var agents = [];
+	var resource = [];
+	var tools = [];
+	var nodeNameToIdMapper = [];
+	var links = [];
+	var resourceLinks = [];
+	var toolLinks = [];
+	var nodeResourceToIdMapper = [];
+	var nodeAgentToIdMapper = [];
+	var nodeToolToIdMapper = [];
+
+	/*
+		Loop over all the nodes and find all of the unique agents
+	*/
+	for(var i in nodes){
+		var agent_array = nodes[i].data.agent;
+		for(var j in agent_array){
+			if(agent_array[j]!=="(null)"){
+				if(agentAlreadyFound(agents,"name",agent_array[j])!=true){
+					agents.push({ "name" : agent_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Add each agents nodes into their structure
+	*/
+
+	var nextNodeId = 0;
+	for(var agent in agents){
+		agents[agent].node = {
+			id : nextNodeId,
+			label : agents[agent].name,
+			shape : "box",
+			color : colourSchemeInUse.blackhole,
+			fixed : false
+		}
+		nodeAgentToIdMapper.push({
+			name : agents[agent].name,
+			id : nextNodeId
+		});
+		nextNodeId++;
+	}
+
+
+	/*
+		Loop over all the nodes and find all of the unique requires
+	*/
+	for(var i in nodes){
+		var resource_array = nodes[i].data.requires;
+		for(var j in resource_array){
+			if(resource_array[j]!=="(null)"){
+				if(agentAlreadyFound(resource,"name",resource_array[j])!=true){
+					resource.push({ "name" : resource_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Loop over all the nodes and find all of the unique provides
+	*/
+	for(var i in nodes){
+		var resource_array = nodes[i].data.provides;
+		for(var j in resource_array){
+			if(resource_array[j]!=="(null)"){
+				if(agentAlreadyFound(resource,"name",resource_array[j])!=true){
+					resource.push({ "name" : resource_array[j]});
+				}
+			}
+		}
+	}
+
+	/*
+		Add each provides node into their structure
+	*/
+
+	for(var agent in resource){
+		resource[agent].node = {
+			id : nextNodeId,
+			label : resource[agent].name,
+			color : colourSchemeInUse.miracle,
+			shape : "ellipse",
+			fixed : false
+		}
+		nodeResourceToIdMapper.push({
+			name : resource[agent].name,
+			id : nextNodeId
+		});
+		nextNodeId++;
+	}
+
+	/*
+		Loop over all the nodes and find all of the unique tool
+	*/
+	for(var i in nodes){
+		var tool_array = nodes[i].data.tool;
+		if(tool_array!=="null"){
+			if(agentAlreadyFound(tools,"name",tool_array)!=true){
+				tools.push({ "name" : tool_array});
+			}
+		}
+	}
+
+	/*
+		Add each tool node into their structure
+
+	*/
+	for(var agent in tools){
+		tools[agent].node = {
+			id : nextNodeId,
+			label : tools[agent].name,
+			color : colourSchemeInUse.transformer,
+			fixed : false
+		}
+		nodeToolToIdMapper.push({
+			name : tools[agent].name,
+			id : nextNodeId
+		});
+
+		nextNodeId++;
+	}
+
+	/*
+		Setup the graph data.
+	*/
+	var nodesVis = new vis.DataSet();
+	var edges = new vis.DataSet();
+
+	/*
+		Draw all of the agents, resources and tools
+	*/
+	for(var agent in resource){
+		nodesVis.add([resource[agent].node]);
+	}
+
+	for(var agent in agents){
+		nodesVis.add([agents[agent].node]);
+	}
+	for(var agent in tools){
+		nodesVis.add([tools[agent].node]);
+	}
+	var REGEX_BRANCH = /branch_*/;
+	var REGEX_REND = /rend_*/;
+
+	/*
+		Draw all of the nodes
+	*/
+
+	for(var node in nodes){
+		var data = nodes[node].data;
+		var agent;
+		var state = 0;
+		nodes[node].nodeId = [];
+		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1 && data.tool !== "null"){
+			nodesVis.add([
+				{
+					id : nextNodeId,
+					label : data.name,
+					shape : "big box",
+					fixed : false
+				}
+			]);
+
+			nodeNameToIdMapper.push({
+				name : data.name,
+				id : nextNodeId
+			});
+			links.push({
+				name : data.name,
+				agent : data.agent,
+				id : nextNodeId
+			});
+
+			resourceLinks.push({
+				name : data.name,
+				requires : data.requires,
+				provides : data.provides,
+				id : nextNodeId
+			});
+			toolLinks.push({
+				name : data.name,
+				tool : data.tool,
+				id : nextNodeId
+			});
+			state =1;
+			nextNodeId++;
+		}else{
+			nodesVis.add([
+				{
+					id : nextNodeId,
+					label : data.name,
+					shape : "big box",
+					fixed : false
+				}
+			]);
+			nodeNameToIdMapper.push({
+				name : data.name,
+				id : nextNodeId
+			});
+		}
+		 if (data.agent.length > 1){
+
+			for(var x in data.agent){
+				links.push({
+					name : data.name,
+					agent : data.agent[x],
+					id : nextNodeId
+				});
+			}
+
+		} else if(state ==0){
+			links.push({
+				name : data.name,
+				agent : data.agent,
+				id : nextNodeId
+			});
+
+		}if(data.requires.length > 1){
+			for(var x in data.requires){
+				resourceLinks.push({
+					name : data.name,
+					requires : data.requires[x],
+					id : nextNodeId
+				});
+			}
+		} else if(state ==0){
+			resourceLinks.push({
+				name : data.name,
+				requires : data.requires,
+				id : nextNodeId
+			});
+		} if(data.provides.length > 1){
+			for(var x in data.provides){
+				resourceLinks.push({
+					name : data.name,
+					provides : data.provides[x],
+					id : nextNodeId
+				});
+
+			}
+		}else if(state ==0){
+			resourceLinks.push({
+				name : data.name,
+				agent : data.agent,
+				provides : data.provides,
+				id : nextNodeId
+			});
+		} if(data.tool !== "null"&& state ==0){
+				toolLinks.push({
+					name : data.name,
+					tool : data.tool,
+					id : nextNodeId
+				});
+				state = 1;
+		}
+		nodes[node].nodeId.push(nextNodeId);
+		nextNodeId++;
+	}
+	/*
+		Draw relations
+	*/
+	for(var rel in relations){
+		var from = relations[rel].data.from.data.name;
+		var to = relations[rel].data.to.data.name;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByName(nodeNameToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+	/*
+		resources
+	*/
+	for(var rel in resourceLinks){
+		var from = resourceLinks[rel].name;
+		var to = resourceLinks[rel].requires;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "from"
+			}
+		])
+	}
+
+	for(var rel in resourceLinks){
+		var from = resourceLinks[rel].name;
+		var to = resourceLinks[rel].provides;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+	/*
+		Agents
+	*/
+	for(var rel in links){
+		var from = links[rel].name;
+		var to = links[rel].agent;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeAgentToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+	/*
+		tools
+	*/
+	for(var rel in toolLinks){
+		var from = toolLinks[rel].name;
+		var to = toolLinks[rel].tool;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeToolToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+	/*
+		Draw the graph
+	*/
+	var data = {
+		nodes : nodesVis,
+		edges : edges
+	}
+
+	setGraphOptions(containter,data,options);
+	createGraph();
+}
+
+function getNodeIdByResource(map, name) {
+	for(var x in map){
+		if(map[x].name==name){
+			return map[x].id
+		}
+	}
+}
+
 /*
 	Post the current editors data to the server and get the reply
 */
@@ -1026,6 +1484,7 @@ function processJSON(data) {
 	nodes = tmp;
 
 	var options = {
+		autoResize: true,
 		manipulation: false,
 		width : "100%",
 		height : "100%",
@@ -1062,18 +1521,6 @@ function processJSON(data) {
 	var REGEX_BRANCH = /branch_*/;
 	var REGEX_REND = /rend_*/;
 
-	/*
-		Find the widest node label and set the gap between nodes to be the
-		closest multiple of 50
-	*/
-	for(var node in nodes){
-		var l = nodes[node].data.name.visualLength();
-		if(2*l > INTER_AGENT_GAP){
-			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+50;
-			console.log(INTER_AGENT_GAP);
-		}
-	}
-
 	var containter = document.getElementById(containerName);
 	var agents = [];
 	var nodeNameToIdMapper = [];
@@ -1093,34 +1540,77 @@ function processJSON(data) {
 	}
 
 	/*
+		Find the widest node label and set the gap between nodes to be the
+		closest multiple of 50
+	*/
+	for(var node in nodes){
+		var l = nodes[node].data.name.visualLength();
+		if(2*l > INTER_AGENT_GAP){
+			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+50;
+		}
+	}
+	for(var agent in agents){
+		var l = agents[agent].name.visualLength();
+		if(2*l > INTER_AGENT_GAP){
+			INTER_AGENT_GAP = Math.ceil((2*l)/50) * 50+agents[agent].name.visualLength();
+		}
+	}
+
+	/*
 		Add each agents nodes into their structure
 		Will make life easier for later.
 	*/
 	var currentAgentX = AGENT_START_LOC_X;
 	var currentLevel = 1;
 	var nextNodeId = 0;
-	for(var agent in agents){
-		agents[agent].node = {
-			id : nextNodeId,
-			label : agents[agent].name,
-			font : {
-				size : 30
-			},
-			x : currentAgentX,
-			y : INTER_LEVEL_GAP * currentLevel,
-			shape : "text",
-			fixed : true
-		}
+	var agentLessLocation = agents.length===1 ? 0 : Math.round(agents.length/2);
+	if(agents.length===0){
+		// Agent for agent-less action
+		agents.push(
+			{
+				name : "Agent-less",
+				node : {
+					id : nextNodeId,
+					label : "Agent-less",
+					font : {
+						size : 30
+					},
+					x : currentAgentX,
+					y : INTER_LEVEL_GAP * currentLevel,
+					shape : "text",
+					fixed : true
+				}
+			}
+		);
 		currentAgentX += INTER_AGENT_GAP;
 		nextNodeId++;
-	}
-	// Agent for agent-less action
-	agents.push(
-		{
-			name : "Agent-less",
-			node : {
+	}else {
+		for(var agent in agents){
+			// Put the agent-less lane in the middle of the graph
+			if(agent === agentLessLocation.toString()){
+				// Agent for agent-less action
+				agents.push(
+					{
+						name : "Agent-less",
+						node : {
+							id : nextNodeId,
+							label : "Agent-less",
+							font : {
+								size : 30
+							},
+							x : currentAgentX,
+							y : INTER_LEVEL_GAP * currentLevel,
+							shape : "text",
+							fixed : true
+						}
+					}
+				);
+				currentAgentX += INTER_AGENT_GAP;
+				nextNodeId++;
+			}
+			agents[agent].node = {
 				id : nextNodeId,
-				label : "Agent-less",
+				label : agents[agent].name,
 				font : {
 					size : 30
 				},
@@ -1129,11 +1619,12 @@ function processJSON(data) {
 				shape : "text",
 				fixed : true
 			}
+			currentAgentX += INTER_AGENT_GAP;
+			nextNodeId++;
 		}
-	);
-	currentAgentX += INTER_AGENT_GAP;
-	nextNodeId++;
+	}
 	currentLevel++;
+
 
 	/*
 		Setup the graph data.
@@ -1195,23 +1686,42 @@ function processJSON(data) {
 			currentLevel++;
 			nodeNameToIdMapper.push({
 				name : data.name,
-				id : nextNodeId
+				id : nextNodeId,
+				y : INTER_LEVEL_GAP * currentLevel
 			});
 			nextNodeId++;
 		}else{
 			var sharedNodeLink = [];
 			for(var x in data.agent){
-				nodesVis.add([
-					{
-						id : nextNodeId,
-						label : data.name,
-						x : getAgentByName(agents,data.agent[x]).node.x,
-						y : INTER_LEVEL_GAP * currentLevel
-					}
-				]);
+				if(x==="0"){
+					nodesVis.add([
+						{
+							id : nextNodeId,
+							label : data.name,
+							x : getAgentByName(agents,data.agent[x]).node.x,
+							y : INTER_LEVEL_GAP * currentLevel
+						}
+					]);
+				}else{
+					nodesVis.add([
+						{
+							id : nextNodeId,
+							label : data.name,
+							x : getAgentByName(agents,data.agent[x]).node.x,
+							y : INTER_LEVEL_GAP * currentLevel,
+							shapeProperties:{
+								borderDashes:[5,5]
+							},
+							color : {
+								background : "#a7afbe"
+							}
+						}
+					]);
+				}
 				nodeNameToIdMapper.push({
 					name : data.name,
-					id : nextNodeId
+					id : nextNodeId,
+					y : INTER_LEVEL_GAP * currentLevel
 				});
 				nodes[node].nodeId.push(nextNodeId);
 				sharedNodeLink.push(nextNodeId);
@@ -1237,13 +1747,30 @@ function processJSON(data) {
 		var to = relations[rel].data.to.data.name;
 		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
 		var toId = getNodeIdByName(nodeNameToIdMapper,to);
-		edges.add([
-			{
-				from : fromId,
-				to : toId,
-				arrows : "to"
-			}
-		])
+		var fromy = getNodeYByName(nodeNameToIdMapper,from);
+		var toy = getNodeYByName(nodeNameToIdMapper,to);
+		if(toy < fromy){
+			edges.add([
+				{
+					from : fromId,
+					to : toId,
+					arrows : "to",
+					smooth: {
+						type : "curvedCCW",
+						forceDirection: "none",
+						roundness: 0.5
+					}
+				}
+			]);
+		}else{
+			edges.add([
+				{
+					from : fromId,
+					to : toId,
+					arrows : "to"
+				}
+			]);
+		}
 	}
 
 
@@ -1295,6 +1822,13 @@ function getNodeIdByName(map, name) {
 	for(var x in map){
 		if(map[x].name===name){
 			return map[x].id
+		}
+	}
+}
+function getNodeYByName(map, name) {
+	for(var x in map){
+		if(map[x].name===name){
+			return map[x].y
 		}
 	}
 }
@@ -1365,10 +1899,17 @@ String.prototype.escapeSpecialChars = function() {
 			    .replace(/[\r]/g, '\\r')
 			    .replace(/[\t]/g, '\\t');
 };
+// Get the width of the text at a given font
 String.prototype.visualLength = function(font) {
 	var f = font || '12px arial';
 	var o = $('<div>' + this + '</div>')
-		.css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+		.css({
+			'position': 'absolute',
+			'float': 'left',
+			'white-space': 'nowrap',
+			'visibility': 'hidden',
+			'font': f
+		})
 		.appendTo($('body'));
 	var w = o.width();
 	o.remove();

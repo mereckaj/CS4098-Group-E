@@ -30,29 +30,25 @@
 				</div>
 				</div>
 				<div class="panel-body">
-					<!-- <button type="submit" class="btn btn-primary" onclick="submitData('{{ url_for('main.index') }}')">
-						<span class="glyphicon glyphicon-repeat"></span>
-						Analyze
-					</button> -->
-					<button type="button" class="btn btn-primary" onclick="simpleGraph('visualization')">
+					<button id="flowGraphButton" type="button" class="btn btn-primary" onclick="simpleGraph('visualization')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Flow Graph
 					</button>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" onclick="simpleGraph('visualization_fullscreen')">
-						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-						Flow Graph Full-screen
-					</button>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-						Legend
-					</button>
-					<button type="button" class="btn btn-primary" onclick="pmlToJson('visualization')">
+					<button id="swimlaneButton" type="button" class="btn btn-primary" onclick="pmlToJson('visualization')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 						Swimlanes
 					</button>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal"  onclick="pmlToJson('visualization_fullscreen')">
+					<button id="socialNetworkButton" type="button" class="btn btn-primary" onclick="pmlToJsonNetwork('visualization')">
 						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-						Swimlanes Full-screen
+						Social Network
+					</button>
+					<button type="button" id="fullScreenButton" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenChoiceModal">
+						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+						Fullscreen
+					</button>
+					<button type="button" class="btn btn-primary" id="colourSchemeChangeButton" data-toggle="modal" data-target="#legendModal">
+						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+						Change Colour Scheme
 					</button>
 					<form action="upload" method="post" enctype="multipart/form-data" id="send">
 						<button type="submit" class="btn btn-primary" style="display: none;"></button>
@@ -75,118 +71,160 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					Visualization
-						<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										Legend
-										<button type="button" class="close" data-dismiss="modal">
-											<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-										</button>
-									</div>
-								<div class="modal-body">
-									<div class="table-responsive">
-										<dic class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-												<table class="table">
-													<thead>
-														<tr>
-															<th>Colour</th>
-															<th>Description</th>
-														</tr>
-													</thead>
-													<tbody>
+					<div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="legendModal" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									Legend
+									<button id="closedModalLegend" type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+									</button>
+								</div>
+							<div class="modal-body">
+								<div class="table-responsive">
+									<dic class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+										<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+											<table class="table">
+												<thead>
 													<tr>
-														<td>Miracle</td>
-														<td>Miracles are actions which provide but do not require a resource</td>
+														<th>Colour</th>
+														<th>Description</th>
 													</tr>
+												</thead>
+												<tbody>
+												<tr>
+													<td>Miracle</td>
+													<td>Miracles are actions which provide but do not require a resource</td>
+												</tr>
+												<tr>
+													<td>Blackhole</td>
+													<td>Black holes require but do not provide a resource</td>
+												</tr>
+												<tr>
+													<td>Transformer</td>
+													<td>Transformations provide a different resource to the one required</td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+										<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+											<table class="table" id="colourSchemeTable">
+												<thead>
 													<tr>
-														<td>Blackhole</td>
-														<td>Black holes require but do not provide a resource</td>
+														<th>Scheme</th>
+														<th>Colours</th>
 													</tr>
-													<tr>
-														<td>Transformer</td>
-														<td>Transformations provide a different resource to the one required</td>
-													</tr>
-													</tbody>
-												</table>
-											</div>
-											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-												<table class="table" id="colourSchemeTable">
-													<thead>
-														<tr>
-															<th>Scheme</th>
-															<th>Colours</th>
-														</tr>
-													</thead>
-													<tbody>
-													</tbody>
-												</table>
-											</div>
+												</thead>
+												<tbody>
+												</tbody>
+											</table>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="modal fade" id="fullscreenModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									Visualization fullscreen
-									<button type="button" class="close" data-dismiss="modal">
-										<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-									</button>
-								</div>
-								<div class="modal-body" id="topkek">
+				</div>
+				<div class="modal fade" id="fullscreenModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog-fs">
+						<div class="modal-content-fs">
+							<div class="modal-header">
+								Visualization fullscreen
+								<button id="closeModalFullscreen" type="button" class="close" data-dismiss="modal">
+									<!-- <span aria-hidden="true">&times;</span><span class="sr-only">Close</span> -->
+									<span aria-hidden="true" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								</button>
+							</div>
+							<div class="modal-body row">
+								<div class="col-lg-12">
 									<div class="panel-body">
 										<div id="visualization_fullscreen" class="graphics_fullscreen"></div>
 									</div>
 								</div>
-								<div class="panel-body text-center">
-									<button type="button" class="btn btn-primary" id="miracle_button">
-										Miracle
+							</div>
+							<div class="modal-footer">
+								<div class="pull-left">
+									Legend:
+									<button type="button" class="btn btn-primary btn-primary-pill" id="miracle_button">
+										Miracle/Resources
 									</button>
-									<button type="button" class="btn btn-primary" id="blackhole_button">
-										Blackhole
+									<button type="button" class="btn btn-primary btn-primary-pill" id="blackhole_button">
+										Blackhole/Agents
 									</button>
-									<button type="button" class="btn btn-primary" id="transformer_button">
-										Transformer
+									<button type="button" class="btn btn-primary btn-primary-pill" id="transformer_button">
+										Transformer/Tools
+									</button>
+								</div>
+								<diV class="pull-right">
+									<button type="button" id="modalFlowGraphButton" class="btn btn-primary" onclick="simpleGraph('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Flow Graph
+									</button>
+									<button type="button" id="modalSwimlaneButton" class="btn btn-primary" onclick="pmlToJson('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Swimlanes
+									</button>
+									<button type="button" id="modalNetworkButton" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="pmlToJsonNetwork('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Social Network
+									</button>
+									<button type="button" id="modalColourSchemeButton" class="btn btn-primary" data-toggle="modal" data-target="#legendModal" data-dismiss="modal">
+										<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+										Change Colour Scheme
 									</button>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-body">
-						<div id="visualization" class="graphics"></div>
+				</div>
+				<div class="modal fade" id="fullscreenChoiceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								Visualization Choice
+								<button id="modalFullscreenChoiceClose" type="button" class="close" data-dismiss="modal">
+									<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+								</button>
+							</div>
+							<div class="modal-body" id="topkek">
+								<div class="text-center">
+									<p>
+										What type of a visualization would you like to see?
+									</p>
+									<button type="button" id="modalFullscreenChoiceFlowButton" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="simpleGraph('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Flow Graph
+									</button>
+									<button type="button" id="modalFullscreenChoiceSwimlaneButton" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="pmlToJson('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Swimlanes
+									</button>
+									<button type="button" id="modalFullscreenChoiceNetworkButton" class="btn btn-primary" data-toggle="modal" data-target="#fullscreenModal" data-dismiss="modal" onclick="pmlToJsonNetwork('visualization_fullscreen')">
+										<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										Social Network
+									</button>
+								</div>
+							</div>
+							<div class="modal-footer">
+							</div>
+						</div>
 					</div>
-					<div class="panel-body">
-						<button type="button" class="btn btn-primary" id="miracle_button_2">
-							Miracle
-						</button>
-						<button type="button" class="btn btn-primary" id="blackhole_button_2">
-							Blackhole
-						</button>
-						<button type="button" class="btn btn-primary" id="transformer_button_2">
-							Transformer
-						</button>
-					</div>
-			</div>
-		</div>
-		<!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h1 class ="panel-title" id = "title">Swimlanes</h1>
 				</div>
 				<div class="panel-body">
-						<div id="swimlanes" class="graphics"></div>
+					<div id="visualization" class="graphics"></div>
 				</div>
 				<div class="panel-body">
-					<button type="button" class="btn btn-primary" onclick="pmlToJson()">
-						<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-						Wiggle wiggle little fish
+					Legend:
+					<button type="button" class="btn btn-primary btn-primary-pill" id="miracle_button_2">
+						Miracle/Resources
+					</button>
+					<button type="button" class="btn btn-primary btn-primary-pill" id="blackhole_button_2">
+						Blackhole/Agents
+					</button>
+					<button type="button" class="btn btn-primary btn-primary-pill" id="transformer_button_2">
+						Transformer/Tools
 					</button>
 				</div>
 			</div>
-		</div> -->
+		</div>
 {% endblock %}

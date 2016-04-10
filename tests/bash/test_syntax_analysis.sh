@@ -8,12 +8,12 @@ function clean(){
 	rm $PML $ERROR_PML;
 }
 function clean_and_exit_error(){
-	echo "[FAIL]";
+	echo "FAIL";
 	clean
 	exit 1;
 }
 function clean_and_exit_success(){
-	echo "[OK]";
+	echo "OK";
 	clean
 	exit 0;
 }

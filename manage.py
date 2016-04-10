@@ -11,12 +11,5 @@ def make_shell_context():
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
 
-@manager.command
-def test():
-	"""RUN TESTS"""
-	import unittest2
-	tests = unittest2.TestLoader().discover("tests")
-	unittest2.TextTestRunner(verbosity=2).run(tests)
-
 if(__name__=="__main__"):
 	manager.run()

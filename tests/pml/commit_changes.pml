@@ -26,7 +26,6 @@ process commit_change {
 
     sequence test_integration {
       action login_as_testuser {
-	agent { top_kek}
 	script { "Login to test host as `jntestuser'." }
       }
       action delete_old_workspace {
