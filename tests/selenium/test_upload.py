@@ -14,6 +14,7 @@ class Test_fileUpload(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Firefox()
+		self.driver.maximize_window()
         self.driver.implicitly_wait(30)
         self.base_url = "http://localhost:8000"
         self.verificationErrors = []
