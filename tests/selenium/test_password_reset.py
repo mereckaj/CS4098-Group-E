@@ -38,9 +38,9 @@ class TestEditor(unittest.TestCase):
 		finally: self.accept_next_alert = True
 
 	def test_editor(self):
-		print("> Testing Flow Graphs")
+		print("> Testing Social Network Graphs")
 		driver = self.driver
-		# Register and login
+		# Register, login and logout
 		driver.get(self.base_url + "/login")
 		driver.find_element_by_id("reg").click()
 		driver.find_element_by_id("first_name").clear()
@@ -54,22 +54,42 @@ class TestEditor(unittest.TestCase):
 		driver.find_element_by_id("email").clear()
 		driver.find_element_by_id("email").send_keys(self.username + "@example.com")
 		driver.find_element_by_id("submit").click()
-		# Go to main page
 		self.assertEqual("http://localhost:8000/", driver.current_url)
-		# Click the editor
-		driver.find_element_by_css_selector("div.ace_content").click()
-		# Set the ace editor to some value
-		driver.find_element_by_class_name("ace_text-input").send_keys("""process a { action one{}  action two {} }""",Keys.RETURN)
-		# Draw the graph
-		driver.find_element_by_id("flowGraphButton").click()
-		# Check that canvas exits
-		self.assertEqual("", driver.find_element_by_css_selector("canvas").text)
-		# Click the fullscreene button
-		driver.find_element_by_id("fullScreenButton").click()
-		#Choose fullscreen flow graph
-		driver.find_element_by_id("modalFullscreenChoiceFlowButton").click()
-		# Assert new canvas appears
-		self.assertEqual("", driver.find_element_by_css_selector("canvas").text)
+
+		# Log out
+		driver.find_element_by_xpath("//div[@id='bs-example-navbar-collapse-1']/ul[2]/li/a").click()
+		driver.find_element_by_link_text("Logout").click()
+		self.assertEqual("http://localhost:8000/login", driver.current_url)
+
+		# Send password reset email
+		driver.find_element_by_link_text("Forgot Password").click()
+		self.assertEqual("http://localhost:8000/reset_password", driver.current_url)
+		driver.find_element_by_id("email").send_keys(self.username + "@example.com");
+		driver.find_element_by_id("submit").click()
+		driver.find_element_by_id("backToLogin").click()
+		self.assertEqual("http://localhost:8000/login", driver.current_url)
+
+		# Go to password reset page and change the password
+		driver.get(self.base_url + "/test/reset/"+self.username + "@example.com")
+		driver.find_element_by_id("password").clear()
+		driver.find_element_by_id("password").send_keys("Ba1aaaa!")
+		driver.find_element_by_id("confirm").clear()
+		driver.find_element_by_id("confirm").send_keys("Ba1aaaa!")
+		driver.find_element_by_id("submit").click()
+
+		# After password reset we are logged in, logout
+		driver.find_element_by_xpath("//div[@id='bs-example-navbar-collapse-1']/ul[2]/li/a").click()
+		driver.find_element_by_link_text("Logout").click()
+		self.assertEqual("http://localhost:8000/login", driver.current_url)
+
+		# Test the new password
+		driver.get(self.base_url + "/login")
+		driver.find_element_by_id("email").clear()
+		driver.find_element_by_id("email").send_keys(self.username + "@example.com")
+		driver.find_element_by_id("password").clear()
+		driver.find_element_by_id("password").send_keys("Ba1aaaa!")
+		driver.find_element_by_id("submit").click()
+		self.assertEqual("http://localhost:8000/", driver.current_url)
 
 	def tearDown(self):
 		self.driver.quit()

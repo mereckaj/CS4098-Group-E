@@ -388,6 +388,27 @@ def reset(token):
 			return redirect(url_for("main.index"))
 		return render_template("password_reset.html",form=form);
 
+@main.route("/test/reset/<email>",methods=["GET","POST"])
+def test_reset(email):
+	# If the app is not running in testing mode, refuse to serve this.
+	# This is a hack to get around the email link that needs to be clicked
+	# to get to the password reset page
+	if current_app.config["TESTING"] is True:
+		form = PasswordChangeForm();
+		if request.method == "GET":
+			return render_template("password_reset.html",form=form);
+		elif request.method == "POST":
+			if form.validate_on_submit():
+				password = form.password.data
+				user = User.query.filter_by(email=email).first_or_404()
+				user.set_password(password);
+				db.session.add(user)
+				db.session.commit()
+				login_and_load_user(user)
+				return redirect(url_for("main.index"))
+			return render_template("password_reset.html",form=form);
+	else:
+		return make_response("Only allowed in testing mode",403)
 
 @main.route("/confirm/<token>")
 @login_required
