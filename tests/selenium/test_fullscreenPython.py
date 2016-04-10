@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
 
-class FullScreenPython(unittest.TestCase):
+class TestFullscreenPython(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
@@ -15,27 +15,30 @@ class FullScreenPython(unittest.TestCase):
         self.verificationErrors = []
         self.accept_next_alert = True
     
-    def test_full_screen_python(self):
+    def test_fullscreen_python(self):
         driver = self.driver
         driver.get(self.base_url + "/login")
         driver.find_element_by_id("fbLogin").click()
-        driver.find_element_by_link_text("File").click()
-        driver.find_element_by_link_text("run_peos").click()
-        driver.find_element_by_xpath("(//button[@type='button'])[3]").click()
-        driver.find_element_by_css_selector("#fullscreenModal > div.modal-dialog > div.modal-content > div.modal-header > button.close").click()
-        driver.find_element_by_xpath("(//button[@type='button'])[3]").click()
+        driver.find_element_by_xpath("(//button[@type='button'])[5]").click()
+        driver.find_element_by_css_selector("div.text-center > button.btn.btn-primary").click()
         self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "canvas"))
-        # Warning: assertTextPresent may require manual changes
-        self.assertRegexpMatches(driver.find_element_by_css_selector("BODY").text, r"^[\s\S]*Visualization fullscreen[\s\S]*$")
+        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "canvas"))
         self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "div.vis-button.vis-zoomExtends"))
-        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "#fullscreenModal > div.modal-dialog > div.modal-content > div.modal-header > button.close"))
-        driver.find_element_by_css_selector("#fullscreenModal > div.modal-dialog > div.modal-content > div.modal-header > button.close").click()
+        driver.find_element_by_xpath("(//button[@type='button'])[13]").click()
+        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "canvas"))
+        driver.find_element_by_css_selector("div.modal-content-fs > div.modal-header > button.close").click()
+        driver.find_element_by_css_selector("button.btn.btn-primary").click()
+        driver.find_element_by_id("swimlaneButton").click()
+        driver.find_element_by_css_selector("div.modal-content-fs > div.modal-header > button.close").click()
+        driver.find_element_by_xpath("(//button[@type='button'])[6]").click()
+        driver.find_element_by_id("1").click()
+        driver.find_element_by_css_selector("button.close").click()
+        driver.find_element_by_xpath("(//button[@type='button'])[5]").click()
+        driver.find_element_by_css_selector("div.text-center > button.btn.btn-primary").click()
+        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "div.vis-button.vis-zoomIn"))
+        driver.find_element_by_css_selector("div.modal-content-fs > div.modal-header > button.close").click()
         self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "div.ace_content"))
-        self.assertTrue(self.is_element_present(By.ID, "visualization"))
-        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "button.btn.btn-primary"))
-        driver.find_element_by_xpath("(//button[@type='button'])[3]").click()
-        driver.find_element_by_css_selector("#fullscreenModal > div.modal-dialog > div.modal-content > div.modal-header > button.close").click()
-        self.assertTrue(self.is_element_present(By.XPATH, "//body/div[2]/div/div[3]"))
+        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, "#visualization > div.vis-network > canvas"))
     
     def is_element_present(self, how, what):
         try: self.driver.find_element(by=how, value=what)
