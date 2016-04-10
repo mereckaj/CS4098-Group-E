@@ -1036,7 +1036,7 @@ function processJSONetwork(data){
 		    },
 		    "minVelocity": 0.75,
 		    "solver": "repulsion",
-			enabled : true
+			enabled : false
 		},
 		interaction : {
 			navigationButtons: true,
@@ -1067,6 +1067,7 @@ function processJSONetwork(data){
 	var nodeNameToIdMapper = [];
 	var links = [];
 	var resourceLinks = [];
+	var toolLinks = [];
 	var nodeResourceToIdMapper = [];
 	var nodeAgentToIdMapper = [];
 	var nodeToolToIdMapper = [];
@@ -1094,7 +1095,8 @@ function processJSONetwork(data){
 		agents[agent].node = {
 			id : nextNodeId,
 			label : agents[agent].name,
-			shape : "ellipse",
+			shape : "box",
+			color : colourSchemeInUse.blackhole,
 			fixed : false
 		}
 		nodeAgentToIdMapper.push({
@@ -1141,6 +1143,7 @@ function processJSONetwork(data){
 		resource[agent].node = {
 			id : nextNodeId,
 			label : resource[agent].name,
+			color : colourSchemeInUse.miracle,
 			shape : "ellipse",
 			fixed : false
 		}
@@ -1173,7 +1176,7 @@ function processJSONetwork(data){
 		tools[agent].node = {
 			id : nextNodeId,
 			label : tools[agent].name,
-			shape : "ellipse",
+			color : colourSchemeInUse.transformer,
 			fixed : false
 		}
 		nodeToolToIdMapper.push({
@@ -1215,16 +1218,15 @@ function processJSONetwork(data){
 		var agent;
 		var state = 0;
 		nodes[node].nodeId = [];
-		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1){
-
-				nodesVis.add([
-					{
-						id : nextNodeId,
-						label : data.name,
-						shape : "box",
-						fixed : false
-					}
-				]);
+		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1 && data.tool.length > 1){
+			nodesVis.add([
+				{
+					id : nextNodeId,
+					label : data.name,
+					shape : "big box",
+					fixed : false
+				}
+			]);
 			
 			nodeNameToIdMapper.push({
 				name : data.name,
@@ -1233,26 +1235,28 @@ function processJSONetwork(data){
 			links.push({
 				name : data.name,
 				agent : data.agent,
-				requires : data.requires,
-				provides : data.provides,
 				id : nextNodeId
 			});
 
 			resourceLinks.push({
 				name : data.name,
-				agent : data.agent,
 				requires : data.requires,
 				provides : data.provides,
+				id : nextNodeId
+			});
+			toolLinks.push({
+				name : data.name,
+				tool : data.tool,
 				id : nextNodeId
 			});
 			state =1;
 			nextNodeId++;
 		}else{
-
 			nodesVis.add([
 				{
 					id : nextNodeId,
 					label : data.name,
+					shape : "big box",
 					fixed : false
 				}
 			]);
@@ -1260,9 +1264,6 @@ function processJSONetwork(data){
 				name : data.name,
 				id : nextNodeId
 			});
-
-
-
 		}
 		 if (data.agent.length > 1){
 
@@ -1270,8 +1271,6 @@ function processJSONetwork(data){
 				links.push({
 					name : data.name,
 					agent : data.agent[x],
-					requires : data.requires,
-					provides : data.provides,
 					id : nextNodeId
 				});
 			}
@@ -1287,16 +1286,13 @@ function processJSONetwork(data){
 			for(var x in data.requires){
 				resourceLinks.push({
 					name : data.name,
-					agent : data.agent,
 					requires : data.requires[x],
 					id : nextNodeId
 				});
 			}
-
 		} else if(state ==0){
 			resourceLinks.push({
 				name : data.name,
-				agent : data.agent,
 				requires : data.requires,
 				id : nextNodeId
 			});
@@ -1304,13 +1300,11 @@ function processJSONetwork(data){
 			for(var x in data.provides){
 				resourceLinks.push({
 					name : data.name,
-					agent : data.agent,
 					provides : data.provides[x],
 					id : nextNodeId
 				});
 
 			}
-
 		}else if(state ==0){
 			resourceLinks.push({
 				name : data.name,
@@ -1318,16 +1312,28 @@ function processJSONetwork(data){
 				provides : data.provides,
 				id : nextNodeId
 			});
+		} if(data.tool.length > 1){
+			for(var x in data.tool){
+				toolLinks.push({
+					name : data.name,
+					tool : data.tool[x],
+					id : nextNodeId
+				});
+
+			}
+		}else if(state ==0){
+			toolLinks.push({
+				name : data.name,
+				tool : data.tool[x],
+				id : nextNodeId
+			});
 		}
 		nodes[node].nodeId.push(nextNodeId);
 		nextNodeId++;
-		
 	}
 	/*
 		Draw relations
 	*/
-
-
 	for(var rel in relations){
 		var from = relations[rel].data.from.data.name;
 		var to = relations[rel].data.to.data.name;
@@ -1359,19 +1365,17 @@ function processJSONetwork(data){
 	}
 
 	for(var rel in resourceLinks){
-		//if(resourceLinks[rel].provides!=undefined){
-			var from = resourceLinks[rel].name;
-			var to = resourceLinks[rel].provides;
-			var fromId = getNodeIdByName(nodeNameToIdMapper,from);
-			var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
-			edges.add([
-				{
-					from : fromId,
-					to : toId,
-					arrows : "to"
-				}
-			])
-		//}
+		var from = resourceLinks[rel].name;
+		var to = resourceLinks[rel].provides;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeResourceToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
 	}
 
 	/*
@@ -1382,6 +1386,23 @@ function processJSONetwork(data){
 		var to = links[rel].agent;
 		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
 		var toId = getNodeIdByResource(nodeAgentToIdMapper,to);
+		edges.add([
+			{
+				from : fromId,
+				to : toId,
+				arrows : "to"
+			}
+		])
+	}
+
+	/*
+		tools
+	*/
+	for(var rel in toolLinks){
+		var from = toolLinks[rel].name;
+		var to = toolLinks[rel].tool;
+		var fromId = getNodeIdByName(nodeNameToIdMapper,from);
+		var toId = getNodeIdByResource(nodeToolToIdMapper,to);
 		edges.add([
 			{
 				from : fromId,
