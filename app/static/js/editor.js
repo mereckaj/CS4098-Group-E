@@ -1161,7 +1161,7 @@ function processJSONetwork(data){
 	*/
 	for(var i in nodes){
 		var tool_array = nodes[i].data.tool;
-		if(tool_array!=="(null)"){
+		if(tool_array!=="null"){
 			if(agentAlreadyFound(tools,"name",tool_array)!=true){
 				tools.push({ "name" : tool_array});
 			}
@@ -1218,7 +1218,7 @@ function processJSONetwork(data){
 		var agent;
 		var state = 0;
 		nodes[node].nodeId = [];
-		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1 ){
+		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1 && data.tool !== "null"){
 			nodesVis.add([
 				{
 					id : nextNodeId,
@@ -1312,19 +1312,13 @@ function processJSONetwork(data){
 				provides : data.provides,
 				id : nextNodeId
 			});
-		} if(data.tool !== "(null)"&& state ==0){
+		} if(data.tool !== "null"&& state ==0){
 				toolLinks.push({
 					name : data.name,
 					tool : data.tool,
 					id : nextNodeId
 				});
 				state = 1;
-		}else if(state ==0){
-			toolLinks.push({
-				name : data.name,
-				tool : data.tool,
-				id : nextNodeId
-			});
 		}
 		nodes[node].nodeId.push(nextNodeId);
 		nextNodeId++;
