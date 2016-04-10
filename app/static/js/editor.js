@@ -949,16 +949,19 @@ function createTableEntry(scheme, radioNumber) {
 	var miracleButton = document.createElement("button");
 	miracleButton.className = "btn btn-primary";
 	miracleButton.style = "background-color:" + scheme.miracle;
+	miracleButton.id = "colourSchemeMiracle" + radioNumber
 	miracleButton.innerHTML = "Miracle";
 
 	var blackHoleButton = document.createElement("button");
 	blackHoleButton.className = "btn btn-primary";
 	blackHoleButton.style = "background-color:" + scheme.blackhole;
+	blackHoleButton.id = "colourSchemeBlackhole" + radioNumber
 	blackHoleButton.innerHTML = "Blackhole";
 
 	var transformerButton = document.createElement("button");
 	transformerButton.className = "btn btn-primary";
 	transformerButton.style = "background-color:" + scheme.transformer;
+	transformerButton.id = "colourSchemeTransformer" + radioNumber
 	transformerButton.innerHTML = "Transformer";
 
 	col2.appendChild(miracleButton);
@@ -1168,7 +1171,7 @@ function processJSONetwork(data){
 
 	/*
 		Add each tool node into their structure
-	
+
 	*/
 	for(var agent in tools){
 		tools[agent].node = {
@@ -1190,7 +1193,7 @@ function processJSONetwork(data){
 	*/
 	var nodesVis = new vis.DataSet();
 	var edges = new vis.DataSet();
-	
+
 	/*
 		Draw all of the agents, resources and tools
 	*/
@@ -1206,7 +1209,7 @@ function processJSONetwork(data){
 	}
 	var REGEX_BRANCH = /branch_*/;
 	var REGEX_REND = /rend_*/;
-	
+
 	/*
 		Draw all of the nodes
 	*/
@@ -1225,7 +1228,7 @@ function processJSONetwork(data){
 					fixed : false
 				}
 			]);
-			
+
 			nodeNameToIdMapper.push({
 				name : data.name,
 				id : nextNodeId
@@ -1278,7 +1281,7 @@ function processJSONetwork(data){
 				name : data.name,
 				agent : data.agent,
 				id : nextNodeId
-			}); 
+			});
 
 		}if(data.requires.length > 1){
 			for(var x in data.requires){

@@ -5,8 +5,6 @@ PWD=$(pwd)/tests/
 TESTS=$(ls -l $PWD/bash/test_*.sh | wc -l);
 SUCCESS=0
 
-echo "Executing bash tests"
-echo "----------------------------------------------------------------------"
 # For every script in tht file, run it and check that it's return is ok
 for each in $PWD/bash/test_*.sh;
 do
