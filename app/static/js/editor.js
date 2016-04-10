@@ -133,9 +133,9 @@ function setupUpload(){
 	by dragging and dropping a file that contains PML.
 */
 function setupFileDragAndDrop() {
-		var inputXml;
-		inputXml = document.getElementById('editor');
-		addFileDragAndDropEventListeners(inputXml, editor);
+		var inputpml;
+		inputpml = document.getElementById('editor');
+		addFileDragAndDropEventListeners(inputpml, editor);
 
 		function addFileDragAndDropEventListeners(aceInputDiv, aceObject) {
 			aceInputDiv.addEventListener('dragover', function (e) {
@@ -1036,7 +1036,7 @@ function processJSONetwork(data){
 		    },
 		    "minVelocity": 0.75,
 		    "solver": "repulsion",
-			enabled : false
+			enabled : true
 		},
 		interaction : {
 			navigationButtons: true,
@@ -1159,11 +1159,9 @@ function processJSONetwork(data){
 	*/
 	for(var i in nodes){
 		var tool_array = nodes[i].data.tool;
-		for(var j in tool_array){
-			if(tool_array[j]!=="(null)"){
-				if(agentAlreadyFound(tools,"name",tool_array[j])!=true){
-					tools.push({ "name" : tool_array[j]});
-				}
+		if(tool_array!=="(null)"){
+			if(agentAlreadyFound(tools,"name",tool_array)!=true){
+				tools.push({ "name" : tool_array});
 			}
 		}
 	}
@@ -1202,10 +1200,10 @@ function processJSONetwork(data){
 
 	for(var agent in agents){
 		nodesVis.add([agents[agent].node]);
-	}/*
+	}
 	for(var agent in tools){
 		nodesVis.add([tools[agent].node]);
-	}*/
+	}
 	var REGEX_BRANCH = /branch_*/;
 	var REGEX_REND = /rend_*/;
 	
@@ -1312,19 +1310,16 @@ function processJSONetwork(data){
 				provides : data.provides,
 				id : nextNodeId
 			});
-		} if(data.tool.length > 1){
-			for(var x in data.tool){
+		} if(data.tool !== "(null)"){
 				toolLinks.push({
 					name : data.name,
-					tool : data.tool[x],
+					tool : data.tool,
 					id : nextNodeId
 				});
-
-			}
 		}else if(state ==0){
 			toolLinks.push({
 				name : data.name,
-				tool : data.tool[x],
+				tool : data.tool,
 				id : nextNodeId
 			});
 		}
