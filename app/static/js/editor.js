@@ -990,7 +990,6 @@ function processJSONetwork(data){
 	}
 	// The server returns raw json (Not jsonified) so parse it
 	var parsed_json = JSON.parse(data.data);
-	//alert(data.data);
 	var nodes = [];
 	var relations = [];
 	/*
@@ -1219,7 +1218,7 @@ function processJSONetwork(data){
 		var agent;
 		var state = 0;
 		nodes[node].nodeId = [];
-		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1 && data.tool.length > 1){
+		if(data.agent.length == 1 && data.requires.length == 1 && data.provides.length == 1 ){
 			nodesVis.add([
 				{
 					id : nextNodeId,
@@ -1313,12 +1312,13 @@ function processJSONetwork(data){
 				provides : data.provides,
 				id : nextNodeId
 			});
-		} if(data.tool !== "(null)"){
+		} if(data.tool !== "(null)"&& state ==0){
 				toolLinks.push({
 					name : data.name,
 					tool : data.tool,
 					id : nextNodeId
 				});
+				state = 1;
 		}else if(state ==0){
 			toolLinks.push({
 				name : data.name,
