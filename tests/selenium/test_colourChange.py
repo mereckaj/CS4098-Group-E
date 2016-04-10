@@ -19,7 +19,6 @@ class Test(unittest.TestCase):
 		self.accept_next_alert = True
 
 	def test_(self):
-		print("> Testing Colour Scheme Changes")
 		driver = self.driver
 		driver.get(self.base_url + "/login")
 		driver.find_element_by_id("reg").click()

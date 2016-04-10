@@ -19,7 +19,6 @@ class TestRegister(unittest.TestCase):
 		self.accept_next_alert = True
 
 	def test_login(self):
-		print("> Testing Login")
 		driver = self.driver
 		driver.get(self.base_url + "/login")
 		driver.find_element_by_id("reg").click()

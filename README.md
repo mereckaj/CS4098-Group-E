@@ -24,6 +24,15 @@
 	12. [Resource Flow](#f12)
 	13. [Flow graphs](#f13)
 	14. [Analysis Coloured Actions](#f14)
+	15. [Resource Flow](#f15)
+	16. [Colour Choices For Graphs](#f16)
+	17. [Email Confirmation](#f17)
+	18. [Password Resetting](#f18)
+	19. [View Graphs Fullscreen](#f19)
+	20. [Graph Download](#f20)
+	21. [Drag and Drop upload](#f21)
+	22. [Swim-lane Graphs](#f22)
+	23. [Social-network Graph](#f23)
 9. [Members](#members)
 
 
@@ -49,15 +58,15 @@ Run the following script in your terminal to install, compile and prepare the ap
 <a name="launch"></a>
 ## Launch
 
-Run the following command in your terminal to start the application. Once done, navigate to [localhost:8000](localhost:8000) using your browser.
+Run the following command in your terminal to start the application. Once done, navigate to [localhost:8000](localhost:8000) using your browser. You must choose the configuration to use. The choices are development (Debug information is turned on), testing (Email sending for new users is suppressed) or production (Emails enabled, Debug disabled).
 ```bash
-./start.sh
+./start.sh <development | testing | production>
 ```
 
 <a name="test"></a>
 ## Test
 ### Server Side
-To test all of the server side components run the following command in your terminal.
+Make sure the <b>testing</b> configuration is in used. To test all of the server side components run the following command in your terminal. There are three sets of tests: Post-Install checks, Python feature tests and Bash pml tests.
 ```bash
 ./test.sh
 ```
@@ -79,6 +88,7 @@ To reset the project to what it was like after cloning (Basically to undo what i
 ## External Dependencies
 
 * [PEOS](https://github.com/jnoll/peos) (PML syntax checker and converter to DOT)
+* [PEOS](https://github.com/mereckaj/peos) (PML to JSON converter)
 * [vis.js](https://github.com/almende/vis/) (DOT parser and graph visualizer)
 
 <a name="features"></a>
@@ -218,6 +228,87 @@ To reset the project to what it was like after cloning (Basically to undo what i
     3. Click <b>Visualize</b> in the navigation bar
     4. Click <b>Standard Flow Graph</b>
     5. Look at the legend
+
+<a name="f15"></a>
+15. Resource Flow
+    * Not Implemented
+
+<a name="f16"></a>
+16. Colour Choices For Graphs
+  * <b>Description: </b>
+    *  Users are able to change the colours of Miracles,Blackholes, Transformers, Reources, Agents, Tools in graphs.
+  * <b>Usage: </b>
+    1. Login
+		2. Enter some PML into the editor
+		3. Click <b>Change Colour Schemes</b>
+		4. Select a colour scheme you would like to use
+		5. Observe the changes
+
+<a name="f17"></a>
+17. Email Confirmation
+  * <b>Description: </b>
+    *  On registration an email containing the confirmation link is sent to the user. If the <b>testing</b> configuration is being used emails will not be sent.
+  * <b>Usage: </b>
+    1. Go to main menu
+    2. Click <b>Register</b>.
+    3. Enter your details.
+    4. Click <b>Register</b>.
+		5. Go to your email
+
+<a name="f18"></a>
+18. Password Resetting
+  * <b>Description: </b>
+    *  Ability to recover a forgotten password
+  * <b>Usage: </b>
+    1. Go to main menu
+    2. Click <b>Forgot Password</b>.
+    3. Enter your email.
+    4. Click <b>Reset Passowrd</b>.
+		5. Go to your email
+		6. Click on the password reset link
+		7. Enter your new password
+
+<a name="f19"></a>
+19. Full-screen Graphs
+  * <b>Description: </b>
+    *  Ability to view graphs in full-screen mode
+  * <b>Usage: </b>
+    1. Login
+		2. Enter some PML into the editor
+		3. Click <b>Fullscreen</b>
+		4. Select the type of graph to view
+		5. Enjoy life
+
+<a name="f20"></a>
+20. Graph Download
+  * Not Implemented
+
+<a name="f21"></a>
+21. Drag and Drop Upload
+  * <b>Description: </b>
+    *  Ability to upload files to the IDE by dragging them onto the editor
+  * <b>Usage: </b>
+    1. Login
+		2. Select a .pml file
+		3. Drag it onto the editor
+
+<a name="f22"></a>
+22. Swim-lane Graphs
+  * <b>Description: </b>
+    *  Swim-lane graph where each lane represents an agent and actions are assigned to a lane.
+  * <b>Usage: </b>
+    1. Login
+		2. Enter some PML into the editor
+		3. Click on <b>Swimlanes</b>
+
+<a name="f23"></a>
+23. Social-network Graph
+  * <b>Description: </b>
+    *  A social network showing the relationship between actions and agents, resources, or tools.
+  * <b>Usage: </b>
+    1. Login
+		2. Enter some PML into the editor
+		3. Click on <b>Social Network</b>
 
 <a name="members"></a>
 ## Members

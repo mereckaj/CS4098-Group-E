@@ -38,7 +38,6 @@ class TestEditor(unittest.TestCase):
 		finally: self.accept_next_alert = True
 
 	def test_editor(self):
-		print("> Testing Social Network Graphs")
 		driver = self.driver
 		# Register, login and logout
 		driver.get(self.base_url + "/login")

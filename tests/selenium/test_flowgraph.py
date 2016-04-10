@@ -38,7 +38,6 @@ class TestEditor(unittest.TestCase):
 		finally: self.accept_next_alert = True
 
 	def test_editor(self):
-		print("> Testing Flow Graphs")
 		driver = self.driver
 		# Register and login
 		driver.get(self.base_url + "/login")
