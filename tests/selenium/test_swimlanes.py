@@ -11,6 +11,7 @@ class TestEditor(unittest.TestCase):
 	username = "test_user_" + str(random.randint(1, 10000000))
 	def setUp(self):
 		self.driver = webdriver.Firefox()
+		self.driver.maximize_window()
 		self.driver.implicitly_wait(30)
 		self.base_url = "http://localhost:8000"
 		self.verificationErrors = []
