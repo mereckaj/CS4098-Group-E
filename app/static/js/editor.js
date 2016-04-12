@@ -1699,7 +1699,8 @@ function processJSON(data) {
 							id : nextNodeId,
 							label : data.name,
 							x : getAgentByName(agents,data.agent[x]).node.x,
-							y : INTER_LEVEL_GAP * currentLevel
+							y : INTER_LEVEL_GAP * currentLevel,
+							shape : "box"
 						}
 					]);
 				}else{
@@ -1714,7 +1715,8 @@ function processJSON(data) {
 							},
 							color : {
 								background : "#a7afbe"
-							}
+							},
+							shape : "box"
 						}
 					]);
 				}
